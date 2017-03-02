@@ -169,11 +169,11 @@ init -1 python hide:
 
     ## Set this to False if the game does not have any sound effects.
 
-    config.has_sound = False
+    config.has_sound = True
 
     ## Set this to False if the game does not have any music.
 
-    config.has_music = False
+    config.has_music = True
 
     ## Set this to False if the game does not have voicing.
 
@@ -247,5 +247,5 @@ init -1 python hide:
 
     ## The default text speed in characters per second. 0 is infinite.
 
-    config.default_text_cps = 0
+    config.default_text_cps = 5
 
