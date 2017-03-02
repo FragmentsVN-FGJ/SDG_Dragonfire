@@ -1,4 +1,4 @@
-# The Dating Sim Engine was written by PyTom, 
+# The Dating Sim Engine was written by PyTom,
 # with updates added by Andrea Landaker.
 #
 # For support, see the Lemma Soft forums thread:
@@ -13,13 +13,14 @@
 
 # Set up a default schedule.
 init python:
+    crt = ImageDissolve("images/crt.png", 0.5, 0)
     register_stat("Strength", "strength", 10, 100)
     register_stat("Intelligence", "intelligence", 10, 100)
 
     dp_period("Morning", "morning_act")
     dp_choice("Attend Class", "class")
     dp_choice("Cut Class", "cut")
-    
+
     # This is an example of an event that should only show up under special circumstances
     dp_choice("Fly to the Moon", "fly", show="strength >= 100 and intelligence >= 100")
 
@@ -35,7 +36,7 @@ init python:
 define a = Character("Aerith")
 define n = Character("Nicholas")
 define s = Character("Silvia")
-    
+
 
 # This is the entry point into the game.
 label start:
@@ -43,7 +44,7 @@ label start:
     # Initialize the default values of some of the variables used in
     # the game.
     $ day = 0
-    
+
     $ blade_sphere_control = False
     $ Aerith_angry = False
     $ Aerith_hurt = False
@@ -57,32 +58,32 @@ label start:
 
     # Battle music
     play music "bgm/Battle1.wav"
-    
+
     n "Damnit!"
-    
+
     # Sound effect
-    
+
     "The monster sinks its fangs into my skin, drawing blood!"
-    
+
     # Screen shake & sound
-    
+
     "I can feel the warm liquid trickling down my skin... Damnit!"
-    
+
     "With a huge throwing motion, I manage to shed the weasel, but others are already circling around me."
-    
+
     "They're huge. But I'm not actually worried. Not yet, anyway."
-    
+
     "I see Aerith in the corner of my vision."
-    
+
     "She's surrounded by the creatures as well, trying to keep them away
-    with her staff." 
-    
+    with her staff."
+
     "Um, shouldn't you just cast a spell or something?"
-    
+
     "Silvia is nowhere to be seen. Hiding somewhere in plain sight, no doubt."
 
     "The weasels are circling me, staring at my wound with blood-hungry eyes."
-    
+
     menu:
         "Okay, let's go!"
         "Fight!":
@@ -92,10 +93,10 @@ label start:
             jump WeaselPull
         "Time to retreat!":
             jump WeaselRetreat
-            
+
     # We jump to day to start the first day.
     # jump day
-    
+
 label WeaselPull:
     "Trampling the weasels around me, I run to protect Aerith!"
     "Damn, they're following me! Of course this would happen!"
@@ -104,37 +105,37 @@ label WeaselPull:
 
 label WeaselFight:
     # Silvia uses hail of daggers
-    
+
     "I'll just have to beat them off!"
-    
+
     "I slash at the pack with my sword!"
-    
+
     "The weasels screech in pain, flying off in a torrent of blood!"
-    
+
     "But there's too many of them! No matter how many times I attack, more are lashing right at me!"
-    
+
     s "Protect yourself."
-    
+
     "I hear Silvia's voice from somewhere nearby, and instantly understand."
-    
+
     "I raise my shield just in time as a hail of daggers falls all around me, piercing the weasels and spraying
     blood everywhere!"
-    
-    "The monsters lie dead on the grass, painted crimson with blood." 
-    
+
+    "The monsters lie dead on the grass, painted crimson with blood."
+
     "I turn around to thank Silvia, but then I hear Aerith scream from behind."
-    
+
     jump WeaselAerithScream
-    
+
     return
-    
+
 label WeaselAerithScream:
     # You can run to Aerith, tell her to use the barrier spell, or tell Silvia to use her hail of daggers again
-    
+
     "She's still surrounded by a pack of weasels, desperately pushing them off!"
-    
+
     "Their gnawing at her health. She won't last at this rate!"
-    
+
     menu:
         "Run to save her!":
             "I run through the pack to her side, seeking to protect her from harm!"
@@ -143,9 +144,9 @@ label WeaselAerithScream:
             jump WeaselAerithBarrier
         "Tell Silvia to use the hail of daggers":
             jump WeaselSilviaHailOfDaggersAerithAlone
-            
+
     return
-    
+
 label WeaselSilviaHailOfDaggersAerithAlone:
     n "Silvia! Finish them with a hail of daggers!"
     "Silvia smirks, hesitating a bit."
@@ -160,7 +161,7 @@ label WeaselSilviaHailOfDaggersAerithAlone:
     $ Aerith_angry = True
     $ Aerith_hurt = True
     jump WeaselVictory
-    
+
 label WeaselAerithBarrier:
     n "Aerith! A barrier!"
     "Aerith's eyes flit from foe to foe in terror, but then she begins casting."
@@ -175,17 +176,17 @@ label WeaselAerithBarrier:
         "Better retreat!":
             # Barrier wears off
             jump WeaselRetreat
-    
+
 label WeaselProtectAerith:
     "The weasels are baring their fangs at us, and Silvia is nowhere to be seen."
-    
+
     "Aerith is cowering behind me, trying to think of a spell to cast."
-    
+
     if Aerith_barrier:
         "Her light barrier is still protecting her, but who knows how long it'll last."
-    
+
     "Well, I'm a guardian, so I should be able to do this, right?"
-    
+
     menu:
         "Offensive technique: Furious strike!":
             jump WeaselFuriousStrike
@@ -195,26 +196,26 @@ label WeaselProtectAerith:
             jump AerithDepthsOfSlumber
         "Silvia Technique: Hail of Daggers!":
             jump WeaselSilviaHailOfDaggers
-            
+
     return
-            
+
 label WeaselBladeSphereControl:
     if Aerith_barrier:
         "Aerith's barrier is beginning to fade."
         $ Aerith_barrier = False
 
     "I close my eyes and focus to find the calm within."
-    
+
     "Blade Sphere Control!"
-    
+
     $ blade_sphere_control = True
-    
+
     "I hold my blade in a protective stance, ready to block any attack, from any direction!"
-    
+
     "The weasels are still scuttling around us, but they don't dare to approach."
-    
+
     "It seems we have reached a standstill."
-    
+
     menu:
         "Special Technique: Taunt":
             jump WeaselTaunt
@@ -224,14 +225,14 @@ label WeaselBladeSphereControl:
             jump AerithDepthsOfSlumber
         "Silvia Technique: Hail of Daggers":
             jump WeaselSilviaHailOfDaggers
-    
+
     return
-            
+
 label WeaselSilviaHailOfDaggers:
     n "Silvia! Use your hail of daggers, now!"
-    
+
     "Silvia doesn't need to be told twice."
-    
+
     if blade_sphere_control:
         "As the flurry of thrown knifes falls upon us, I block each and every one coming towards me and Aerith!"
     else:
@@ -248,96 +249,96 @@ label WeaselSilviaHailOfDaggers:
                 $ Aerith_hurt = True
 
     "The weasels aren't as lucky, and the blades pierce their hearts and throats."
-    
+
     "Only a pitiful whimper is left of them now."
-    
+
     jump WeaselVictory
-    
+
 label WeaselTaunt:
     "I can't help but smirk."
-    
+
     "I happen to know a technique for situations exactly like this."
-    
+
     n "What, you afraid or something? Here I thought I was fighting a pack of weasels..."
-    
+
     n "... but turns out you're just a bunch of chickens!"
-    
+
     "You'd think they couldn't understand me."
 
     "But this is a special guardian technique, passed down from ancient times through generations of invincible warriors!"
-    
+
     "I'm almost laughing as I see the weasels seething with rage."
-    
+
     "Suddenly, the entire pack pounces on us, claws flashing in the air!"
-    
-    "But they can't get through my perfect defense!" 
-    
+
+    "But they can't get through my perfect defense!"
+
     "My sword strikes each and every one of them, cutting of their heads and piercing their beating hearts!"
-    
+
     jump WeaselVictory
-    
+
 label WeaselAerithCuringLight:
     n "Aerith! Cast Curing Light on us!"
-    
+
     "Aerith seems flustered for a moment, then begins chanting the spell."
-    
+
     a "Thou art the sun which giveth life and light to the creatures of the earth..."
-    
+
     a "Lord Phopassus, lend us your power. Curing light!"
-    
+
     "I feel the warm, green glow closing the wounds on my arms."
-    
+
     "Freshly invigorated, we return our focus to the battle at hand."
-    
+
     "The weasels are already getting ready to pounce. We have to react fast!"
-    
+
     $ curing_light = True
-    
+
     menu:
         "Offensive technique: Furious strike!":
             jump WeaselFuriousStrike
         "Silvia technique: Hail of Daggers!":
             jump WeaselSilviaHailOfDaggers
-    
+
     return
 
 label WeaselFuriousStrike:
     "Time to go on the offensive!"
-    
+
     "I raise my blade above my head, preparing to unleash my technique."
-    
+
     "But I am interrupted as one of the animals jumps right at me!"
-    
+
     "Its fangs and claws tear into my arm!"
-    
+
     if curing_light:
         "However, thanks to the healing, I barely feel it."
     else:
         "Aah, I'm not gonna survive for much longer at this rate!"
-    
+
     "I shake it off my gauntlet, and prepare the technique again."
-    
+
     n "Furious Strike!"
-    
+
     "I slam the critter with my sword!"
-    
+
     "The steel runs right through its torso, hitting the ground with unbelievable power!"
-    
+
     "The earth trembles as a shockwave emanates from where the weasel was crushed."
-    
+
     "The rest of the weasels flee in terror."
-    
+
     jump WeaselVictory
-    
+
 label AerithDepthsOfSlumber:
     n "Aerith! Cast Depths of Slumber!"
-    
+
     "Aerith blinks, then nods and begins casting the spell."
-    
+
     "The weasels aren't about to let that happen!"
-    
+
     "Three of them jump right at us!"
-    
+
     if blade_sphere_control:
         # Success
         "I smirk. They're never getting through my perfect defense!"
@@ -357,7 +358,7 @@ label AerithDepthsOfSlumber:
                 "Silvia technique: Hail of Daggers!":
                     jump WeaselSilviaHailOfDaggers
     return
-    
+
 label AerithDepthsOfSlumberSuccess:
     a "Gift them with a peaceful sleep!"
     a "Depths of Slumber!"
@@ -365,7 +366,7 @@ label AerithDepthsOfSlumberSuccess:
     "We retreat, and Silvia finishes them off with a flurry of daggers."
     "They shall trouble us no more."
     jump WeaselVictory
-    
+
 label WeaselRetreat:
     # Silvia appears in front of you: "Good thinking!"
     "I turn around to run!"
@@ -381,24 +382,24 @@ label WeaselRetreat:
         $ Aerith_barrier = False
     "I stop in my tracks, and she runs behind me."
     jump WeaselProtectAerith
-    
+
 label WeaselVictory:
 
     play music "bgm/fanfare.mp3"
-    
+
     "Silvia emerges from her hiding place, and I walk to her."
-    
+
     s "Whew! Nice workout, eh?"
-    
+
     "She flashes a wide grin."
-    
+
     s "Seeing all that blood really makes my stomach tickle!"
-    
+
     if Aerith_hurt:
         "Aerith comes towards us, visibly hurt."
     else:
         "Aerith approaches as well."
-        
+
     if Aerith_angry:
         a "What the hell were you doing!? I could have died!"
         "I touch the back of my neck, slightly embarrassed."
@@ -417,10 +418,10 @@ label WeaselVictory:
         s "Come on, the gore is the best part!"
         "Aerith gives her a mean look, but doesn't retort."
         n "Well, I just think it's good for realism."
-    
+
     n "Anyway, thanks for grinding with me. I guess I'll call it a day."
     "We say our farewells, and I log off."
-    scene black with dissolve
+    scene black with crt
     "Taking off my headset, it takes a while for my eyes to adjust to the dim lighting of my room."
     return
 
@@ -451,7 +452,7 @@ label day:
     # to compute the values for.
     call screen day_planner(["Morning", "Afternoon", "Evening"])
 
-    
+
     # We process each of the three periods of the day, in turn.
 label morning:
 
@@ -459,10 +460,10 @@ label morning:
     centered "Morning"
 
     # Set these variables to appropriate values, so they can be
-    # picked up by the expression in the various events defined below. 
+    # picked up by the expression in the various events defined below.
     $ period = "morning"
     $ act = morning_act
-    
+
     # Execute the events for the morning.
     call events_run_period
 
@@ -488,7 +489,7 @@ label afternoon:
 
 
 label evening:
-    
+
     # The evening is the same as the afternoon.
     if check_skip_period():
         jump night
@@ -497,7 +498,7 @@ label evening:
 
     $ period = "evening"
     $ act = evening_act
-    
+
     call events_run_period
 
 
@@ -517,14 +518,13 @@ label night:
     # And we jump back to day to start the next day. This goes
     # on forever, until an event ends the game.
     jump day
-         
 
-# This is a callback that is called by the day planner. 
+
+# This is a callback that is called by the day planner.
 label dp_callback:
 
     # Add in a line of dialogue asking the question that's on
     # everybody's mind.
     $ narrator("What should I do today?", interact=False)
-    
-    return
 
+    return
