@@ -36,6 +36,8 @@ init python:
 define a = Character("Aerith")
 define n = Character("Nicholas")
 define s = Character("Silvia")
+define c = Character("Catherine")
+define nvlNarrator = Character(None, kind=nvl)
 
 
 # This is the entry point into the game.
@@ -423,8 +425,118 @@ label WeaselVictory:
     "We say our farewells, and I log off."
     scene black with crt
     "Taking off my headset, it takes a while for my eyes to adjust to the dim lighting of my room."
+    jump RoomDescription
     return
-
+    
+label RoomDescription:
+    play music "bgm/buzz.wav"
+    nvlNarrator "Not that there's much to see, in any case."
+    nvlNarrator "It's a small, dirty one-room apartment overlooked by a single, large window with eternally closed curtains."
+    nvlNarrator "Not like there’s anything meaningful behind them anyway. Just the gray exterior of another apartment building."
+    nvlNarrator "Why they even bothered making a window so large for such a dreadful view is beyond me."
+    nvlNarrator "My eyes linger on the shadows of empty coke bottles and assorted trash littering the small, barely sun-lit floor space."
+    nvlNarrator "I really should throw that pizza slice away."
+    nvl clear
+    nvlNarrator "The only thing of note here is the VR equipment, which has eaten all of my wages to date."
+    nvlNarrator "I've got the full setup. Head-mounted display, omnidirectional treadmill, haptic feedback suit, everything I could buy."
+    nvlNarrator "This project already started in middle school, when I got the Oculus Rift as a gift from my parents."
+    nvlNarrator "Since then, I've been obsessively buying more and more amazing gadgets in search of ever-deepening immersion."
+    nvlNarrator "And to top it all of, due to the weight of the HMD and the suit, and the exercise provided by the omnidirectional treadmill, I'm actually in great shape!"
+    nvl clear
+    nvlNarrator "Well, I have to be, to be able to use this for longer than an hour at a time."
+    nvlNarrator "Most other people don't care about immersion as much as I do, so they just have a basic setup that they can use seated."
+    nvlNarrator "Plebs."
+    nvlNarrator "I detach the treadmill's harnest from my waist, proceeding to hop off."
+    nvl clear
+    play music "bgm/hope(Ver1.00).ogg"
+    nvlNarrator "After the natural disorientation and nausea of entering the bleaker tonalities of reality has passed away, I place the HMD on the floor."
+    nvlNarrator "The headset's brand new, with fresnel lens and dual 8k-screens providing a 210-degree field of view at 120 frames per second."
+    nvlNarrator "In other words, virtually indistinguishable from reality. Though just try to run photorealistic graphics at those speeds!"
+    nvlNarrator "Only the new line of GPUs Nvidia released last year is anywhere near capable of outputting those resolutions. I need eight of them just to run Dragonfire Online."
+    nvl clear
+    nvlNarrator "I start to take off the haptic feedback suit."
+    nvlNarrator "This is the most annoying part of the process. It takes forever to set up and disassemble all the equipment."
+    nvlNarrator "I've gotten rather skilled at it, though, getting down from about half an hour to just around ten minutes."
+    nvlNarrator "At least the suit looks cool. Kind of like Batman in the 8k remaster of the Dark Knight."
+    nvlNarrator "It uses electric feedback to generate haptic impressions all around your body. There's also a sort of reverse
+    exoskeleton with electric motors to simulate the feeling of weight and pressure."
+    nvl clear
+    nvlNarrator "There's still some things I've been thinking of trying. It's possible to modify the suit to produce actually painful
+    shocks."
+    nvlNarrator "It's a bit dangerous, though. I saw a news story about a man who was found dead in his home. He had botched the modding,
+    and his rig gave him a jolt of over 80 milliamperes. Instant cardiac arrest."
+    nvlNarrator "I already have everything set up to try it out. I just need to gather the courage to do so."
+    nvlNarrator "One of these days, for certain..."
+    "Suddenly, my wristband vibrates to signal a call."
+    "I read the name projected on my forearm."
+    "Catherine." # Can this be colored red?
+    "My heart skips a beat, and I hover my finger over the ignore button."
+    "Then, I manage to get a hold of myself. Lifting my index finger to my ear, I pick up the call."
+    n "Hi."
+    "A cold, smooth voice responds from the other side. A woman I know all too well."
+    c "Hello there, Nicky."
+    n "It's been a while, huh."
+    c "Indeed." # Change font?
+    "Could this atmosphere get any more tense? Just get to the point already!"
+    c "Have you had fun? With that little game of yours?"
+    "She sounds more hurt than angry now."
+    n "Listen, Cat, I've just been busy with work and..."
+    c "That's a lie!" # Furious sprite
+    "In my mind's eye, I see her face contort with rage."
+    c "Just, please Nick, just don't lie to me."
+    "There's an awkward silence as I stumble for words."
+    c "Nick, we... we need to talk."
+    n "Cat, I... I'm sorry. Look, let's go out sometime. We can go to that ice cream parlor you like."
+    c "I... yes. That... let's do that."
+    n "Let's meet there tomorrow afternoon, 2pm. I'm serving."
+    c "Thanks, Nicky. You're sweet... sometimes."
+    "She hangs up, and I immediately begin to regret the recklessness of my promise."
+    "I'm not getting pay until Monday, and my wallet's practically empty. If she wants something expensive..."
+    "I sigh. What won't a man do for love?"
+    
+    window hide
+    pause 2
+    nvl clear
+    window show
+    
+    play music "bgm/wrong.wav"
+    
+    nvlNarrator "My dreams are uneasy that night."
+    nvlNarrator "I am lying on the floor of my apartment."
+    nvlNarrator "Catherine comes to me, laughing."
+    nvlNarrator "She hates me. Hates me."
+    nvlNarrator "There’s a knife in her hands now."
+    nvlNarrator "I don’t love her enough."
+    nvlNarrator "That’s Silvia’s dagger! Why do you have that?"
+    nvlNarrator "Silvia appears from the shadows. She’s enraged."
+    nvlNarrator "Cat stole her knife."
+    nvlNarrator "Only she has the right to use it."
+    nvlNarrator "It was her gift to me."
+    nvlNarrator "She grabs the knife, and there’s a hail of daggers, and everything is red and Sil laughs and laughs and laughs and I wake up."
+    
+    nvl clear
+    
+    play music "bgm/hope(Ver1.00).ogg"
+    
+    nvlNarrator "My eyes blink open as the timed lights in my room reach their brightest setting."
+    nvlNarrator "For a moment, I just lie in bed, doing my most to calm down."
+    nvlNarrator "It was just a dream. Just a dream."
+    nvlNarrator "I can’t even remember what happened in it. Can’t remember."
+    nvlNarrator "Something about Cat or Dragonfire Online or something. I’d better just forget it."
+    nvl clear
+    nvlNarrator "Rising from the bed, I feel the pangs of oncoming headache as my earlier promise re-emerges into my consciousness."
+    nvlNarrator "I sigh yet again. I’m not sure I’m ready to face Cat in this state."
+    nvlNarrator "I’m tempted to just boot up Dragonfire Online and play ‘til evening."
+    nvlNarrator "But I can’t do that. I’m a man of my word."
+    nvlNarrator "At least, I hope to be."
+    nvlNarrator "I wouldn’t break a promise if it got me killed!"
+    nvl clear
+    nvlNarrator "My stomach growls as I stretch my arms far towards the ceiling, careful not to hit the lamp."
+    nvlNarrator "Time to make some breakfast, I guess. And then, a plan for the day."
+    return
+    
+    
+    
 # This is the label that is jumped to at the start of a day.
 label day:
 
