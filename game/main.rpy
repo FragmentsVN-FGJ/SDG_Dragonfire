@@ -37,6 +37,7 @@ define a = Character("Aerith")
 define n = Character("Nicholas")
 define s = Character("Silvia")
 define c = Character("Catherine")
+define cashier = Character("Cashier")
 define nvlNarrator = Character(None, kind=nvl)
 
 
@@ -533,9 +534,386 @@ label RoomDescription:
     nvl clear
     nvlNarrator "My stomach growls as I stretch my arms far towards the ceiling, careful not to hit the lamp."
     nvlNarrator "Time to make some breakfast, I guess. And then, a plan for the day."
+    jump parlorStart
+    
+label parlorStart:
+    show parlor with dissolve
+    $ cat_mood = 0
+    $ cash = 24000
+    $ ice_cream = None
+    "Queens Gelateria is a mixed Italian-American -style ice cream parlor close to the center."
+    "The place is surprisingly full even though it's already February."
+    "I mean, summer's basically over, right?"
+    "It's only 21 degrees Celsius outside. You almost need a jacket."
+    "We used to come to this place often with Catherine."
+    "She can't get enough of the ice cream here."
+    "It is good, I'll admit. But also ridiculously expensive."
+    "I suppose being right across from the stock exchange guarantees rich customers."
+    "Today she's not as elated as usual. Something's on her mind."
+    "Well, I guess it's obvious what."
+    c "Which one should I choose...?"
+    "How about the cheapest one on the menu?"
+    "No way I'm saying that out loud though."
+    c "I can't decide..."
+    "I make a small smirk."
+    n "Just close your eyes and I'll decide for you."
+    "My little kittie has never been good at making up her mind."
+    "She is always overthinking things, trying to balance every possible variable so as to reach the optimal decision."
+    "For her, it's not so simple as choosing the one that tastes best."
+    "Right now, she's probably trying to account for the taste, the price, the calories, the amount of exercise she got last week, and the temperature outside."
+    "I guess business people can also be like that sometimes."
+    "Well, let's have a look at the choices."
+    "The cheapest choice would be 'Strawberry-Chocolate mix'. Two large scoops of the titular flavors at a price of 6000 bits."
+    "I'm not sure Cat would appreciate me being a cheapskate, but it would be easier on my wallet."
+    "Going to the other end of the price range, there's Rockefeller Parfait."
+    "A whopping 12 scoops of ice cream with six different toppings including marshmellows and cherries. Costs 24 000 bits."
+    "On the plus side, we could eat it together."
+    "Or I could go with her favorite. The Chocolate-Peanut butter Sundae with maple syrup sauce. Mouth-wateringly delicious, but ridiculously fatty."
+    "I'm sure she would love it, but glancing at her T-shirt, I see a small problem with that choice."
+    "Catherine is very strict about her physique. She does cross-fit, and always
+    buys into these fitness fads."
+    "She's wearing an activity-tracking T-shirt which changes color to indicate her movement during the day."
+    "It's bright red, so she must have skipped her morning gym. In that case, she might not want anything too fatty."
+    "Anyway, the sundae costs 12 000 bits. Not exactly cheap, but you're paying for quality."
+    "While her eyes are closed, I tap my wristband to check the status of my bitcoin wallet."
+    "The numbers are projected on my wrist. I've got 24 000 bits, just barely enough for the most expensive one, should I decide to go with that."
+    "Well, which should I take?"
+    menu:
+        "The expensive one":
+            "Well, at least I won't go hungry with this choice."
+            $ ice_cream = "expensive"
+            $ cash = cash - 24000
+        "The cheap one":
+            "Sorry, Cat. I just don't have the money."
+            $ ice_cream = "cheap"
+            $ cash = cash - 6000
+        "Her favorite":
+            "She might not admit it, but I'm sure she'll be happy."
+            $ ice_cream = "favorite"
+            $ cash = cash - 12000
+    n "I'll have this one."
+    cashier "Excellent choice, sir. Will you be eating here?"
+    n "Yes."
+    cashier "I'll bring it to your table."
+    "I press my finger on the reader to validate the transaction, and we go sit at a fancy table in the corner. No sense going outside when it's so cold."
+    jump parlorConversation
+    
+label parlorConversation:
+    "There's a bit of an awkward silence as we sit down. Cat is staring at the table, avoiding eye contact."
+    "She's fiddling with a napkin, deliberating something, but can't get the words out."
+    $ parlorwait = False
+    $ parlorapology = False
+    $ parloridle = False
+    menu:
+        "Wait for her to say something":
+            jump parlorWait
+        "Try to make conversation":
+            jump parlorIdle
+        "Apologize":
+            jump parlorApology
+            
+label parlorApology:
+    $ parlorapology = True
+    n "Look, Cat, I'm sorry for not calling you for a while. I've been really busy."
+    "She squeezes the napkin with her hands."
+    c "Busy with Dragonfire Online, that is."
+    "I'm surprised she remembered the name. She's not much of a gamer."
+    n "T-that too. I mean, you know me, right?"
+    c "Sometimes, Nicholas, I think I know you too well."
+    "I swallow. She's not going to..."
+    menu:
+        "Promise to make it up to her":
+            jump parlorMakeUp
+        "Try to console her" if not parloridle:
+            jump parlorConsole
+        "Get angry" if parloridle:
+            jump parlorAngry
+        "Remain silent" if not parlorwait:
+            jump parlorWait
+        "Beg her not to leave you" if parlorwait:
+            jump parlorBeg
+                
+label parlorMakeUp:
+    n "Look, I'll make it up to you! I'm honestly sorry for what I did. You can't stay mad at me, right?"
+    "She frowns."
+    $ cat_mood += 1
+    c "We'll just have to see about that, won't we?"
+    n "I'll take you somewhere, let's go to the movies or..."
+    c "Nick, you don't have to take me anywhere. Just - please - don't ignore me."
+    menu:
+        "Promise to spend more time with her":
+            call parlorInterrupt
+            jump promiseTime
+        "Promise to go to the movies with her":
+            call parlorInterrupt
+            jump promiseMovies
+        "Offer to play DFO with her":
+            call parlorInterrupt
+            jump offerDFO
+
+label promiseTime:
+    n "I'll spend more time with you from now on. I promise."
+    
+    if cat_mood < 0:
+        "She doesn't take that too kindly."
+        c "Yeah, just like last time!"
+        "She gets up and storms out, leaving her half-eatean ice cream behind."
+    else:
+        "She seems a bit sad."
+        c "I guess I just have to believe you. Again."
+    return
+
+label promiseMovies:
+    n "I'll take you to the movies."
+    
+    if cat_mood < 0:
+        "She purses her lips."
+    else:
+        "She flashes a sad smile."
+    
+    c "Which one?"
+    n "Erm, whatever you'd like?"
+    c "Lover's Abandon."
+    "Darn, that's some boring chick flick."
+    n "Ahaha, sounds great!"
     return
     
+label offerDFO:
+    n "Cat, I'm a gamer. If you really want to spend time with me..."
+    "She raises an eyebrow."
+    n "... Let's play some DFO together! What do you say?"
     
+    if cat_mood < 0:
+        "Her expression alternates between anger and frustration."
+        c "What makes you think I'd be interested in that stupid game?"
+    else:
+        "She looks away from me. I guess that's a no."
+        c "I'm willing to accept that you like the game. But..."
+    
+    c "You really need to return to reality, Nicholas. You get too easily obsessed with these things."
+    n "Come on, just try it out. I never expected to actually like your dance lessons when you dragged me there!"
+    c "... You just don't get it."
+    return
+    
+label parlorIdle:
+    "I try to force a smile."
+    n "You curious about the ice cream I ordered?"
+    "She clenches her teeth."
+    c "Not particularly."
+    "Darn, she's really upset, isn't she?"
+    jump parlorConsole        
+
+label parlorConsole:
+    $ parloridle = True
+    n "Kittie..."
+    $ cat_mood -= 1
+    "She slams her fist on the table."
+    c "Don't call me that! First you disappear for two weeks, then I call you and you act as if nothing has happened!"
+    
+    menu:
+        "Get angry":
+            n "It's because you're such a psycho!"
+            "Catherine's eyes widen in shock, and I immediately regret saying that."
+            "However, empowered by fury, I go on."
+            jump parlorAngry
+        "Apologize" if not parlorapology:
+             jump parlorApology
+        "Promise to make it up to her" if parlorapology:
+            jump parlorMakeUp
+        "Remain silent" if not parlorwait:
+            jump parlorWait
+        "Beg her not to leave you" if parlorwait:
+            jump parlorBeg
+
+label parlorAngry:
+    n "You don't control my life, and you can't tell me what to do!"
+    c "Nick, I'm only trying to help you! Can't you see you're hurting yourself!?"
+    c "You're 23 and working as some cleaner because you can't be bothered to study and actually get yourself somewhere in life!"
+    menu:
+        "Threaten to break up with her":
+            call parlorInterrupt
+            jump parlorBreakUp
+        "Argue with her":
+            call parlorInterrupt
+            jump parlorArgue
+        "Call her out on her hypocrisy":
+            call parlorInterrupt
+            jump parlorHypocrisy
+    
+label parlorBreakUp:
+    "I gulp, trying to gather strength."
+    n "I think we need to break up."
+    n "I... I'm sorry, Catherine."
+    
+    if cat_mood < 0:
+        "She blinks, her eyes wet with tears."
+        "Without showing me any, she gets up and leaves."
+    else:
+        "She licks on her spoon, but says nothing."
+        "For what feels like an eternity, we just sit there, together yet separate."
+    
+    return
+
+label parlorArgue:
+    n "A-anyway. What you said about me not studying."
+    n "I am going to study. I just need to decide what."
+    n "I feel like most of the choices available are just pointless."
+    n "If only reality was more like a game..."
+    
+    if cat_mood < 0:
+        c "You're a fucking addict, you know that?"
+        n "Gaming keeps me together! Why can't you get that!?"
+        c "Whatever. Just keep playing your games. No need to call."
+        "With that, she storms out."
+    else:
+        "She looks down at her ice cream."
+        c "It wouldn't be any better."
+    
+    return
+        
+label parlorHypocrisy:
+    n "You're critisizing me for not studying. But you're the one who's always complaining how stressful it is to not have time for anything else!"
+    
+    if cat_mood < 0:
+        c "It's stressful now! But at least I won't be dying alone in some godforsaken apartment playing a stupid video game because I have no life!"
+        c "Whatever. Just keep playing your games. No need to call."
+        "With that, she storms out."
+    else:
+        c "It's stressful now. But at least I'll get a proper job."
+        c "Nick, please just let me help you..."
+        "She tries to look endearingly into my eyes, but I avoid her gaze."
+        
+    return
+
+label parlorWait:
+    $ parlorwait = True
+    "After a little bit of silence, she speaks up."
+    c "Nick... I think we should break up."
+    "There. She said it. But I didn't expect it to hurt this much."
+    n "Catherine... please..."
+    menu:
+        "Beg her not to do it":
+            jump parlorBeg
+        "Change the subject" if not parloridle:
+            jump parlorIdle
+        "Get angry" if parloridle:
+            jump parlorAngry
+        "Apologize" if not parlorapology:
+            jump parlorApology
+        "Promise to make up for your negligence" if parlorapology:
+            jump parlorMakeUp
+                
+label parlorBeg:
+    n "Please, Catherine. Not yet. I'll change."
+    c "I wish I could believe that."
+    $ cat_mood += 1
+    "I blink so as to hide the tears. I want to just go under the table and cry."
+    menu:
+        "Promise to quit DFO":
+            call parlorInterrupt
+            jump quitDFO
+        "Accept the situation":
+            call parlorInterrupt
+            jump parlorAccept
+        "Plead with her":
+            call parlorInterrupt
+            jump parlorPlead
+            
+label quitDFO:
+    n "If you want, I'll... I'll even stop playing DFO. Just, please..."
+    
+    if cat_mood < 0:
+        "Cat frowns."
+        c "That's not the real problem. Even if you stop playing, you won't change."
+        c "Just... Goodbye, Nick."
+        "She gets up and leaves."
+    else:
+        "Catherine doesn't say anything."
+        "Then, she closes her eyes."
+        c "Fine, if you promise. Nicholas, this is for your own good."
+    
+    return
+        
+label parlorAccept:
+    n "If you really want to leave me, I guess I just have to... accept it."
+    "Cat sighs."
+    
+    if cat_mood < 0:
+        c "Yes. Well then, goodbye, Nicholas."
+        "With that, she gets up and goes out the door."
+    else:
+        c "I don't want to leave you. But things can't go on like this anymore."
+        n "Can we try? Just a little bit longer?"
+        c "One more time. Don't blow it."
+    return
+    
+label parlorPlead:
+    n "Please don't give up on me yet. We'll figure this out."
+    "At first, just for a moment, she hesitates."
+    
+    if cat_mood < 0:
+        c "I don't think so. This is it, Nicholas."
+        "Before I have a chance to respond, she gets up and leaves."
+    else:
+        c "Fine. Let's try one last time."
+        n "You don't realize how happy that makes me."
+        "Contrary to my intentions, my comment just makes her sulk."
+    return
+    
+label parlorInterrupt:
+    "We're interrupted as the cashier comes to our table."
+    
+    if ice_cream == "cheap":
+        # Strawberry-Chocolate mix
+        cashier "One Strawberry-Chocolate mix."
+        n "Thank you."
+    
+        if cat_mood < 0:
+            c "That's what you got me? The cheapest one on the menu?"
+            c "Is this some kind of joke?"
+        else:
+            "Catherine doesn't seem too impressed with the ice cream I got her."
+            "Still, she sticks a spoon in it and begins eating."
+        
+        $ cat_mood -= 1
+    
+    elif ice_cream == "expensive":
+        # Rockefeller parfait
+        cashier "One Rockefeller parfait. Careful so it doesn't tip over."
+        n "Thank you."
+    
+        if cat_mood < 0:
+            "Catherine looks a bit surprised."
+            c "Why'd you get such a big one? I can't eat that much!"
+        else:
+            "Catherine gasps."
+            c "Nicholas, isn't that the most expensive thing on the menu? Why did you..."
+    
+        n "I thought we could eat it together."
+        "Catherine says nothing, but seems placated, and we start eating."
+    
+        $ cat_mood += 1
+    
+    else:
+        # Chocolate-Peanut butter sundae
+    
+        cashier "One Chocolate-Peanut butter sundae."
+        n "Thank you."
+    
+        if cat_mood < 0:
+            "Catherine doesn't look as happy as I had hoped."
+            c "Oh, I get it. You saw that I hadn't exercised today..."
+            c "... and bought that just to tease me!"
+            c "Well, thanks a lot, Nick."
+            "If more sarcasm was dripping from her voice, we would have a flood."
+            $ cat_mood -= 1
+        else:
+            "Catherine seems to slightly cheer up as she sees what I bought her."
+            c "Oh, thanks, Nick. That was thoughtful of you."
+            $ cat_mood += 1
+    
+    n "A-anyway."
+    return
     
 # This is the label that is jumped to at the start of a day.
 label day:
