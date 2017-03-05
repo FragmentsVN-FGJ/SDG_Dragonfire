@@ -14,23 +14,39 @@
 # Set up a default schedule.
 init python:
     crt = ImageDissolve("images/crt.png", 0.5, 0)
-    register_stat("Strength", "strength", 10, 100)
-    register_stat("Intelligence", "intelligence", 10, 100)
+    #register_stat("Strength", "strength", 10, 100)
+    #register_stat("Intelligence", "intelligence", 10, 100)
+    register_stat("Fitness", "fitness", 50, 100)
 
-    dp_period("Morning", "morning_act")
-    dp_choice("Attend Class", "class")
-    dp_choice("Cut Class", "cut")
+    #dp_period("Morning", "morning_act")
+    #dp_choice("Attend Class", "class")
+    #dp_choice("Cut Class", "cut")
 
     # This is an example of an event that should only show up under special circumstances
-    dp_choice("Fly to the Moon", "fly", show="strength >= 100 and intelligence >= 100")
+    #dp_choice("Fly to the Moon", "fly", show="strength >= 100 and intelligence >= 100")
+    
+    dp_period("Morning", "morning_act")
+    dp_choice("Swimming hall", "swimming")
+    dp_choice("Gym", "gym")
+    dp_choice("Running track", "track")
 
     dp_period("Afternoon", "afternoon_act")
-    dp_choice("Study", "study")
-    dp_choice("Hang Out", "hang")
+    #dp_choice("Study", "study")
+    #dp_choice("Hang Out", "hang")
+    dp_choice("Ice Cream Parlor", "parlor")
+    dp_choice("Restaurant", "restaurant")
+    dp_choice("Bowling", "bowling")
+    dp_choice("Mall", "mall")
+    dp_choice("Library", "library")
+    dp_choice("Work", "work")
 
     dp_period("Evening", "evening_act")
-    dp_choice("Exercise", "exercise")
-    dp_choice("Play Games", "play")
+    #dp_choice("Exercise", "exercise")
+    #dp_choice("Play Games", "play")
+    dp_choice("Bar", "bar")
+    dp_choice("Movie theatre", "movies")
+    dp_choice("VR Arcade", "arcade")
+    dp_choice("Clean room", "clean")
 
 # Define characters
 define a = Character("Aerith")
@@ -489,7 +505,7 @@ label RoomDescription:
     c "Nick, we... we need to talk."
     n "Cat, I... I'm sorry. Look, let's go out sometime. We can go to that ice cream parlor you like."
     c "I... yes. That... let's do that."
-    n "Let's meet there tomorrow afternoon, 2pm. I'm serving."
+    n "Let's meet there tomorrow afternoon, 2pm. It's on me."
     c "Thanks, Nicky. You're sweet... sometimes."
     "She hangs up, and I immediately begin to regret the recklessness of my promise."
     "I'm not getting pay until Monday, and my wallet's practically empty. If she wants something expensive..."
@@ -534,7 +550,7 @@ label RoomDescription:
     nvl clear
     nvlNarrator "My stomach growls as I stretch my arms far towards the ceiling, careful not to hit the lamp."
     nvlNarrator "Time to make some breakfast, I guess. And then, a plan for the day."
-    jump parlorStart
+    jump day
     
 label parlorStart:
     show parlor with dissolve
@@ -755,7 +771,7 @@ label parlorBreakUp:
     return
 
 label parlorArgue:
-    n "A-anyway. What you said about me not studying."
+    n "What you said about me not studying."
     n "I am going to study. I just need to decide what."
     n "I feel like most of the choices available are just pointless."
     n "If only reality was more like a game..."
@@ -1002,8 +1018,8 @@ label night:
 
     "It's getting late, so I decide to go to sleep."
 
-    # We jump events_end_day to let it know that the day is done.
-    jump events_end_day
+    # We call events_end_day to let it know that the day is done.
+    call events_end_day
 
     # And we jump back to day to start the next day. This goes
     # on forever, until an event ends the game.
