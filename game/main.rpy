@@ -39,6 +39,7 @@ init python:
     dp_choice("Mall", "mall")
     dp_choice("Library", "library")
     dp_choice("Work", "work")
+    dp_choice("Business school", "business")
 
     dp_period("Evening", "evening_act")
     #dp_choice("Exercise", "exercise")

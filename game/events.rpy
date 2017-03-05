@@ -17,6 +17,7 @@ init:
     $ event("library", "act == 'library'", event.only(), priority=200)
     $ event("work", "act == 'work'", event.only(), priority=200)
     $ event("clean", "act == 'clean'", event.only(), priority=200)
+    $ event("business", "act == 'business'", event.only(), priority=200)
     
     $ event("icecreamparlorintro", "act == 'parlor'", event.only(), event.once())
     $ event("restaurantintro", "act == 'restaurant'", event.only(), event.once())
@@ -31,6 +32,7 @@ init:
     $ event("libraryintro", "act == 'library'", event.only(), event.once())
     $ event("workintro", "act == 'work'", event.only(), event.once())
     $ event("cleanintro", "act == 'clean'", event.only(), event.once())
+    $ event("businessintro", "act == 'business'", event.only(), event.once())
     
 init python:
        class NonUniformRandom(object):
@@ -53,6 +55,11 @@ init python:
                     if r < s: return k
                 return 
                 
+label business:
+    "I wander around the hallways for a bit. Why did I even come here in the first place?"
+    
+    return
+               
 label work:
     "I clean up at some organization."
     
@@ -334,4 +341,13 @@ label cleanintro:
 
     jump clean
     
+    return
+    
+label businessintro:
+    "This is the business school Catherine goes to. Ridiculously high class."
+    "Well, someone with her natural abilities deserves only the best, I guess."
+    "It's kinda depressing. I could never make it here."
+    "Despite the pressure Cat and my parents put on me."
+    
+    jump business
     return
