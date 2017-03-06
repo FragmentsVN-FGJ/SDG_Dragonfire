@@ -48,6 +48,16 @@ init python:
     dp_choice("Movie theatre", "movies")
     dp_choice("VR Arcade", "arcade")
     dp_choice("Clean room", "clean")
+    
+    # PROMISE SYSTEM
+    
+    promises = {}
+    forgotten_promises = set()
+    unkept_promises_personal_counter = {}
+    # Promises are stored in a dictionary mapping (act, day) -tuples to [person, activity, boolean]-lists indicating 
+    # the person the promise was made to, the promise itself, and whether the promise is
+    # fulfilled (True), or not (False). The label night checks whether the promises for that day have been fulfilled and
+    # gives a warning if they haven't. There're special date events linked to promises.
 
 # Define characters
 define a = Character("Aerith")
@@ -511,6 +521,7 @@ label RoomDescription:
     "She hangs up, and I immediately begin to regret the recklessness of my promise."
     "I'm not getting pay until Monday, and my wallet's practically empty. If she wants something expensive..."
     "I sigh. What won't a man do for love?"
+    $ promises[('parlor', 1)] = {("Catherine", "meet"): False}
 
     window hide
     pause 2
@@ -942,6 +953,7 @@ label day:
     # right now we don't bother.
 
     "It's day %(day)d."
+    
 
     # Here, we want to set up some of the default values for the
     # day planner. In a more complicated game, we would probably
@@ -1021,6 +1033,32 @@ label night:
     centered "Night"
 
     "It's getting late, so I decide to go to sleep."
+    
+    python:
+        forgotten_promises = set()
+        for promise_event in promises.keys():
+            if promise_event[1] == day:
+                if not all(promises[promise_event].values()):
+                    for promise in promises[promise_event].keys():
+                        if not promises[promise_event][promise]:
+                            # An unfulfilled promise today
+                            forgotten_promises.add(promise[0])
+                            if promise[0] in unkept_promises_personal_counter:
+                                unkept_promises_personal_counter[promise[0]] += 1
+                            else:
+                                unkept_promises_personal_counter[promise[0]] = 1
+                    
+    if len(forgotten_promises) != 0:
+        python:
+            if len(forgotten_promises) == 1:
+                forgotten_people = next(iter(forgotten_promises))
+                promise_pluralized = "promise"
+            else:
+                list_forgotten = list(forgotten_promises)
+                forgotten_people = ", ".join(list_forgotten[0:len(list_forgotten)-1]) + " and " + list_forgotten[-1]
+                promise_pluralized = "promises"
+        
+        "Just as I'm going to sleep, I realize I forgot my [promise_pluralized] to [forgotten_people]."
 
     # We call events_end_day to let it know that the day is done.
     call events_end_day
