@@ -5,6 +5,8 @@
 # Place the day planner.
 style dayplanner_window:
     background "images/fullmap.png"
+    xalign 0.5
+    yalign 0
 
 style dp_frame:
     ypos 150
@@ -18,7 +20,6 @@ style dp_vbox:
 # Spacing between the choice columns.
 style dp_hbox:
     box_spacing 20
-
 
 # Center the choices.
 style dp_choice is default:
@@ -35,6 +36,8 @@ style dp_label_text:
 # Make each choice button the same size, and centered.
 style dp_choice_button is button:
     size_group dp_choice
+    background '#0001'
+    hover_background '#fff3'
     xalign 0.5
 
 style dp_choice_button_text is button_text
