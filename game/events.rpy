@@ -5,6 +5,10 @@ init:
     $ call_ignored = False
     
     
+    $ event("Catherine_gym_together", "act == 'gym'", event.only(), event.once(), priority=50)
+    $ event("sauna_accident", "act == 'swimming'", event.only(), event.depends("swimminghallintro"), event.once(), priority=50)
+    $ event("Catherine_running_together", "broken_up == False and act == 'track'", event.once(), event.only(), priority=50)
+    
     $ event("generic_promise_event", "(act, day) in promises.keys()", event.only(), priority=10)
     
     # Simple events for the actions
@@ -38,7 +42,7 @@ init:
     $ event("cleanintro", "act == 'clean'", event.once())
     $ event("businessintro", "act == 'business'", event.once())
     
-    $ event("Catherine_afternoon_call_ignored2", "call_ignored and 'Catherine' not in forgotten_promises and unkept_promises_personal_counter['Catherine'] >=3 1 and period == 'afternoon'", priority=5)
+    $ event("Catherine_afternoon_call_ignored2", "call_ignored and 'Catherine' not in forgotten_promises and unkept_promises_personal_counter['Catherine'] >= 3 and period == 'afternoon'", priority=5)
     $ event("Catherine_afternoon_call_ignored", "call_ignored and 'Catherine' not in forgotten_promises and unkept_promises_personal_counter['Catherine'] == 1 and period == 'afternoon'", priority=5)
     $ event("Catherine_morning_call3", "'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] > 2 and period == 'morning'", priority=5)
     $ event("Catherine_evening_call3", "call_ignored and 'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] > 2 and period == 'evening'", priority=210)
@@ -46,6 +50,10 @@ init:
     $ event("Catherine_morning_call1", "'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] == 1 and period == 'morning'", priority=5)
     $ event("Catherine_afternoon_call1", "call_ignored and 'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] == 1 and period == 'afternoon'", priority=5)
     $ event("Catherine_evening_call1", "call_ignored and 'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] == 1 and period == 'evening'", priority=5)
+    
+define o = Character("Old guy")
+define jackquotes = Character("'Jack'")
+define jack = Character("Jack")
     
 init python:
        class NonUniformRandom(object):
@@ -594,4 +602,432 @@ label businessintro:
     "It's kinda depressing. I could never make it here."
     "Despite the pressure Cat and my parents put on me."
     
+    return
+    
+    
+# Special Scenes, Catherine
+
+label sauna_accident:
+    "I yawn while navigating the labyrinthine hallways of the swimming hall."
+    "I didn't sleep that well, and I'm feeling really tired today."
+    "I'm hoping the cold water will refresh me. Wouldn't want to feel tired for the whole day."
+    "In a slight daze, I finally arrive at the lockers. Some nagging voice in the back of my voice is saying that something is different today, but I'm too tired to take note of it."
+    "I undress and go to the showers."
+    "I woke up so early that no-one else is around yet."
+    "While standing under the warm pouring water, I'm struck by something strange."
+    "The architecture feels really different today. Was that door always on that side?"
+    "Aaaah, I should just let go of the tension and forget it."
+    "I go sit in the sauna, relaxing even further in the Eucalyptus-tinged vapours."
+    "This is the life. I'm so relaxed, I'm practically dozing... off..."
+    "Someone comes in and sits beside me, a bit further away."
+    "Then, the person seems to recognize me, and I'm jolted awake."
+    c "Nick...?"
+    "W-wait, what's Catherine doing on the men's side?"
+    "Suddenly, I realize why something felt off before."
+    "This is not the men's side at all, is it!?"
+    menu:
+        "Engage!":
+            n "I, uh, I am... I..."
+            "Damn, I'm so sleepy I can barely put a coherent sentence together!"
+            "Catherine seems at a loss for words as well."
+            call .Catherine_conversation
+        "Take cover!":
+            "I stumble to cover up my private parts!"
+            "Catherine's looking at me, eyes agape."
+            call .Catherine_conversation
+        "Run away!":
+            "I run away as fast as I can!"
+            c "Nick, what the hell are you doing!?"
+            "I almost slip on the wet floor, but manage to get away, with no time to close the door behind me."
+            "Damn! I can hear Catherine following right behind me. Thankfully, she's walking rather than sprinting."
+            "Quick, I need to hide somewhere!"
+            menu:
+                "Inside the locker!":
+                    "The locker looks just barely big enough."
+                    "I cram myself in, and close the door just in time!"
+                    call .Catherine_investigation("through the slits in the door", "to check the lockers")
+                "Under the benches!":
+                    "I crawl under the bench just in time!"
+                    call .Catherine_investigation("up from here,", "and look under the benches")
+                "Behind the column!":
+                    "It's not much of a hiding place, but I need to be quick!"
+                    "I hide behind the column just in time!"
+                    call .Catherine_investigation(", in the corner of my vision,", "near the column")
+            "After Catherine has left, the absurdity of my sleep-addled reaction hits me."
+            "I dress up quickly, red with shame, and leave without even trying to go for a swim."
+    return
+
+label .Catherine_investigation(visibility, place):
+    "Catherine walks in, and [visibility] I can see her investigating the perimeter."
+    c "Nick, I know you're in here somewhere!"
+    "I'm holding my breath, praying that she won't come [place]."
+    "Finally, she appears to lose interest."
+    c "Whatever. We'll talk when you're ready to act like an adult."
+    "I hold back a sigh of relief until she is no longer visible."
+    return
+            
+label .Catherine_conversation:
+    # Funny music here
+    menu:
+        "This is some anime cliche, isn't it!?":
+            n "This is like the oldest cliche ever! Next you're gonna beat me up for seeing you naked!"
+        "It was an accident!":
+            n "Cat, you have to believe me, it was an accident! I didn't come here to peep on you!"
+            n "Please don't hurt me!"
+        "I'm sorry!":
+            n "I'm so sorry, I'm so sorry, please don't beat me up!"
+    "Cat frowns and blinks, as if confused, but then..."
+    "... she starts giggling!"
+    c "Oh yeah, I'll send you blasting off again!"
+    c "Nicky, you really watch too much anime, don't you?"
+    c "Why would I beat you? It's not like I'm some abuser!"
+    "She's teasing me now."
+    c "And it's not like you haven't seen me naked before..."
+    "I storm out, all red, hoping that I don't meet anyone on the way out."
+    return
+    
+    
+label Catherine_gym_broken_up:
+    "As I arrive at the gym, I see that Catherine is already here."
+    "I don't really want to face her like this, but I did come here to exercise."
+    menu:
+        "Stay and exercise":
+            "I go as far away from Catherine as possible, deciding to lift some weights."
+        "Leave":
+            "I leave Catherine to her own gym devices."
+            return
+    "Eventually, Catherine comes over as well."
+    "She doesn't even look at me, and starts lifting some weights."
+    "Does she think she rules the place or something?"
+    "I get some bigger weights and tighten my pace."
+    "Seeing that, she does likewise."
+    "Pretty soon, we're in a heated competition, trying to see who can lift the most!"
+    "Other guys at the gym come around us, cheering for Catherine."
+    "Yeesh, is she some sort of celebrity around these parts?"
+    if fitness < 45:
+        "I'm in pretty poor shape."
+        "I grit my teeth as I see her still going fast while my own arms scream with pain!"
+        "Damnit! I'm never giving uuuuuuup!"
+        "THUMP!"
+        "Suddenly, all the strength disappears from my arms and legs, and I collapse to the ground."
+        "Everyone is laughing at my misfortune. Darn, how can she be so good?"
+    elif fitness < 75:
+        "I'm in good shape myself, but she's just amazing."
+        "Her T-shirt has turned bright green, and she's huffing and puffing right next to me."
+        "But unlike me, she doesn't seem to be slowing down at all!"
+        "The crowd breaks into a cheer as I collapse to the ground, giving up."
+    elif fitness < 90:
+        "She's in great shape, but I'm no pushover myself."
+        "I manage to keep up pace with her, and our combat ends in a draw."
+        "The crowd seems a bit disappointed, and disperses."
+    else:
+        "She's in great shape, but she's still no match for me!"
+        "I can see her trying as hard as she can, but eventually she must acquiesce."
+        "She sits on the ground panting heavily. The crowd boos, though I'm not sure if it's directed at me or at her."
+    # Talk with Catherine here. If there's nothing to discuss...
+    "I don't talk to her after that."
+    "Well, at least I really gave it my all this time."
+    "Although my arms sure are going to ache tomorrow..."
+    $ fitness += 10
+    
+label Catherine_gym_together:
+    # Fight with the robot
+    $ i = renpy.random.random()
+    
+    "Upon arrival, I see that Catherine is already here, in full exercise mode."
+    menu:
+        "Talk to her":
+            "I walk up to her to say hi."
+            n "Already hard at work, I see."
+        "No need to disturb her":
+            "She's so deeply focused, I'd better not disturb her."
+            "I go a bit further off, doing some acrobatic exercises."
+            "She eventually comes over."
+            # Hi scene
+            c "Hi!"
+            n "Hello there! I guess you're almost done?"
+    c "Yeah, I've been developing a lot of muscle strength. Wanna see?"
+    "She grins and holds her fist right below my nose."
+    menu:
+        "Sure":
+            n "Show me what you've got."
+        "I'll pass":
+            n "No, no, I believe you."
+        "Please don't hit me!":
+            n "Please don't hurt me, it wasn't me!"
+            "Catherine looks surprised, and then blushes and whispers."
+            c "Nick, you idiot! Don't embarrass me in front of the whole box!"
+            "She glances around, trying to confirm that no-one heard my outburst."
+            c "Anyway."
+    c "Just come over here, I'll show you."
+    "She walks over to the sparring robot, still sporting a wide grin."
+    c "I've been learning some martial arts on the side!"
+    "She takes a fighting stick and approaches the bot."
+    "However, just then, an older gray-haired guy comes over. Despite his age, he manages to boast a six-pack."
+    o "Hi, Catherine. Daily workout almost done?"
+    "He sizes me up."
+    o "Is this your boyfriend?"
+    c "Hi, Jack. Jack this is Nicholas, my boyfriend. Nick, this is Jack, my trainer and the leader of this gym."
+    n "Does he have an Onyx?"
+    "Cat casts a sharp glance at me."
+    jackquotes "Well, let's see what he's made of. You two, spar with the robot together."
+    c "There's a team mode?"
+    jack "Sure there is. Let's crank up the difficulty a bit..."
+    "He plays with the settings of the robot, and it sprouts two extra arms and legs!"
+    jack "Ready... set... go!"
+    "Jack recedes into the background as the robot springs to life!"
+    play music "bgm/Battle1.wav"
+    "Its red visor turns from target to target, finally locking onto..."
+    $ cat_in_air = False
+    $ nick_in_air = False
+    $ robot_stunned = False
+    $ struggle_counter = 0
+    $ victorious = False
+    if i < 0.5:
+        "Catherine!"
+        "The robot lunges its elongated arms forward, attempting to grapple her!"
+        $ robot_focusing = "Catherine"
+        jump .react_phase
+    else:
+        "Me!"
+        "I barely have the time to see the robot's long arms coming straight towards me!"
+        $ robot_focusing = "Nick"
+        jump .react_phase
+    return
+                
+# States: Nick in air, Cat not; Cat in air, Nick not; Both in air; Neither in air; Robot focusing on Nick, robot focusing on Catherine, robot stunned,
+# robot attacking
+# Act phase and react phase separate, choices controlled by state flags?
+# Winning conditions: Robot focusing on Catherine, robot stunned, Nick hits the button; or with Nick's and Catherine's roles reversed.
+
+label .act_phase:
+    menu:
+        #Implement
+        "Struggle to break free!" if nick_in_air and struggle_counter == 0:
+            call .struggle
+        "Struggle some more!" if nick_in_air and struggle_counter > 0:
+            call .struggle
+        "Attack!" if not nick_in_air:
+            call .attack
+        "Tell Catherine to press the red button!" if robot_focusing == "Nick":
+            call .Catherine_press
+        "Press the red button" if not nick_in_air and robot_focusing == "Catherine":
+            call .press
+        "Ask Catherine to distract it!" if robot_focusing == "Nick":
+            call .Catherine_distract
+        "Try to catch its attention!" if robot_focusing == "Catherine":
+            call .distract
+    if victorious:
+        jump .victory
+    if cat_in_air:
+        call .Catherine_struggle
+    call .robot_act
+    jump .act_phase # Loop act phase until victory
+
+    
+label .struggle:
+    $ struggle_counter += 1
+    "I exert all my strength to break free of its grip!"
+    $ j = renpy.random.random()
+    if j < 0.5:
+        "But it's too strong!"
+    else:
+        "Suddenly, it loosens its grasp, and I fall gracefully to the ground!"
+        $ nick_in_air = False
+        "It shifts its visor towards me, preparing to attack."
+        $ robot_focusing = "Nick"
+        $ struggle_counter = 0
+    return
+    
+label .Catherine_struggle:
+    # Catherine attempts to break free
+    "Catherine struggles heroically in the robot's grasp!"
+    $ j = renpy.random.random
+    if j < 0.66:
+        "However, she can't break free of its iron-grasp!"
+    else:
+        "The robot is forced to release her, and she lands on the ground, graceful as a cat."
+        $ cat_in_air = False
+    return
+
+    
+label .attack:
+    if robot_focusing == "Catherine":
+        "I've got to protect Catherine!" # "No way I'm gonna let you hurt Cat!"
+    else:
+        "I need to keep distracting it!"
+    if cat_in_air:
+        "I strike at the arm holding Catherine, forcing the robot to release its grip."
+        "She rolls in the air and lands beside me."
+        c "Thanks!"
+        $ cat_in_air = False
+        "The robot appears to be stunned by my strike."
+    else:
+        "I strike at one of the robot's arms, causing it to halt for a few seconds."
+    $ robot_stunned = True
+    $ stun_counter = 1
+    if robot_focusing == "Catherine":
+        "Its red visor shifts ominously towards me."
+        $ robot_focusing = "Nick"
+    return
+        
+label .Catherine_press:
+    n "Catherine, press the button, quick!"
+    c "O-okay!" # Y-yes!
+    if not robot_stunned:
+        "Catherine approaches, but at the last moment, the robot notices her and evades the incursion!"
+        if nick_in_air:
+            "In the commotion, it accidentally releases me, and I land on the ground."
+            $ nick_in_air = False
+    else:
+        # Victory
+        "The robot does not have the time to react, and Cat manages to shut it down!"
+        $ victorious = True
+    return
+    
+label .press:
+    "While the machine is concentrating on Catherine, I sneak up on it, attempting to press the power down button on its back."
+    if not robot_stunned:
+        "At the last moment, its head rotates 180 degrees to face me, and it lashes out at me!"
+        $ robot_focusing = "Nick"
+    else:
+        # Victory
+        "Without giving the robot time to react, I shut it down!"
+        $ victorious = True
+    return
+    
+label .Catherine_distract:
+    n "Catherine! Try to draw its attention!"
+    c "U-uh, hey you stupid robot, don't forget about me!"
+    "Catherine strikes one of the robot's arms, and it turns its head towards her."
+    $ robot_focusing = "Catherine"
+    return
+    
+label .distract:
+    "I get closer to the robot, hoping to capture its attention."
+    n "Hey, you pile of screws! Look here!"
+    "It's visor turns to face me, and I feel shudders going down my spine."
+    $ robot_focusing = "Nick"
+    return
+        
+label .react_phase:
+    menu:
+        #Implement
+        "Jump out of the way!" if robot_focusing == "Nick":
+            call .dodge("jump")
+        "Strike!" if robot_focusing == "Nick":
+            "I stomp on one of its arms right as it's about to grapple me!"
+            "If robots feel pain, I'm sincerely sorry!"
+            "The robot retracts its arms, giving me a few seconds to act!"
+            $ robot_stunned = True
+            $ stun_counter = 0
+        "Roll!" if robot_focusing == "Nick":
+            call .dodge("roll")
+        "Jump to protect her!" if robot_focusing == "Catherine":
+            "I jump in front of the robots arms!"
+            c "Nick, get out of my way!"
+            "Oh right, Cat already had experience in this, didn't she..."
+            "And I forgot that the robot's got four arms!"
+            "It's arms curl up around us, and it lifts us both into the air."
+            c "Niiick, you idiooot!"
+            $ cat_in_air = True
+            $ nick_in_air = True
+        "Let her handle it" if robot_focusing == "Catherine":
+            "Cat deftly dodges the robot's arms, delivering a strong blow with her fighting stick!"
+            "The robot is completely focused on fighting Catherine now."
+            $ robot_stunned = True
+            $ stun_counter = 0
+        "Sneak up on the robot" if robot_focusing == "Catherine":
+            "The red power switch glows on the robot's back. If only I could reach it..."
+            "I sneak up towards the robot, but just as I'm about to press the button, it notices me and retreats!"
+            "Now it's lunging its arms towards me!"
+            $ robot_focusing = "Nick"
+            jump .react_phase
+    jump .act_phase
+
+
+        
+label .dodge(method):
+    $ attempt = NonUniformRandom( [("attempt", 1), ("try", 1)] ).pick()
+    $ i = renpy.random.random
+    "I [attempt] to [method] out of the way!"
+    if i < 0.5:
+        "And barely manage to!"
+        "The robot is momentarily confused as its claws grasp thin air!"
+        $ robot_stunned = True
+        $ stun_counter = 0
+    else:
+        "It's no use! The robot catches my leg and lifts me into the air!"
+        $ nick_in_air = True
+    return
+    
+label .robot_act:
+if not robot_stunned:
+    if robot_focusing == "Catherine":
+        if not cat_in_air:
+            "The robot lashes out its huge arms, aimed right at Catherine!"
+            jump .react_phase
+        else:
+            "Secure in Cat's captivity, the robot turns its attention to me."
+            $ robot_focusing = "Nick"
+            jump .act_phase
+    else:
+        if not nick_in_air:
+            "The robot lunges one of its many arms in my direction!"
+            jump .react_phase
+        else:
+            "Having made sure that I'm not going anywhere, the robot shifts its focus to Catherine."
+            $ robot_focusing = "Catherine"
+            jump .act_phase
+elif stun_counter < 1:
+    "The bot seems to recover from its daze."
+    $ robot_stunned = False
+else:
+    $ stun_counter -= 1
+return
+    
+label .victory:
+    play music "bgm/Hope(Ver1.00).ogg"
+    jack "So you did manage to beat it."
+    "He sounds genuinely impressed."
+    "Hey, wait a minute, weren't you expecting us to win!?"
+    n "Is this thing even legal!? What if you need to turn it off?"
+    jack "Yeah, I guess these were outlawed a while back."
+    n "Then why do you still have one!? I should tell the cops!"
+    jack "It's good to see that your boyfriend's got some sass."
+    "Seriously, what is it with this guy..."
+    return
+        
+label Catherine_running_together:
+    "I go to the running track to run a few laps."
+    "As I'm running, Catherine arrives, and I slow down to meet her."
+    # Catherine introductions
+    c "Hi, how's it going, Nick?"
+    "I have to catch my breath for a bit."
+    n "Oh, you know, the usual. How are you?"
+    c "Great! Especially now that I'm going to beat you at this race!"
+    "She darts right ahead of me."
+    "Yeesh, this is unfair, I'm already exhausted!"
+    if fitness < 45:
+        "Not only that, I'm not in as good shape as I used to be!"
+        "I'm not giving uuuup!"
+        "Except that I have no choice in the matter. My body fails me, and I trip face down into the red sand."
+        "She easily beats my times. Well, at least she's happy."
+    elif fitness < 75:
+        "I can keep up with her with a while, but she's in even better condition than I am."
+        "She beats my times with little difficulty."
+        "Darnit! A guy losing to his own girlfriend in sports, this is a disgrace!"
+        "Even for a nerd like me!"
+    elif fitness < 90:
+        "Despite my exhaustion, I manage to keep up with her."
+        "She purses her lips and frowns, trying her most to run even faster."
+        "She barely manages to beat me. I'd chalk that up to unfair advantage, but I'm not saying that to her face."
+    else:
+        "Even with the advantage, she can only barely keep up with me."
+        "It's actually kind of sad to leave her behind like this."
+        "But that's life I guess. Sorry Cat! Even you can't always win!"
+        "Cat's still pouting once we've finished racing."
+        c "Hmph. Don't get any big ideas. I was just tired from the gym today."
+    "I really gave it my all, though. My muscles are really aching."
+    $ fitness += 8
     return
