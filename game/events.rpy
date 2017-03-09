@@ -4,7 +4,7 @@ init:
     $ broken_up = False # Implement this later
     $ call_ignored = False
     
-    
+    $ event("Catherine_study_together", "act == 'cathouse'", event.only(), priority=200)
     $ event("Catherine_gym_together", "act == 'gym'", event.only(), event.once(), priority=50)
     $ event("sauna_accident", "act == 'swimming'", event.only(), event.depends("swimminghallintro"), event.once(), priority=50)
     $ event("Catherine_running_together", "broken_up == False and act == 'track'", event.once(), event.only(), priority=50)
@@ -641,11 +641,13 @@ label sauna_accident:
             "I almost slip on the wet floor, but manage to get away, with no time to close the door behind me."
             "Damn! I can hear Catherine following right behind me. Thankfully, she's walking rather than sprinting."
             "Quick, I need to hide somewhere!"
+            $ locker = False
             menu:
                 "Inside the locker!":
                     "The locker looks just barely big enough."
                     "I cram myself in, and close the door just in time!"
                     call .Catherine_investigation("through the slits in the door", "to check the lockers")
+                    $ locker = True
                 "Under the benches!":
                     "I crawl under the bench just in time!"
                     call .Catherine_investigation("up from here,", "and look under the benches")
@@ -654,6 +656,15 @@ label sauna_accident:
                     "I hide behind the column just in time!"
                     call .Catherine_investigation(", in the corner of my vision,", "near the column")
             "After Catherine has left, the absurdity of my sleep-addled reaction hits me."
+            if locker:
+                "And as I try to leave the locker, I realize it's locked!"
+                "This is turning out to be a great day..."
+                "Eventually, a cleaner comes in."
+                "I try to discreetly catch her attention by tapping on the door."
+                "She looks suspicious, and slowly approaches."
+                "As she opens the door, I bolt out as quickly as I can."
+                "She is left behind, utterly aghast."
+                "Well, you don't see naked men running from girl's lockers every day!"
             "I dress up quickly, red with shame, and leave without even trying to go for a swim."
     return
 
@@ -680,7 +691,7 @@ label .Catherine_conversation:
     "... she starts giggling!"
     c "Oh yeah, I'll send you blasting off again!"
     c "Nicky, you really watch too much anime, don't you?"
-    c "Why would I beat you? It's not like I'm some abuser!"
+    c "Why would I beat you? I'm not that scary, am I?"
     "She's teasing me now."
     c "And it's not like you haven't seen me naked before..."
     "I storm out, all red, hoping that I don't meet anyone on the way out."
@@ -1031,3 +1042,582 @@ label Catherine_running_together:
     "I really gave it my all, though. My muscles are really aching."
     $ fitness += 8
     return
+    
+label Catherine_study_together:
+    # For now, assuming this happens at Cat's house, though I'd like the player to
+    # be able to choose between that, the library and the parlor.
+    
+    "I'm standing in front of the door to Catherine's apartment."
+    "It's just an ordinary apartment in a small tower block right by the docks."
+    "It still manages to be far more fancy than mine, though, with an entrance, two rooms and a kitchen."
+    "I guess not spending all your money on VR gaming also has its advantages."
+    "Don't get it wrong. I'm perfectly happy with my life choices! When you've got VR, you're apartment can be the size of a mansion!"
+    "Virtually, that is."
+    "We agreed to meet at 5pm. I don't want to wake her dog up, so I guess I'll just knock."
+    "After a time period which feels far longer than a minute, I begin to get worried."
+    "She's not answering. That's very unusual. Normally we'd already be down to business by now."
+    jump .atthedoor
+    
+label .atthedoor:
+    menu:
+        "Knock again":
+            # Still no answer
+            "I try to knock again, but the only response is silence."
+            jump .atthedoor
+        "Ring the doorbell":
+            # The dog doesn't wake up
+            "I attempt to ring the doorbell."
+            "Strange, even the dog isn't waking up."
+            jump .atthedoor
+        "Use the key":
+            "I have a copy of the key to her apartment, of course. I'm her boyfriend, right?"
+            "It's kind of bad-mannered to just waltz in like this, but I'm sure she won't mind if I explain it to her afterwards."
+            "I turn the key in the lock and walk into her apartment."
+            play music "bgm/wrong.wav"
+            "There's definitely something going on here."
+            "Her shoes are still in the cabinet, so she must be inside."
+            "But she's nowhere to be seen. There's a quiet racket coming from the door to the right, which is connected to her bedroom."
+            "It couldn't be... a robber? A serial killer?"
+            "I swallow, hoping that my worst nightmares are not coming into fruition."
+            menu:
+                "Wait quietly":
+                    "I look around the entrance, trying to find something to arm myself with."
+                    "The cabinet has some of Catherine's old sports equipment. There's a golf club, two tennis rackets, and... yes, this will do."
+                    "I take the baseball bat and ready it for attack."
+                    "Eventually, I see someone come out the door, and I swing the bat over my head!"
+                    stop music
+                    c "Gyaaa! Nick, what the hell are you doing!?"
+                    "It's Catherine. In her underwear, no less."
+                    c "Just... stay there! And put that bat down!"
+                    $ bat_noticed = 1
+                    "She goes back to her bedroom and closes the door."
+                    jump .gettingclothed
+                "Say something":
+                    n "Is... is someone in there?"
+                    "For a moment, the sound goes quiet."
+                    c "N-Nick? Uh, just stay there for a while!"
+                    play music "bgm/Hope(Ver1.00).ogg"
+                    "She closes the door to her bedroom, and I can hear her going all around the room, as if looking for something."
+                    n "Is everything okay in there?"
+                    c "Yeah, sure, just let me get dressed. Weren't we supposed to meet at six?"
+                    n "No, it was at five."
+                    c "Darn, sorry, I forgot."
+                    n "Your dog's somewhere?"
+                    c "At my parents. It needed some rest."
+                    "She opens the door, dressed in clothes with completely unmatching colors. She must have not had time to look for anything
+                    better."
+                    "She looks into my eyes for a moment, a bit flustered."
+                    c "Hi."
+                    "Before I have time to respond, she's already disappeared into the kitchen."
+                    jump .kitchen
+                "Go closer to the door":
+                    "I'd better arm myself first."
+                    "I look around the entrance. The cabinet has some old sports equipment in it."
+                    "I try the weight of the baseball bat, ready it, and approach the door."
+                    "I can hear the strange noise right around the corner. Like someone stomping on the floor."
+                    "Okay, here goes nothing!"
+                    "Shouting a battlecry, I storm into the room!"
+                    # silence
+                    stop music
+                    "And I see Catherine. Playing a dance game. Wearing a T-shirt and nothing else."
+                    "There's an awkward silence as we both stand perfectly still, staring at each other with gaping eyes."
+                    c "......"
+                    c "Gyaaaa! What the hell, Nick!? Get out get out get out!"
+                    "She pushes me back to the corridor and closes the door behind her."
+                    $ bat_noticed = 2
+                    jump .gettingclothed
+                    
+                    
+label .gettingclothed:
+    "I can hear her frantically search for clothing."
+    c "Why didn't you knock? Eh, what am I gonna wear, no way... Weren't we supposed to meet at six?"
+    n "Um... no, it was at five."
+    play music "bgm/Hope(Ver1.00).ogg"
+    "While she's getting dressed, I quietly leave the bat where I took it."
+    if bat_noticed == 2:
+        "I hope she didn't have time to register it."
+    else:
+        "I hope she won't question me about it."
+    # interrupt with Nick's questions
+    n "Where's that mutt of yours?"
+    c "Oh, Snowy is at my parents. It's been a bit sick lately, I thought the vacation would do it some good."
+    "For a moment, I just listen to the wooshing coming from her room."
+    c "What were you doing with that baseball bat, anyway?"
+    "Damn."
+    n "Erm... Actually, I thought there was a robber in there."
+    "She sounds almost amused."
+    c "Whaat, seriously? In this day and age?"
+    "Crime rates how gone down a bit in the recent years, what with the increased availability of automated surveillance systems."
+    "But criminals have endless ingenuity for bypassing such things."
+    "It's not as unlikely as she makes it sound."
+    n "Well, you never know."
+    "She opens the door again, dressed a bit more amicably. Still, the colors don't match at all."
+    "She must be irritated, not getting to spend the whole day choosing."
+    c "I didn't know you were that paranoid, Nick. What's gotten into you?"
+    "Without giving me time to answer, she slides into the kitchen."
+    jump .kitchen
+                   
+label .kitchen:
+    c "Anyway, let's just get this started. Now, what should we drink?"
+    "She starts going through the cupboards."
+    "Oh dear, this is going to take the whole day, isn't it?"
+    $ water_heater_on = False
+    $ coffee_machine_on = False
+    $ coke_bottle = False
+    menu:
+        "Tea, please.":
+            c "Y-yeah. I guess that's okay."
+            "She turns the water heater on."
+            $ water_heater_on = True
+            c "Sorry, it's kind of slow."
+            c "Let's just go to the living room while it heats up."
+        "I could use some coffee.":
+            c "Oh, you're tired?"
+            c "Let me guess, staying awake until 3am again, playing some game..."
+            "She sighs and turns on the coffee machine."
+            $ coffee_machine_on = True
+            c "Let's just go to the living room while it heats up."
+        "You got any coke?":
+            c "S-sure. I'll bring the bottle to the living room."
+            $ coke_bottle = True
+    "I sit on the mat by the glass table, while she sits on the couch, looking down on me."
+    "Literally that is. Hopefully not metaphorically."
+    c "Now then, let us commence. The purpose of this meeting is to help you get into a good school by studying properly."
+    n "Why are you making this sound so professional? We're a pair, right?"
+    c "Mister Nicholas, if you would please focus."
+    "I can see that she's enjoying this."
+    "Cat likes to be in a position where she can tell others what to do."
+    "Pretty stereotypical with MBA students, I suppose."
+    "Although with her inability to actually make decisions, I'm not sure she'd be such a great boss."
+    c "But first, we will have to determine what you should actually study in the first place."
+    menu:
+        "Game design":
+            "I'm not sure if Cat will be on board with this idea, but..."
+            n "I've been thinking of game design."
+            "She presses her mouth into a thin line."
+            c "I suppose that is a job. Of sorts."
+            n "Shouldn't you do something you're passionate about?"
+            c "As long as you can actually make a living that way."
+        "Business":
+            n "I'm interested in business."
+            "She smiles, incredulous."
+            c "Yeah, right. You're just saying that to get on my good side."
+            n "No, I really am interested."
+            "I'm not certain that's actually true, but I have to say something, right?"
+        "I don't know":
+            n "I dunno."
+            c "Of course not. Not when it's something important."
+    "She frowns in that cute way of hers again."
+    c "Well, regardless of what you're going to apply for, there's some basic subjects that spring up in every entrance exam."
+    c "Mathematics, physics and basic chemistry, for instance."
+    c "I guess math is the most common, so we might as well start with that."
+    c "Okay then, what's your weakest area, probability theory, calculus or geometry?"
+    menu:
+        "Probability theory.":
+            $ math_subject = 0
+        "Calculus.":
+            $ math_subject = 1
+        "Geometry.":
+            $ math_subject = 2
+    jump .math_question1
+    
+label .math_question1:
+    $ math_genius = False
+    "She closes one eye, beckoning me to answer."
+    c "Let's start with a simple one."
+    if math_subject == 0:
+        jump .probability1
+    elif math_subject == 1:
+        jump .calculus1
+    else:
+        jump .geometry1
+        
+label .right_answer1:
+    c "Yeah, I guessed that one would be too easy for you."
+    return
+    
+label .wrong_answer1:
+    "Cat blinks."
+    c "Uh, no. You see..."
+    return
+
+label .right_answer2:
+    c "Y-yeah, that's correct."
+    "She looks a bit flustered."
+    "What, you weren't expecting me to get it right?"
+    return
+    
+label .wrong_answer2:
+    c "This one's a bit more difficult, huh?"
+    return
+
+label .right_answer3:
+    c "W-wait a minute, didn't you say this was your weakest area?"
+    c "Are you just really good at math or something?"
+    $ math_genius = True
+    return
+    
+label .wrong_answer3:
+    c "Yeah, um, I think it goes like this..."
+    "You're not certain yourself?"
+    return
+    
+label .math_question2:
+    "Well then, how about this one?"
+    if math_subject == 0:
+        jump .probability2
+    elif math_subject == 1:
+        jump .calculus2
+    else:
+        jump .geometry2
+    
+label .math_question3:
+    "Okay, here's a tough one."
+    if math_subject == 0:
+        jump .probability3
+    elif math_subject == 1:
+        jump .calculus3
+    else:
+        jump .geometry3
+    
+label .probability1:
+    c "You roll two normal, six-sided dice. What is the probability that the sum of their values is 11?"
+    menu:
+        "2/36":
+            call .right_answer1
+            jump .math_question2
+        "11/36":
+            call .wrong_answer1
+            call .probability1_explanation
+        "2/11":
+            call .wrong_answer1
+            call .probability1_explanation
+    jump .interrupt
+        
+label .probability1_explanation:
+    c "Your denominator is the total amount of possible dice combinations. For example, both first die and second die are ones, or the second one is a two or a three and so on."
+    c "You can draw all the possibilities in a table like this."
+    "The table has the numbers 1-6 both as columns and as rows."
+    c "So now each cell of the table represents one possibility. Count them."
+    n "There's 36. It's a six-by-six table, I can tell without counting."
+    c "Right, of course. Now then, the numerator represents the dice combinations which you're interested in."
+    c "So the ones which have a sum of 11. We can fill in the table with the sums in each case."
+    c "And now you can just count the amount of 11s in the table! Pretty simple, isn't it?"
+    n "When you put it that way..."
+    "There's two 11s in the table. First die is 5 and second 6 or the other way around."
+    "So 2 as the numerator, 36 as the denominator, the answer is..."
+    n "So it's 2/36?"
+    c "I knew you'd get it!"
+    return
+    
+label .probability2:
+    c "You roll three dice. What is the probability that at least one of them is a 6?"
+    menu:
+        "3/6":
+            call .wrong_answer2
+            call .probability2_explanation
+        "91/216":
+            call .right_answer2
+            jump .math_question3
+        "215/216":
+            call .wrong_answer2
+            call .probability2_explanation
+    jump .interrupt
+    
+label .probability2_explanation:
+    c "The probability of one die coming up 6 is 1/6, and if you sum them together, you get 3/6."
+    c "But that's not the correct answer! Look at this Venn diagram."
+    "She draws three overlapping circles on the screen of her table."
+    "Tapping them with her finger, she names them 'A: Die 1 comes up 6,' 'B: Die 2 comes up 6,' and 'C: Die 3 comes up 6'."
+    c "If you just naively sum the probabilities together, you will end up counting certain combinations twice."
+    c "For instance, the combination 'Dice 1 and 2 come up 6' is contained in both the probability 'A: Die 1 comes up 6' and the probability 'B: Die 2 comes up 6,' so you will end up counting it twice!"
+    c "To correct for this, you have to subtract the probability of them both coming up 6 from the sum."
+    c "In mathematical notation, P(A)+P(B)-P(A and B)."
+    c "You can also see this visually in this portion of the Venn diagram."
+    c "Now when you have three different variables, or circles, you have to subtract each of these intersections: A and B, A and C, B and C."
+    c "But then, you will have removed the middle part, or 'A and B and C' entirely! So you have to add that back."
+    c "So you're final formula becomes P(A) + P(B) + P(C) - P(A and B) - P(A and C) - P(B and C) + P(A and B and C)."
+    n "That's ridiculously complicated! Isn't there a simpler way?"
+    "She raises one corner of her mouth a bit."
+    c "Yeah, in this case there is."
+    c "If you want to know the probability of getting one or more instances of some specific result with probability p in n repetitions..."
+    n "Say that in English, will ya?"
+    c "I'm getting to that! The total probability is 1 - (1-p)^n. So in this case, the probability of getting a six is p = 1/6, you're throwing
+    three identical dice, which is mathematically the same as throwing one die three times..."
+    c "If p = 1/6 and there's three repetitions, the total probability is... 1 - (5/6)^3, or 91/216."
+    c "Essentially, you're calculating the probability of none of the dice coming up six, which is (5/6)^3, and taking the complement of that by subtracting from 1."
+    n "That still sounds pretty complicated..."
+    
+label .probability3:
+    c "In the Sherlock Holmes story 'The Adventure of the Six Napoleons,' there are six busts of Napoleon, one of which may conceal a priceless pearl."
+    c "The probability that one of the busts really does contain the pearl is 1/2. Five of the busts have been destroyed. What is the probability that there is a pearl inside the last one?"
+    menu:
+        "1/2":
+            call .wrong_answer3
+            call .probability3_explanation
+        "1/12":
+            call .wrong_answer3
+            call .probability3_explanation
+        "1/7":
+            call .right_answer3
+    jump .interrupt
+    
+label .probability3_explanation:
+    c "So, um, the probability that there's a pearl at all is 1/2, and there are six identical busts."
+    c "So if the pearl does exist, it's in bust 1 with a probability of 1/6, and the same for all the other busts."
+    c "When you multiply by the probability of there being a pearl at all, you get (1/2)*(1/6) = 1/12, which is, hold on, about 0.083."
+    "She checked that with the calculator on her wristband."
+    c "However, this is just the probability in the beginning, before any busts have been broken!"
+    c "You might be thinking, well, there's a fifty percent chance that it's not in any of the busts, but if it is, then, since all the others have been broken, it must be in the last one."
+    c "So there's a 0.5 probability that it is in the last one."
+    n "But that's not correct?"
+    c "Well, it sort of doesn't take into account the information you get from breaking the busts."
+    n "How so?"
+    c "Whenever you break a bust without finding the pearl, the probability of there being no pearl at all also increases, so in the end it should be way more than fifty percent!"
+    n "This is making my head hurt."
+    "Catherine doesn't answer, but the way she's frowning, she must secretly agree."
+    c "So. The correct way to do this is to use the Bayes formula. Do you know that?"
+    menu:
+        "Sure.":
+            n "It was something like... P(H|O) = P(O|H)*P(H)/P(O)?"
+            c "Yes."
+        "Not really...":
+            c "The Bayes formula is like the pythagorean theorem of geometry. It's the most important formula in all of probability theory!"
+            c "It says: 'The probability of a hypothesis based on observations is the probability of the observations if the hypothesis is true, multiplied by the probability of the hypothesis and divided by the probability of the observations.'"
+            c "So in mathematical terms, P(H|O) = P(O|H)*P(H)/P(O)"
+        "Can we do another question? I'm getting a headache.":
+            c "Be serious about this, Nick!"
+            return
+    c "Now our observation is that none of the first five busts contained the pearl. And our hypothesis is that the last one contains the pearl."
+    c "We want to calculate P(H|O), or 'the probability that the last one contains the pearl when the other ones didn't.'"
+    "I'm starting to zone out a bit, listening to the tea kettle in the background."
+    c "So if bust number six contains the pearl, the probability that the first five don't contain it is equal to 1: P(O|H) = 1."
+    c "The starting probability for the pearl being in bust 6 is like we calculated earlier, 1/12. So P(H) = 1/12."
+    c "Now the probability of the observation. There's two cases where the first five busts will be empty. Either the last bust contains the pearl, probability 1/12, or none of them do, probability 1/2."
+    c "Thus, P(O) = (1/12)+(1/2) = 7/12."
+    c "Now we can just plug in the values to the Bayes formula: P(H|O) = P(O|H)*P(H)/P(O) = 1*(1/12)/(7/12) = 1/7."
+    c "And that's the correct answer!"
+    n "How could I ever have figured that out!?"
+    c "Well, that's why we're here, after all."
+    return
+    
+label .calculus1:
+    c "What is the derivative of x^2 + ln(x) relative to x?"
+    menu:
+        "2x + 1/x":
+            call .right_answer1
+            jump .math_question2
+        "2x + e^x":
+            call .wrong_answer1
+            call .calculus1_explanation
+        "x^2*ln(x) + 2":
+            call .wrong_answer1
+            call .calculus1_explanation
+    jump .interrupt
+    
+label .calculus1_explanation:
+    c "This is just basic formulas. In a sum, you can differentiate the terms separately. So the answer is just D(x^2) + D(ln(x))."
+    c "The derivative of x^2 is 2x by the formula D(x^n) = n*x^(n-1)."
+    c "The derivative of ln(x) is known to be 1/x."
+    c "So the answer is just 2x + 1/x."
+    n "I really don't know this stuff..."
+    return
+
+label .calculus2:
+    c "What is the minimum point of the parabola x^2 + x + 1?"
+    menu:
+        "(3/4, -1/2)":
+            call .wrong_answer2
+            call .calculus2_explanation
+        "(-1/2, 3/4)":
+            call .right_answer2
+            jump .math_question3
+        "(0, 1)":
+            call .wrong_answer2
+            call .calculus2_explanation
+    jump .interrupt
+    
+label .calculus2_explanation:
+    c "To minimum of a continuous differentiable function like this is either at the ends of the interval being studied, or at the zeroes of the derivative."
+    c "Because there's no interval in this case, the minimum must be at the zeroes!"
+    c "The derivative is easily calculated as 2x + 1."
+    c "It is only zero when x = -1/2."
+    c "Before that, the derivative is negative. And after that, it's positive, so there's a local minimum right at that spot!"
+    n "Uh-huh."
+    c "So just plug in x = -1/2 to the original equation, and you get (-1/2)^2 + (-1/2) + 1 = 3/4. So the minimum point is (-1/2, 3/4)."
+    return
+    
+label .calculus3:
+    "She smiles fiendishly."
+    c "What is the 2nd-degree Maclaurin polynomial for the function sin(x)?"
+    menu:
+        "1 + x + (x^2)/2":
+            call .wrong_answer3
+            call .calculus3_explanation
+        "x - (x^2)/2 + (x^4)/24":
+            call .wrong_answer3
+            call .calculus3_explanation
+        "x - (x^3)/6 + (x^5)/120":
+            "Her expression melts into astonishment."
+            c "W-what!?"
+            call .right_answer3
+    jump .interrupt
+    
+label .calculus3_explanation:
+    c "So as everybody knows, the nth-degree taylor polynomial for sin(x) is the sum of the terms (-1)^k * x^(2k+1) / (2k + 1)! as k goes from 0 to n."
+    n "Who would know something like that!?"
+    c "*Cough*... *cough*... Right, a very simple question indeed..."
+    
+label .geometry1:
+    c "You have a right-angled triangle with the hypotenuse of length 5 and one leg of length 3. What is the length of the remaining leg?"
+    menu:
+        "4":
+            call .right_answer1
+            jump .math_question2
+        "34":
+            call .wrong_answer1
+            call .geometry1_explanation
+        "The square root of 34":
+            call .wrong_answer1
+            call .geometry1_explanation
+    jump .interrupt
+
+label .geometry1_explanation:
+    c "The pythagorean theorem. Mark the legs with a = 3 and b = ?, hypotenuse with c = 5. Now a^2 + b^2 = c^2"
+    c "So b^2 = c^2 - a^2 = 25 - 9 = 16."
+    c "Taking the square root, we get b = 4."
+    c "Easy, right?"
+    n "Maybe for you..."
+    return
+    
+label .geometry2:
+    c "In soccer, the circumference of the ball has to be between 68 and 70 cm."
+    n "You play soccer?"
+    c "Not really..."
+    c "Anyway, how many percent is the largest allowable ball larger than the smallest one?"
+    n "Never imagined I'd see you talking about balls with a straight face."
+    "She blushes."
+    c "Focus, Nick!"
+    menu:
+        "110\%":
+            call .wrong_answer2
+            call .geometry2_explanation
+        "9\%":
+            call .right_answer2
+            jump .math_question3
+        "8\%":
+            call .wrong_answer2
+            call .geometry2_explanation
+    jump .interrupt
+    
+label .geometry2_explanation:
+    c "First think about what you want to calculate."
+    c "If you form a fraction of the volumes like so: V_max / V_min, this will tell you how large the larger ball is procentually compared to the other."
+    n "And that's the answer?"
+    c "Not quite. You want to know how many percent {i}larger{/i} it is, that is to say, how many percent above 100\%. So you actually want to calculate (V_max / V_min) - 1."
+    c "Now if you plug in the ball volume formula V = 4/3 * pi * r and simplify the resulting equation, you get just (r_max)^3 / (r_min)^3 - 1!"
+    c "The only thing left to do is to calculate the radii for the balls. So 2*pi*r_min = 68cm, r_min ~= 10.82 cm."
+    c "And 2*pi*r_max = 70 cm, r_max ~= 11.14 cm."
+    c "Here's the result: 11.14/10.82 - 1 ~= 0.09 = 9\%."
+    n "Man, that was just amazingly simple."
+    c "Wasn't it though?"
+    n "No. It was sarcasm."
+    return
+    
+label .geometry3:
+    c "Okay, how about this. What is the volume of the solid of revolution which is formed when the line f(x) = x, x goes from 0 to 2, rotates around the x-axis?"
+    n "Does this even count as geometry!?"
+    c "Heh, I take it you can't answer?"
+    menu:
+        "4*pi":
+            call .wrong_answer3
+            call .geometry3_explanation
+        "2":
+            call .wrong_answer3
+            call .geometry3_explanation
+        "8*pi/3":
+            call .right_answer3
+    jump .interrupt
+    
+label .geometry3_explanation:
+    c "So, uh, you're essentially integrating..."
+    n "Integration? So this is calculus?"
+    c "Well, you said your calculus is stronger than your geometry!"
+    c "Whatever, just... you're integrating, not the function f(x) = x, but the area of the circle formed as f(x) rotates around the x-axis."
+    c "For each value of x, the area is A(x) = pi*x^2. Integrating gives pi/3 * x^3 plus a constant. Now just evaluate in the interval from 0 to 2 and you'll get 8*pi/3 as the answer."
+    n "Yeesh, who is willing to study this sort of stuff?"
+    return
+    
+label .interrupt:
+    if water_heater_on:
+        "A red light appears on Cat's device to signal that the water has been boiled."
+        c "I'll get the tea!"
+        "She comes back to the room carrying too mugs of hot tea."
+        c "Sorry, I only have Ceylon Black."
+        $ drink = 0
+    elif coffee_machine_on:
+        "A red light on Cat's wristband indicates that the coffee is ready for drinking."
+        c "I'll go fetch the coffee!"
+        "She comes back to the room carrying two mugs of the blackest coffee I've ever seen."
+        "Cat, just how much powder did you use?"
+        c "Here's some tofu milk in case you don't want to drink it black."
+        $ drink = 1
+    else:
+        "Deciding that I'm in need of some refreshment, I open the coke bottle."
+        "And of course, it bursts all around the room, spilling on the carpet!"
+        c "I'll go get some paper!"
+        "We clean up the mess. Thankfully, the bottle is still over half-full."
+        $ drink = 2
+    jump .timeskip
+    
+label .timeskip:
+    python:
+        if math_subject == 0:
+            subject = "probability theory"
+        elif math_subject == 1:
+            subject = "calculus"
+        else:
+            subject = "geometry"
+    if math_genius:
+        c "Since you're so good with [subject], I guess we should just move onto physics or something..."
+    else:
+        c "Well, let's continue with the [subject]. Try doing this one..."
+    "We spend the rest of the evening like this, Cat attempting to teach me while I do my best to avoid learning anything."
+    if drink == 1:
+        "Not even the power of the coffee is enough to keep us alert anymore."
+    else:
+        "We consume loads of caffeine, but eventually we must acquiesce to the exhaustion."
+    jump .DFO
+    
+label .DFO:
+    "As I'm getting ready to leave, Catherine asks me the question that must have been on her mind for a while now."
+    c "Nick, are you still playing that game? DFO?"
+    menu:
+        "Yes.":
+            n "Y-yes. I am."
+            # check for promise here
+            c "Even though you promised?"
+            n "It's a great game, Cat. You should try it sometime."
+        "No.":
+            n "No."
+            n "I mean, I promised, right?"
+            c "I see..."
+        "Not your business.":
+            n "What do you care, Cat? Just let me do what I want."
+    "Cat looks disheartened."
+    c "Nick, why don't you let me help you..."
+    menu:
+        "I don't need any help.":
+            n "Help? You're not helping me, Catherine. I don't need any help."
+        "I came here, didn't I?":
+            n "Hey, you already did. I learned loads of math and stuff today."
+            c "Yeah, right. After I forced you to listen."
+        "Cat, it's not as bad as you think.":
+            n "Look, Cat, gaming is just a hobby. It's not magically going to destroy my life."
+    c "Damnit, Nick! You need to think about your future!"
+    n "The future! It's not like there's going to be any jobs anyway. The robots are going to take them all, right?"
+    c "That's bullshit!"
+    c "Whatever, just..."
+    "She hands me my hat and pushes me towards the door."
+    c "Just go."
+    "As the door closes behind me, I silently go outside, walking through the streets of the night-lit city, letting no-one see the raindrops on my cheeks."

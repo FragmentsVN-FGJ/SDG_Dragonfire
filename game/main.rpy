@@ -48,6 +48,7 @@ init python:
     dp_choice("Movie theatre", "movies")
     dp_choice("VR Arcade", "arcade")
     dp_choice("Clean room", "clean")
+    dp_choice("Catherine's apartment", "cathouse")
     
     # PROMISE SYSTEM
     
