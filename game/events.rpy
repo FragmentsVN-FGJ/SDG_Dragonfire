@@ -4,6 +4,10 @@ init:
     $ broken_up = False # Implement this later
     $ call_ignored = False
     
+    $ event("Catherine_movie_scene", "act == 'movies'", event.only(), event.once(), priority=5)
+    $ event("Catherine_broken_up_mall", "act == 'mall'", event.only(), event.once(), priority=5)
+    $ event("DFOServers", "act == 'work'", event.once(), event.only(), priority=5)
+    
     $ event("Catherine_study_together", "act == 'cathouse'", event.only(), priority=200)
     $ event("Catherine_gym_together", "act == 'gym'", event.only(), event.once(), priority=50)
     $ event("sauna_accident", "act == 'swimming'", event.only(), event.depends("swimminghallintro"), event.once(), priority=50)
@@ -54,8 +58,12 @@ init:
 define o = Character("Old guy")
 define jackquotes = Character("'Jack'")
 define jack = Character("Jack")
+define m = DynamicCharacter("serverguy")
     
 init python:
+       import math
+       handkerchief = False
+       last_seen = ""
        class NonUniformRandom(object):
             def __init__(self, list_of_values_and_probabilities):
                 """
@@ -74,7 +82,16 @@ init python:
                 for k, w in self.the_list:
                     s += w
                     if r < s: return k
-                return 
+                retur
+                
+       def renpyrandomnormal(mean, sd):
+            # Produce a renpy random from the given normal distribution using Box-Muller transform
+            i = renpy.random.random()
+            j = renpy.random.random()
+            Z_0 = math.sqrt(-2*math.log(i))*math.cos(2*math.pi*j); # Random variable from the standard normal distribution
+            return sd*Z_0 + mean
+            
+       hub_seen_labels = []
                 
 label Catherine_afternoon_call_ignored2:
     "For a few seconds, I can feel my wristband vibrate."
@@ -1039,7 +1056,20 @@ label Catherine_running_together:
         "But that's life I guess. Sorry Cat! Even you can't always win!"
         "Cat's still pouting once we've finished racing."
         c "Hmph. Don't get any big ideas. I was just tired from the gym today."
-    "I really gave it my all, though. My muscles are really aching."
+    if fitness < 90:
+        "Cat approaches, smiling."
+        c "Wow, you're sweating."
+        n "Well, yeah. I was running as hard as I could back there."
+        c "Want a handkerchief?"
+        menu:
+            "Thanks.":
+                n "Thanks."
+                c "No problem."
+                $ handkerchief = True
+            "No need.":
+                n "Nah, you keep it."
+                c "Okay then."
+    "I really gave it my all today. My muscles are really aching."
     $ fitness += 8
     return
     
@@ -1621,3 +1651,966 @@ label .DFO:
     "She hands me my hat and pushes me towards the door."
     c "Just go."
     "As the door closes behind me, I silently go outside, walking through the streets of the night-lit city, letting no-one see the raindrops on my cheeks."
+    
+
+# Structure for the movie scene:
+# I wasted so much time... Genius (when procedurally generated)!
+# Introduction scene
+# Handkerchief
+# Buying tickets
+# Promise to pay for the tickets
+# Finding seats
+# Movie
+# Girlishness
+# Looking at the girl
+# Comments on the movie
+# Silence
+# Timeskip
+# Touching hands
+# Crying
+# Talking about the movie
+# Childhood memories (Always crying in middle school)
+# Thanks for holding my hand
+# Kiss
+# Credits roll, leave the cinema
+
+label Catherine_movie_scene:
+    $ price_asked = False
+    $ seen_before_asked = False
+    call .date_intro
+    n "Anyway, let's go."
+    "We arrive at the ticket booth."
+    cashier "Yes? Which movie would you like to see?"
+    call .cashier
+
+label .cashier:
+    menu:
+        "Two tickets for Lover's Abandon.":
+            cashier "Any students?"
+            c "I am."
+            menu:
+                "Me too.":
+                    cashier "Very well, could you press here for authentication?"
+                    "Crap."
+                    "We press our fingers on the device. The cashier looks through the results."
+                    cashier "Says here you don't have a student status, sir. You're fine, madam."
+                    jump .payment
+                "One student, one adult.":
+                    jump .payment
+        "How much do they cost?" if not price_asked:
+            n "How much do the tickets cost?"
+            cashier "Around 15 000 bits per person. Student discount at half price."
+            $ price_asked = True
+            jump .cashier
+        "Have I seen you before?" if not seen_before_asked:
+            n "Aren't you the same guy from the ice cream parlor?"
+            $ i = renpy.random.random()
+            if i < 0.33:
+                cashier "I have no idea what you're talking about."
+            elif i < 0.66:
+                cashier "Must have been my twin brother."
+                "Okay, I guess that... makes sense?"
+            else:
+                cashier "I am many things, Nicholas. But you will not remember that."
+                "Hmm... Strange, I can't remember what he just said."
+            $ seen_before_asked = True
+            jump .cashier
+            
+label .payment:
+    cashier "That will be 15 000 and 7 500 bits."
+    # Check money status
+    menu:
+        "Pay for both.":
+            n "I'll pay for both."
+            c "Nick, you don't need to..."
+            n "It's fine, Catherine. Let me treat you to something for a change."
+        "Pay for yourself.":
+            "We both pay for the tickets ourselves."
+            "It would have been more chivalrous to pay for Cat's ticket, but I need to think of my wallet as well."
+        "Ask Catherine to pay for you.":
+            "This is kind of embarrassing, but..."
+            n "Uh, Cat, could you pay for me just this once?"
+            n "I'm kind of in a poor financial situation."
+            c "Wasting it all on games, I'm sure."
+            "She sighs and pays for the ticket."
+    "After the transaction has been authenticated, we continue into the theatre."
+    jump .findseats
+
+label .findseats:
+    n "Quite dark in here..."
+    c "Seems there's quite many seats free. I wonder where we should sit...?"
+    menu:
+        "In the front":
+            n "Well, the front has the best view, I guess."
+            $ seating = "front"
+        "In the middle":
+            n "Somewhere in the middle should be best."
+            $ seating = "middle"
+        "In the back":
+            n "It's more peaceful in the back, I reckon."
+            $ seating = "back"
+    "We walk over to the [seating] of the theatre and take our seats."
+    
+    if seating == "back":
+        "You can view the whole theatre pretty easily from here. There's some teenagers to the right..."
+        "A couple like us on the middle seats..."
+        "And a parent with children that are probably a bit too young to understand this movie, sitting right in front."
+    elif seating == "middle":
+        "These seats have a pretty nice balance of being close to the screen without having our ears blasted off by the loudspeakers."
+        "I can hear the commotion of some teenagers sitting in the back."
+        "Next to us is another couple, and in the front is a parent with kids who look slightly too young to be watching this film."
+    else:
+        "With my VR-numbed senses, these seats are the only ones that can provide any immersion."
+        "I can faintly hear teenagers talking and a couple of lovebirds whispering behind us."
+        "I'm sure their voices will be drowned out by the loudspeakers."
+        "There's a parent with some twerps who look too young for this movie, sitting a bit further away to the side."
+    
+    jump .moviestart
+    
+label .moviestart:
+    "I sit back to relax as the movie begins."
+    "Lover's Abandon. As I had heard, it seems to be a chick flick."
+    "Catherine can be unexpectedly girly at times."
+    "I steal a glance at her."
+    "The movie seems to captivate her."
+    "I don't really see the appeal of these sappy romance stories myself, but..."
+    "Seeing her like this makes me feel pretty good."
+    "The movie is a romance drama about a guy and a girl who, predictably, fall in love at first sight."
+    "But they don't really fit together. They're from different social classes and they're interests are not compatible at all."
+    "So the guy starts avoiding the girl in the second act, and she's heartbroken."
+    "In the cheesy scenes that follow, the girl gets the guy to realize how much he loves her."
+    "In the end, he promises to change for her sake, and they get married."
+    "Pretty ridiculous if you ask me. She should just dump him."
+    "Catherine seems touched, though. I wonder if it's appropriate to make a move?"
+    "Normally, it would be fine, but I've been making her pretty angry lately..."
+    menu:
+        "Hold her hand.":
+            "I softly press my hand on hers."
+            "She tears up."
+            "Did I hurt her feelings somehow?"
+            menu:
+                "Take your hand away.":
+                    "As I try to take my hand away, she holds it tight, mot letting me go."
+                "Keep holding her hand.":
+                    "I keep my hand where it is, and she responds by holding my hand as well."
+        "Pretend to yawn.":
+            "I pretend to yawn and curl my arm around her shoulder."
+            "She begins to tear up."
+            "Did I get too close?"
+            menu:
+                "Keep holding her.":
+                    "I keep my arm around her, and she whispers to the air."
+                    c "So beatiful..."
+                    "So it was the scene after all..."
+                "Better stop.":
+                    "She takes hold of my hand before I have the chance to move."
+                    c "It's fine, Nicky..."
+        "Do nothing.":
+            "Tears fall on her cheeks."
+            "Was she expecting me to do something?"
+            c "How beatiful..."
+            "I siqh silently out of relief. So it was only the scene she was crying at."
+    if handkerchief:
+        "As I place my other hand in my pocket, I feel the handkerchief that Cat gave me earlier, tucked in there."
+        menu:
+            "Should I give her the handkerchief?"
+            "Sure.":
+                n "Here."
+                "As I hand it back to her, she tilts her head, quizzical."
+                c "Is that the one I gave you."
+                n "Yes, actually. I didn't even remember to give it back..."
+                "She smiles."
+                c "That's so like you... Well, thanks anyway."
+                "She sniffs the handkerchief."
+                n "Hey, I did keep it clean!"
+                "She responds with a burst of quiet laughter, saying nothing."
+                "Then, she wipes her tears into the handkerchief."
+                c "Nicky... Thanks."
+            "No, let's save it for later.":
+                "I take my hand out of my pocket. You never know when it might turn out useful."
+    jump .middleschooltalk
+    return
+    
+label .middleschooltalk:
+    n "It's not like you to cry so openly. Was it really that touching?"
+    c "What do you mean, it's not like me? I cried all the time in middle school, didn't I?"
+    c "Yeah, now that you mention it..."
+    jump .flashback
+    
+label .flashback:
+    "I sift through a current of hazy memories coming back to me, thinking back to the first time we met."
+    "It was in middle school, wasn't it?"
+    "We hadn't really talked to each other or anything. It was recess, and my usual group of friends was away from somewhere."
+    "That's when I saw Catherine."
+    "I'd like to say something cliched, like she was amazingly beautiful and I fell in love with her at first sight."
+    "But that's not really the case. She wasn't a very good-looking kid back then." 
+    "She wore thick glasses and obviously didn't do much sports."
+    "Anyway, it wasn't her appearance which drew my attention. It was the girls bullying her."
+    "I think they were teasing her about her glasses, or something equally stupid."
+    "Well, you know how kids are. But that doesn't mean I thought the situation was acceptable!"
+    menu:
+        "So I went to help her.":
+            "Being the strongheaded fool I was, I went to tell those idiots to lay off."
+            "They started spreading some bad rumours about me, but it's not like I cared."
+            call .friends
+        "So I cheered her up afterwards.":
+            "Well, I was actually too timid to do anything about it at that specific moment."
+            "But later that day, I saw her crying by a tree, so I went to cheer her up, telling her to ignore those idiots."
+            call .friends
+        "So I went to join the bullies":
+            "So being the total jerkass I used to be, I went to join in on the fun."
+            "But I felt really sorry after she started crying, and secretly went to her to apologize, begging for her forgiveness."
+            call .friends
+    jump .opinion
+    
+label .friends:
+    "Cat and I started to spend a lot of time together after that. I had quite a lot of friends, and she joined our group as an equal."
+    "Despite not really being into the sort of nerdy stuff we liked, she seemed a lot happier after that."
+    return
+    
+label .opinion:
+    "Cat looks into my eyes."
+    c "Wasn't it great?"
+    menu:
+        "Yes.":
+            n "Yeah."
+            jump .kiss
+        "If you say so.":
+            n "If you liked it, then so do I."
+            jump .kiss
+        "It was terrible.":
+            n "No, it sucked."
+            "Cat frowns."
+            c "Well thank you very much for ruining the mood, Nicholas."
+            "We move out of the theatre, Cat's berating still ringing in my ears."
+            "Still, she looks happy enough."
+            c "Thanks, Nick. We should do things together more often."
+            "With one last hug, we go our separate ways."
+    return
+    
+label .kiss:
+    "She closes her eyes expectantly."
+    menu:
+        "Kiss her.":
+            "In the darkness of the movie theatre, I press my mouth on her soft, slightly open lips."
+        "Hesitate.":
+            "Since I won't make the first move, she does, pressing her rosy lips upon mine."
+    
+    if seating == "front":
+        "The parent sitting next to us probably doesn't appreciate our wanton display of carnal desires."
+        "But it's really their own fault for bringing kids to a movie like this in the first place."
+    elif seating == "middle":
+        "The couple next to us is kissing as well, and I can hear the teenagers variously cheering and booing in the background."
+    else:
+        "The teens next to us are giggling and whispering to each other, but I do my best to ignore them."
+        
+    "After a long kiss, we move out of the theatre."
+    c "Thanks, Nick. Let's do this again some time."
+    "We say our farewells and go our separate ways."
+    return
+    
+label .date_intro:
+    "As I arrive at the movie theatre, I see that Catherine is already here."
+    n "Sorry, have you been waiting for long?"
+    c "N-no, just a short while."
+    return
+ 
+label Catherine_broken_up_mall:
+    "While walking at the mall, I spot Catherine inspecting some clothes."
+    menu:
+        "Should I go talk to her?"
+        "Go talk to her.":
+            "I gather my courage and approach her."
+            "I'm so close that I can smell the floral notes of her shampoo, but her mind seems to be wandering in some other world."
+            "I tap her on the shoulder, and she jolts."
+            c "N-nick? Hi."
+            n "Hi."
+        "Better leave it be.":
+            "I go to a store and wait for her to leave. She probably doesn't want to see me, anyway."
+            return
+    c "Could you just... I really don't feel like talking to you right now."
+    "She's avoiding eye contact."
+    menu:
+        "Apologize":
+            jump .sorry
+        "Blame her":
+            n "I just want to say one thing to you, Catherine."
+            n "It was all your fault. And you're not guilt tripping me on this one."
+            "Her expression turns blank, her face white, and she turns to leave without saying anything."
+        "Stay silent":
+            "I stand behind her, both of us stammering for words."
+            "Finally, she breaks the silence."
+            c "Do you hate me?"
+            menu:
+                "Yes":
+                    n "Kind of."
+                    c "... I thought so."
+                "No":
+                    n "Of course not."
+                    c "... That's good to hear."
+    return
+        
+label .sorry:
+    n "Catherine, I'm sorry. I didn't mean to hurt you."
+    n "Please forgive me."
+    "She looks hesitant, her eyes glimmering with sorrow."
+    c "Nicky......"
+    "The silence is interrupted by the sound of her swallowing."
+    c "Nicholas, I already have someone else."
+    n "What? It's only been three days!"
+    "Cat frowns."
+    c "Well, he asked me out."
+    menu:
+        "T-that's great!":
+            n "Well, that's just great."
+            c "It, uh, it is?"
+            n "Yeah, I'm so happy for you."
+            n "I'm sure you've finally found someone you deserve."
+            n "You know, someone who doesn't waste all his time online."
+            c "Nick, stop acting like a fricking kid!"
+            n "I'm serious! I'm sure this guy is way better for you. What's he like, anyway?"
+            jump .guydescription
+        "Come on, who is it?":
+            n "Who is it?"
+            "Cat folds her arms in defense."
+            c "None of your business."
+            n "Come on, tell me."
+            c "I-it's no one you know..."
+            n "Well, what's he like?"
+            jump .guydescription
+        "Well, I've got a new girlfriend too!":
+            jump .newgirlfriend
+            
+label .newgirlfriend:
+    n "W-well, you know what? I've found a new girlfriend too!"
+    "Now it's her turn to be astonished."
+    c "W-WHAT!? Who?"
+    n "Oh, you haven't met her..."
+    c "... Oh yeah? What's she like?"
+    "Uh-oh. She doesn't seem to be buying my story!"
+    menu:
+        "She plays DFO.":
+            c "Really? What sort of character?"
+            n "What do you care? It's not like you'd even understand."
+            "My comment doesn't seem to satisfy her."
+            c "Nevermind that. Just tell me."
+            menu:
+                "She's a priestess named Aerith.":
+                    "Catherine blinks."
+                    c "O-oh? Is that so?"
+                    n "Yes. She had obviously taken a liking to me, so we hooked up right after you and I broke up."
+                    c "Excuse me, 'obviously liked you'? Cut it with the arrogance, Nick."
+                "She's an assassin named Silvia.":
+                    "Catherine's expression turns sour."
+                    c "Really. Have you even met this person in real life?"
+                    menu:
+                        "Yes.":
+                            n "Sure. Many times."
+                            c "You're such a bad liar, Nick."
+                            "The wavering of her voice betrays her uncertainty."
+                        "No.":
+                            n "Well, not yet..."
+                            "Catherine responds to that with a hurt laugh."
+                            c "And you think you're together. Get your feet back on the ground."
+                        "We have a date coming up.":
+                            n "We've already set up a date."
+                            "Catherine raises her eyebrows in disbelief."
+                            c "No way! You're just, you're just saying that to boost your ego..."
+                "She's a demopyre mage named Lucia666.":
+                    "Catherine seems confused."
+                    c "What? A demopyre?"
+                    n "Demon vampire, duh."
+                    "She shakes her head, frowning in disbelief."
+                    c "That doesn't even make sense."
+                    n "Hey, I didn't design the game."
+                    c "That's not what I... whatever."
+        "Okay, I made her up.":
+            n "You caught me. I made it up."
+            c "Figured as much."
+        "She's hot.":
+            n "Well, you know, a real blonde bombshell!"
+            n "Short, wavy hair, curvy body, ample breasts..."
+            n "... always wears white ..."
+            c "Uh, Nick?"
+            c "Are you describing Marilyn Monroe?"
+            n "What? Nooo. No, she's real. I mean, Marilyn Monroe is real too, and so's this girl!"
+            n "Yeah, and she's really into me. She says I'm the most handsome man she's ever laid her eyes upon!"
+            n "And then she said: 'You'd have to be a real idiot to let go of a guy like me!' Yeah!"
+            "Catherine is giggling now."
+            c "Whatever. I never did get your sense of humor, Nick."
+    return
+
+label .guydescription:
+    $ height = renpyrandomnormal(178, 7)
+    $ haircolor = renpy.random.choice(["auburn", "fiery", "blonde", "chestnut", "black"])
+    $ eyecolor = renpy.random.choice(["baby blue", "cerulean", "gray", "hazel", "amber", "deep blue", "indigo"])
+    $ positiveattribute1 = renpy.random.choice(["smart", "intelligent", "hunky", "confident"])
+    $ positiveattribute2 = renpy.random.choice(["funny", "humorous", "good-looking", "attractive"])
+    c "Well, he's [height] cm tall, he has [haircolor] hair and [eyecolor] eyes, he's [positiveattribute1] and [positiveattribute2]..."
+    n "... And he lives in Canada."
+    c "This is serious, Nick!"
+    return
+    
+label .interrupt:
+    "Catherine puts down the shirt she was inspecting and turns to leave."
+    menu:
+        "Stop her.":
+            # Silence
+            "I place my hand on her shoulder, and she turns around, looking defiantly into my eyes."
+            c "What?"
+            menu:
+                "Kiss her.":
+                    # Response should depend on affection
+                    "Without giving her time to react, I press my mouth upon her rosy lips."
+                    "At first she resists, but then her arms curl around my back, embracing me."
+                    # If she's angry, expect a slap instead
+                    "After a moment's eternity, we let go, still gazing deeply into each other's eyes."
+                    jump .loveyou
+                "Profess your love for her.":
+                    n "Cat, I love you. Please come back to me."
+                    # Response should depend on affection
+                    c "Nick, I..."
+                    c "I can't. It won't work."
+                    "She breaks free from my grasp and walks away as I reach my hand toward her back, receding into the distance."
+                "Slap her.":
+                    "I slap her on her cheek. I try to be gentle, but hey..."
+                    "She holds her cheek with reddened eyes."
+                    "Then, she regains her fervor."
+                    c "What did you do that for!?"
+                    menu:
+                        "Because I love you.":
+                            n "I love you, Cat. And I can't take these games any longer."
+                            jump .loveyou
+                        "Because you deserve it.":
+                            n "You're always playing games with me. I can't stand it anymore!"
+                            c "Games!? I'm the one playing games with {i}you{/i}?"
+                            c "You're a hypocritical bastard, you know that, Nick?"
+                            "She breaks free from my grasp and storms off."
+                        "I just felt like it.":
+                            n "I don't know where it came from. Sorry, I guess."
+                            c "You're always guessing, aren't you?"
+                            n "W-what's that supposed to mean?"
+                            "She sighs, breaks free and leaves me hanging."
+                "Say nothing.":
+                    "We stay silent, still looking at each other."
+                    "Then, she whispers."
+                    c "Nick, please just let it go."
+                    "She turns around, and, breaking free from my grasp, walks away.."
+        "Let her go.":
+            "With a heavy heart, I watch her back disappear into the crowd."
+    return
+        
+label .loveyou:
+    c "Nick, I..."
+    # If she really likes you, she'll be willing to try again
+    "She closes her eyes, then runs away."
+    
+# Other scenes
+
+label DFOServers:
+    scene servers
+    "I'm pretty elated."
+    "I get to clean at one of the server farms at DFO today!"
+    "In one of the rooms I'm supposed to clean, I see a guy wearing cheap VR gear at one of the desks."
+    "He's probably an employee. Usually there isn't anyone here while I'm working, though."
+    "Should I disturb him?"
+    menu:
+        "Is there any real choice?":
+            jump .conversation_start
+        "Eh, I'll go clean somewhere else.":
+            "I go clean the other parts of the building, but when I return, the guy is still there."
+            menu:
+                "Talk to him.":
+                    jump .conversation_start
+                "Just ignore the room":
+                    "As I turn to leave, one last thought enters my mind."
+                    "My boss has been a bit stressed lately. No way he's going to appreciate it if someone finds out I didn't clean the room."
+                    menu:
+                        "Leave anyway.":
+                            "He seems really busy. Maybe this is the best option in the end."
+                            return
+                        "Okay, okay, go talk to the guy. Yeesh.":
+                            jump .conversation_start
+    return
+    
+label .conversation_start:
+    $ main_hub_visits = 0
+    "I go over to him and tap him lightly on the shoulder."
+    "He jolts and takes the VR gear away."
+    "His expression relaxes as he sees me, though."
+    m "Hi. I guess you're the cleaner?"
+    menu:
+        "Yes.":
+            m "Yeah, I guessed as much."
+            jump .main_hub_transition
+        "No.":
+            m "I haven't seen you before. A new employee?"
+            menu:
+                "Yes.":
+                    m "Excuse me, can I see your ID? Just need to be on the lookout for any suspicious activity, you see."
+                    n "Uh, I don't have one."
+                    n "Sorry, I was only joking. I'm actually a cleaner."
+                    "He doesn't seem to trust me that much."
+                    m "Yeah, I hope so."
+                    jump .main_hub_transition
+                "No, I'm a spy.":
+                    n "No, I'm a spy."
+                    m "Pretty forthright for a spy. Then again..."
+                    m "... you can never be sure."
+                    n "It was just a joke. I'm a cleaner, like you thought."
+                    jump .main_hub_transition
+                "I was just joking. I'm a cleaner.":
+                    m "I thought so."
+                    jump .main_hub_transition
+        "Who are you?":
+            m "I'll ask the questions here, if you don't mind."
+            m "For reasons of security, you know. Who are you?"
+            n "I'm from the cleaning service."
+            m "Just as I thought."
+            jump .main_hub_transition
+        
+label .main_hub_transition:
+    if main_hub_visits == 0:
+        m "What do you want?"
+    elif main_hub_visits == 1:
+        n "I have some more questions."
+        m "Ask away."
+    elif main_hub_visits == 2:
+        n "I'd still like to ask some questions..."
+        m "Okay, but I need to get back to work soon."
+    else:
+        n "A few more questions..."
+        m "{i}One{/i} more question. I really need to get back to work."
+    $ main_hub_visits += 1
+    jump .main_hub
+    
+label .main_hub:
+    call HubMenu("DFOServers", True, [("Who are you?", "who_transition"),
+    ("Could you refresh my memory a bit? Who were you?", "who_transition2"),
+    ("What are you doing?", "what_transition"),
+    ("Could you remind me what you were doing here?", "what_transition2"),
+    ("Why are you still here?", "why_transition"),
+    ("You were working late for some reason?", "why_transition2"),
+    ("Could you move? I need to clean this room.", "move_transition"),
+    ("Why did you say you couldn't move, again?", "move_transition2"),
+    ("Do you happen to own a master key?", "key_transition"),
+    ("Couldn't you let me see some places, just this once?", "key_transition2")], ("On second thought, I'll just leave you to your work.", "leave"))
+    return
+            
+label .leave:
+    n "I think I'll just leave you to do your work."
+    m "Well, thanks for the company. It gets a bit lonely here, some nights."
+    return
+    
+label .forced_leave(label):
+    if main_hub_visits > 3:
+        m "Anyway, I really need to get back to work now. It was nice talking to ya."
+        "He puts the VR glasses back on and refuses to respond anymore."
+        return
+    else:
+        jump expression "DFOServers"+label
+        
+label .who_transition:
+    m "Oh, how impolite of me. I'm Andy Vrable, an employee here, at least for now. My friends call me Data."
+    $ serverguy = "Andy"
+    call .forced_leave(".who")
+    return
+    
+label .who_transition2:
+    n "Who were you again?"
+    "He looks at me, a bit non-plussed."
+    m "Andy 'Data' Vrable, data scientist at Klein Hyperbolic. I didn't catch your name, mister..."
+    n "Nicholas."
+    m "Yes, well, Nicholas, consider yourself lucky."
+    m "I don't remember other people's names and I don't expect them to remember mine."
+    call .forced_leave(".who")
+    return
+    
+label .who:
+    call HubMenu("DFOServers", True, [("Why do they call you that?", "who_why"),
+    ("Why did they call you Data again?", "who_why_recap"),
+    ("So you designed DFO?", "who_designed"),
+    ("What did you say your job was?", "who_designed_recap"),
+    ("'For now'? Are you thinking of quitting?", "who_work"),
+    ("What was that AI system you mentioned?", "who_work_recap"),
+    ("What's it like to work at a cool company like Klein Hyperbolic?", "who_Klein"),
+    ("You said you didn't like to work here?", "who_Klein_recap")], ("I had some more general questions...", "main_hub_transition"))
+    return
+    
+    # $ who_why = False
+    # $ who_designed = False
+    # $ who_Klein = False
+    # $ last_asked = ""
+    #menu:
+    #    "Why do they call you that?" if not who_why and last_asked != "who_why":
+    #        $ who_why = True
+    #        $ last_asked = "who_why"
+    #        jump .who_why
+    #    "Why did they call you Data again?" if who_why and last_asked != "who_why":
+    #        $ last_asked = "who_why"
+    #        m "Apparently they think I'm like an android. Or it's a twisted compliment, I don't know."
+    #    "So you designed DFO?" if not who_designed and last_asked != "who_designed":
+    #        $ who_designed = True
+    #        $ last_asked = "who_designed"
+    #        jump .who_designed
+    #    "What did you say your job was?" if who_designed and last_asked != "who_designed" and last_asked != "datascience":
+    #        $ last_asked = "datascience"
+    #        m "I'm a data scientist. I go through user data logs and try to find patterns in it."
+    #    "What was that AI system you mentioned?" if who_designed and last_asked != "who_designed" and last_asked != "AIDA":
+    #        $ last_asked = "AIDA"
+    #        m "I think it was called AIDA according to the leaks. Artificially Intelligent Directing Assistant."
+    #        m "I feel like I've seen the term somewhere else, though..."
+    #    "What's it like to work at a cool company like Klein Hyperbolic?" if not who_Klein and last_asked != "who_Klein":
+    #        $ who_Klein = True
+    #        $ last_asked != "who_Klein"
+    #        jump .who_Klein
+    #    "You said you didn't like to work here?" if who_Klein and last_asked != "who_Klein":
+    #        $ last_asked = "who_Klein"
+    #        m "Well, not as long as they're treating their employees like dirt."
+    #    "I had some more general questions...":
+    #        jump .main_hub_transition
+            
+label .who_why:
+    m "I think it's supposed to be a Star Trek reference. Makes sense, considering my line of work."
+    jump .who
+
+label .who_why_recap:
+    m "Apparently they think I'm like an android. Or it's a twisted compliment, I don't know."
+    jump .who
+    
+label .who_designed:
+    m "Not really. I'm a data scientist. I analyze all the user data we're collecting and try to find sensible patterns within it."
+    m "It's my job to figure out what people enjoy so the marketers and game designers can capitalize on that."
+    jump .who
+
+label .who_designed_recap:
+    m "I'm a data scientist. I go through user data logs and try to find patterns in it."
+    jump .who
+    
+label .who_work:
+    m "I guess you know about the AI director?"
+    menu:
+        "Of course":
+            n "Yeah, I, uh, know all about it."
+            m "Really? Well, my analyses are used to subtly modify its algorithms. You know, to produce an improved player experience."
+        "I've heard of it, but don't know the details.":
+            n "I don't really know the details."
+            m "Yeah, well, you'd have to be a programmer, I guess. It's not like we want our competitors like ClicheQuest, Alfheim Online and Elder Tale to figure out our secret sauce."
+            call .aidescription
+        "Never heard.":
+            n "Never heard of it?"
+            m "Oh? I thought you were a player?"
+            n "I've been on hiatus for a while."
+            m "Hmm. All right, then."
+            call .aidescription
+    m "Recently, some guys at the company have been spreading rumors about a next-gen AI director that would completely replace data scientists like me."
+    m "Rumor goes Klein Hyperbolic is developing it in collaboration with some big names like MIT and DeepMind Technologies."
+    m "It's a secret even within the company, but some articles about it were leaked on the internet a while back."
+    m "The architecture they describe is really freaking cool, way beyond any conventional game AI I've ever seen."
+    jump .who
+    
+label .who_work_recap:
+    m "I think it was called AIDA according to the leaks. Artificially Intelligent Directing Assistant."
+    m "I feel like I've seen the term somewhere else, though..."
+    jump .who
+            
+label .aidescription:
+    m "Well, the purpose of the AI director is to improve the player experience by spawning monsters, redesigning dungeons and generating new quests."
+    m "It's not actually as complicated as it sounds. Games have been using AI directors since 2008."
+    return
+    
+label .who_Klein:
+    n "So, isn't it amazing to work at a company like this?"
+    "He doesn't seem to agree with my remark."
+    m "Well, you know, it's a job. The pay's good, at least."
+    n "But you don't like it?"
+    m "I'm working overtime right now, aren't I?"
+    jump .who
+    
+label .who_Klein_recap:
+    m "Well, not as long as they're treating their employees like dirt."
+    jump .who
+    
+label .what_transition:
+    m "I'm running late on some analyses on the user data generated by the new expansion they released a while back."
+    m "So it's crunch time as usual."
+    call .forced_leave(".what")
+    return
+    
+label .what_transition2:
+    n "What were you doing, again?"
+    m "I'm trying to do these analyses."
+    "He notices my fidgeting."
+    m "It's all right. A small break does no harm."
+    call .forced_leave(".what")
+    return
+    
+label .what:
+    call HubMenu("DFOServers", True, [("How do you actually analyze the data?", "what_analysis"),
+    ("Can you show me that VR thing again?", "what_analysis_recap"),
+    ("Any interesting patterns?", "what_interesting"),
+    ("You sure you can't tell me any of your findings?", "what_interesting_recap"),
+    ("Wasn't that expansion released like a month ago?", "what_expansion"),
+    ("Sorry, I forgot why you're still working on this?", "what_expansion_recap")], ("I had some more general questions...", "main_hub_transition"))
+    return
+            
+label .what_analysis:
+    n "How do you actually do the analysis? With that headset, I would have mistaken you for a play-tester."
+    m "Heh. It's a bit hard to explain. But I can show you."
+    "He beckons me to place the headset over my eyes."
+    "As I do so, I'm first struck by the primitive graphics."
+    "But this initial impression quickly turns into confusion."
+    "I am watching small shapes of sundry shapes and colors fly around a pitch-black space, like falling stars or colorful dust motes floating in all directions around me."
+    "I return the headset, feeling a bit disoriented."
+    n "What was that?"
+    m "Well, if you want the technical explanation, it was a projection of a higher-dimensional data space into a 7-dimensional space."
+    m "Seven dimensions, that is, three spatial, one temporal, color, size and shape."
+    n "That didn't really help."
+    m "Haha, just think of it like a really complicated scatter plot."
+    m "Exploratory data analysis really took off after the VR revolution."
+    m "It takes years to build up the experience you need, but eventually you can read deep patterns in that cloud of information."
+    m "I've been dreaming of tech like this ever since I read Gibson as an adolescent. I was one of the first to jump on the bandwagon when the cyberspace became reality."
+    jump .what
+    
+label .what_analysis_recap:
+    n "Could you show me that VR thing again? It was cool."
+    m "The 7-dimensional scatter plot? Sure."
+    "I place the headset over my eyes again. This time, I can almost make out patterns in the way the technicolor points and crosses move across the vast expanses of the black background."
+    n "Yup, still cool, still confusing."
+    m "It takes a while to really spot the patterns. It's rewarding work, in and of itself."
+    jump .what
+    
+label .what_interesting:
+    n "So, uh, found anything interesting so far?"
+    m "Plenty. But they're company secrets."
+    menu:
+        "Come on, I probably won't even get it.":
+            "He looks at me suspiciously."
+            m "Yeah. Either you're naive or a spy."
+            m "Let me give you a piece of advice, kid."
+            m "Don't trust anyone. Everything's broken, nothing is secure."
+        "Ah, okay then.":
+            n "Okay, no pressure."
+            m "Sorry about that. But I really can't tell you."
+    jump .what
+    
+label .what_interesting_recap:
+    n "Could you please tell me something you've figured out?"
+    m "No. And I'd advise you to stop asking."
+    jump .what
+    
+label .what_expansion:
+    n "I thought that expansion was released over a month ago. You're still analysing it?"
+    m "Well, of course we've been analysing data from players and beta testers since before it was released."
+    m "But now we've acquired enough to start searching for some truly stable patterns."
+    jump .what
+    
+label .what_expansion_recap:
+    n "Why were you still analyzing that expansion?"
+    m "The more data you have, the more certain will be the inferences you can draw from it."
+    m "We've finally collected enough to figure out and confirm stable patterns."
+    jump .what
+    
+label .why_transition:
+    m "I'm running late on these analyses I'm supposed to be making. And Klein Hyperbolic really doesn't appreciate late reports."
+    m "But they're not against over-time work."
+    call .forced_leave(".why")
+    return
+
+label .why_transition2:
+    n "What was the reason you were working so late?"
+    m "Draconic employment policies."
+    n "Ah."
+    call .forced_leave(".why")
+    return
+    
+label .why:
+    call HubMenu("DFOServers", True, [("You still get extra pay, right?", "why_extra"),
+    ("They really don't pay you for over-time work?", "why_extra_recap"),
+    ("That sorta sucks.", "why_sucks"),
+    ("What was that piece of advice you gave me about games development?", "why_sucks_recap"),
+    ("Is this really legal?", "why_legal"),
+    ("Can't you sue them or something?", "why_legal_recap")], ("I had some more general questions...", "main_hub_transition"))
+    return
+
+label .why_extra:
+    n "But they still pay you for over-time, right?"
+    m "I wish. For me, this is just a way to keep my job."
+    jump .why
+    
+label .why_extra_recap:
+    n "They really don't pay you for working over-time?"
+    m "What are you expecting me to say? 'Haha, it was just a joke'?"
+    "He sighs."
+    m "When you get older, you find out that jokes aren't as funny when you're the butt of them..."
+    jump .why
+    
+label .why_sucks:
+    n "That kinda sucks."
+    "He responds in a dry tone."
+    m "Gee, thanks for the empathy."
+    m "Anyway, if you ever get into games development, make sure to pick the right company."
+    m "In case you're so amazing that you {i}have{/i} choice."
+    jump .why
+    
+label .why_sucks_recap:
+    n "What was that tip you gave me about games development?"
+    m "Unless you're really passionate about it, just don't."
+    m "But hey, you're young. You've no business listening to a cynical old man like me."
+    jump .why
+    
+label .why_legal:
+    n "This can't be legal. You can't just make people work like slaves."
+    m "Apparently you can, if you're too big to care."
+    jump .why
+
+label .why_legal_recap:
+    n "You really should just sue them."
+    m "And lose my livelihood fighting a losing battle for the sake of justice in an unjust world."
+    m "Must be nice to have eyes so clear and blue."
+    jump .why
+
+label .key_transition:
+    n "So, um, I guess you have the keys to all the top-secret areas?"
+    "He furrows his eyebrows, suspicious."
+    m "And what if I do?"
+    menu:
+        "I'd like to see some of the server halls.":
+            n "I'd just like to see some of the server halls. You know, out of curiosity."
+            m "Is that so? Well, I'm sorry to disappoint, but I can't let you there."
+        "Nothing, just asking.":
+            n "Oh, it's nothing. I was just curious."
+            m "Oh, you were, weren't you?"
+    call .forced_leave(".main_hub_transition")
+    return
+    
+label .key_transition2:
+    n "You really can't show me around?"
+    m "Nope. Sorry, that's just the way it is."
+    call .forced_leave(".main_hub_transition")
+    return
+    
+label .move_transition:
+    n "Could you maybe move somewhere? I need to clean this room."
+    m "Sorry, pal. The data is contained locally on this computer for security reasons. I mean, I could transfer it, but that would take like an hour."
+    call .forced_leave(".move")
+    return
+    
+label .move_transition2:
+    n "Why did you say you couldn't move from here?"
+    m "The data is contained locally, and there's loads of it. And, in addition to that, I simply lack the time."
+    call .forced_leave(".move")
+    return
+    
+label .move:
+    call HubMenu("DFOServers", True, [("You're storing the data locally?", "move_locally"),
+    ("Why did you have to store the data locally, again?", "move_locally_recap"),
+    ("An hour? How much data do you have there?", "move_how_much"),
+    ("How much data did you say you had stored?", "move_how_much_recap"),
+    ("It won't take long. You can just come back afterwards.", "move_quick"),
+    ("I'd really like to clean this room.", "move_quick_recap")], ("I had some other questions...", "main_hub_transition"))
+    return
+    
+label .move_locally:
+    n "You're storing it locally? As in 'not connected to the Net?'"
+    m "That's what the word means, yes."
+    n "Why?"
+    m "I told you. Security. Course, it means I have to commute here whenever I want to take a look at the whole dataset."
+    jump .move
+    
+label .move_locally_recap:
+    n "Why did the data have to be local, again?"
+    m "If the storage servers are not connected to the net, there's no danger of them being hacked. In principle, at least."
+    jump .move
+
+label .move_how_much:
+    n "It takes an hour? Just how much data have you collected?"
+    m "I reckon it's somewhere around 1.6 petabytes."
+    n "Wow."
+    m "Yeah, it's pretty cool."
+    jump .move
+
+label .move_how_much_recap:
+    n "How much data did you have here?"
+    m "It was around 1.6 petabytes."
+    n "You know, that number never ceases to amaze me."
+    jump .move
+
+label .move_quick:
+    n "I'll be quick, I promise."
+    n "I really need to clean this place. Command from above, you understand."
+    m "Hey, don't worry about it. I'll just tell the bosses I saw you and didn't let you clean up cuz I was so paranoid."
+    m "You're not going to get into any trouble for it."
+    jump .move
+    
+label .move_quick_recap:
+    n "Could I please clean this place?"
+    m "Why do you want it that bad? I said I'm not gonna let anyone pressure you about it."
+    n "Um, I guess I'm just addicted to cleanliness."
+    m "You'll make a great housewife some day."
+    jump .move
+    
+# Code for handling Bioware-style Hub-and-Spokes conversation in an elegant (or "elegant") way
+
+label HubMenu(calling_label, hide_if_last_asked, list_of_choices, exit_choice = False):
+    # list_of_choices is a python list of (string, string)-tuples representing the choice text and the name of the label.
+    # The handler *doesn't* allow repeating choices. Instead, for each choice you need to provide a "repeat-alternative" which
+    # will be shown after the player has tried the choice once. The rep-alt should provide a short recap of the earlier discussion.
+    # Check the examples above, it'll probably be clearer.
+    # Supports up to 6 choices, but it's easy to extend.
+    
+    menu:
+
+        "[list_of_choices[0][0]]" if len(list_of_choices) >= 1 and (not hide_if_last_asked or last_seen != list_of_choices[0][1] ) and not list_of_choices[0][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[0][1]
+            $ last_seen = list_of_choices[0][1]
+            $ hub_seen_labels.append(list_of_choices[0][1])
+        "[list_of_choices[1][0]]" if len(list_of_choices) >= 2 and (not hide_if_last_asked or last_seen != list_of_choices[0][1] ) and list_of_choices[0][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[1][1]
+            $ last_seen = list_of_choices[0][1]
+            
+        "[list_of_choices[2][0]]" if len(list_of_choices) >= 3 and (not hide_if_last_asked or last_seen != list_of_choices[2][1] ) and not list_of_choices[2][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[2][1]
+            $ last_seen = list_of_choices[2][1]
+            $ hub_seen_labels.append(list_of_choices[2][1])
+        "[list_of_choices[3][0]]" if len(list_of_choices) >= 4 and (not hide_if_last_asked or last_seen != list_of_choices[2][1] ) and list_of_choices[2][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[3][1]
+            $ last_seen = list_of_choices[2][1]
+            
+        "[list_of_choices[4][0]]" if len(list_of_choices) >= 5 and (not hide_if_last_asked or last_seen != list_of_choices[4][1] ) and not list_of_choices[4][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[4][1]
+            $ last_seen = list_of_choices[4][1]
+            $ hub_seen_labels.append(list_of_choices[4][1])
+        "[list_of_choices[5][0]]" if len(list_of_choices) >= 6 and (not hide_if_last_asked or last_seen != list_of_choices[4][1] ) and list_of_choices[4][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[5][1]
+            $ last_seen = list_of_choices[4][1]
+            
+        "[list_of_choices[6][0]]" if len(list_of_choices) >= 7 and (not hide_if_last_asked or last_seen != list_of_choices[6][1] ) and not list_of_choices[6][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[6][1]
+            $ last_seen = list_of_choices[6][1]
+            $ hub_seen_labels.append(list_of_choices[6][1])
+        "[list_of_choices[7][0]]" if len(list_of_choices) >= 8 and (not hide_if_last_asked or last_seen != list_of_choices[6][1] ) and list_of_choices[6][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[7][1]
+            $ last_seen = list_of_choices[6][1]
+            
+        "[list_of_choices[8][0]]" if len(list_of_choices) >= 9 and (not hide_if_last_asked or last_seen != list_of_choices[8][1] ) and not list_of_choices[8][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[8][1]
+            $ last_seen = list_of_choices[8][1]
+            $ hub_seen_labels.append(list_of_choices[8][1])
+        "[list_of_choices[9][0]]" if len(list_of_choices) >= 10 and (not hide_if_last_asked or last_seen != list_of_choices[8][1] ) and list_of_choices[8][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[9][1]
+            $ last_seen = list_of_choices[8][1]
+            
+        "[list_of_choices[10][0]]" if len(list_of_choices) >= 11 and (not hide_if_last_asked or last_seen != list_of_choices[10][1] ) and not list_of_choices[10][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[10][1]
+            $ last_seen = list_of_choices[10][1]
+            $ hub_seen_labels.append(list_of_choices[10][1])
+        "[list_of_choices[11][0]]" if len(list_of_choices) >= 12 and (not hide_if_last_asked or last_seen != list_of_choices[10][1] ) and list_of_choices[10][1] in hub_seen_labels:
+            $ target = calling_label + "." + list_of_choices[11][1]
+            $ last_seen = list_of_choices[10][1]
+         
+        # Exit choice 
+        "[exit_choice[0]]" if exit_choice:
+            $ target = calling_label + "." + exit_choice[1]
+            
+    jump expression target

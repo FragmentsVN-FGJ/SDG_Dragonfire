@@ -81,6 +81,8 @@ label start:
     $ Aerith_hurt = False
     $ Aerith_barrier = False
     $ curing_light = False
+    
+    $ serverguy = "Man"
 
     # Show a default background.
     scene forest
