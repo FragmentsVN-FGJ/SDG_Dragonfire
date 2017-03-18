@@ -262,7 +262,7 @@ label .payment:
     $ pay_both_tried = False
     cashier "That was one student, one adult, right?"
     n "Yes."
-    cashier "That'll be [prices['movies']/2] and [prices['movies']] bits, please."
+    cashier "That'll be [prices['movies_student']] and [prices['movies']] bits, please."
     call check_wallet
     jump .payment_menu
     

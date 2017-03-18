@@ -33,7 +33,7 @@ init:
     $ serverguy = "Man"
     
     $ visited = {"arcade": False, "movies": False}
-    $ prices = {'arcade': 7000, 'arcade_both': 14000, 'movies': 15000, 'movies_both': 22500, 'gym': 1000, 'swimminghall': 3000, "bar_cheap": 3000, "bar_medium": 6000, "bar_expensive": 12000, "parlor_cheap": 6000, "parlor_medium": 12000, "parlor_expensive": 24000, "mall_cheap": 3000, "mall_medium": 8000, "mall_expensive": 24000, "bowling": 1000, "restaurant_cheap": 12000, "restaurant_medium": 24000, "restaurant_expensive": 48000}
+    $ prices = {'arcade': 7000, 'arcade_both': 14000, 'movies': 15000, 'movies_student': 7500, 'movies_both': 22500, 'gym': 1000, 'swimminghall': 3000, "bar_cheap": 3000, "bar_medium": 6000, "bar_expensive": 12000, "parlor_cheap": 6000, "parlor_medium": 12000, "parlor_expensive": 24000, "mall_cheap": 3000, "mall_medium": 8000, "mall_expensive": 24000, "bowling": 1000, "restaurant_cheap": 12000, "restaurant_medium": 24000, "restaurant_expensive": 48000}
     $ fitness_bonuses = {'swimminghall': 7, 'runningtrack': 5, 'gym': 6}
     $ stress_modifiers = {'movies': -2, 'arcade': -1, 'bar_drink': -1, 'bar_nodrink': 0, 'library': 0, 'work': 2, 'restaurant': -1, 'mall_expensive': -3, 'mall_medium': -2, 'mall_cheap': -1, 'clean': 0, 'bowling': -1, 'swimminghall': 0, 'gym': 0, 'runningtrack': 0, 'business': 0, 'parlor_broken_up': 0, 'parlor': -2}
 

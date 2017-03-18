@@ -702,7 +702,7 @@ label .react_phase:
         
 label .dodge(method):
     $ attempt = NonUniformRandom( [("attempt", 1), ("try", 1)] ).pick()
-    $ i = renpy.random.random
+    $ i = renpy.random.random()
     "I [attempt] to [method] out of the way!"
     if i < 0.5:
         "And barely manage to!"
