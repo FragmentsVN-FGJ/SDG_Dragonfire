@@ -61,6 +61,7 @@ screen image_planner(period):
     window:
         style "dayplanner_window"
         #background "images/fullmap.png"
+        use display_stats(True, True, True, True)
         style_group "dp_choice"
         for name, curr_val, tooltip, x, y, enable, should_show in this_period.acts:
             $ show_this = eval(should_show)

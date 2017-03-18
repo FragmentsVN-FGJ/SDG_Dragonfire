@@ -17,6 +17,8 @@ init python:
     #register_stat("Strength", "strength", 10, 100)
     #register_stat("Intelligence", "intelligence", 10, 100)
     register_stat("Fitness", "fitness", 50, 100)
+    register_stat("Stress", "stress", 3, 10)
+    register_stat("Bits", "cash", 24126, 999999)
 
     #dp_period("Morning", "morning_act")
     #dp_choice("Attend Class", "class")
@@ -29,13 +31,14 @@ init python:
     dp_choice("Swimming hall", "swimming")
     dp_choice("Gym", "gym", show="day == 3")
     dp_choice("Running track", "track")
+    dp_choice("Call Catherine", "callcat")
 
     dp_period("Afternoon", "afternoon_act")
     #dp_choice("Study", "study")
     #dp_choice("Hang Out", "hang")
     dp_choice("Ice Cream Parlor", "parlor")
     dp_choice("Restaurant", "restaurant")
-    dp_choice("Bowling", "bowling")
+    #dp_choice("Bowling", "bowling")
     dp_choice("Mall", "mall")
     dp_choice("Library", "library")
     dp_choice("Work", "work")
@@ -59,15 +62,61 @@ init python:
     # the person the promise was made to, the promise itself, and whether the promise is
     # fulfilled (True), or not (False). The label night checks whether the promises for that day have been fulfilled and
     # gives a warning if they haven't. There're special date events linked to promises.
+    
+    # CASH SYSTEM
+    def paycash(amount):
+        if amount > cash:
+            return False
+        cash -= amount
+        return True
+        
+    # WORK SYSTEM
+    work_counter = 6
+    work_payment = 1500
+    # At the start of each week, you get work_payment bits for each day you've worked during the last week
+    
+    # AFFECTION AND TRUST
+    max_affection = 10
+    max_trust = 10
+    affection = {'Catherine': 5, 'Silvia': 5}
+    trust = {'Catherine': 5, 'Silvia': 5}
+    
+    def affection_modify(person, amount):
+        affection[person] = affection[person] + amount
+        if affection[person] > max_affection:
+            affection[person] = max_affection
+        if affection[person] < 0:
+            affection[person] = 0
+        return
+            
+    def trust_modify(person, amount):
+        trust[person] = trust[person] + amount
+        if trust[person] > max_trust:
+            trust[person] = max_trust
+        if trust[person] < 0:
+            trust[person] = 0
+        return
+        
 
 # Define characters
 define a = Character("Aerith")
 define n = Character("Nicholas")
 define s = Character("Silvia")
 define c = Character("Catherine")
-define cashier = Character("Cashier")
 define nvlNarrator = Character(None, kind=nvl)
 
+label pay(amount):
+    $ pay_successful = paycash(amount)
+    if pay_successful:
+        "I validate the transaction with my wristband."
+    else:
+        "As I'm about to pay, my wristband flashes a red light with the message: 'Transaction rejected. Bitcoin wallet balance exceeded.'"
+    return
+    
+label check_wallet:
+    "I covertly check my bitcoin wallet."
+    "It seems I've got [cash] bits."
+    return
 
 # This is the entry point into the game.
 label start:
@@ -82,8 +131,6 @@ label start:
     $ Aerith_barrier = False
     $ curing_light = False
     
-    $ serverguy = "Man"
-
     # Show a default background.
     scene forest
 
@@ -570,7 +617,6 @@ label RoomDescription:
 label parlorStart:
     show parlor with dissolve
     $ cat_mood = 0
-    $ cash = 24000
     $ ice_cream = None
     "Queens Gelateria is a mixed Italian-American -style ice cream parlor close to the center."
     "The place is surprisingly full even though it's already February."
@@ -613,15 +659,15 @@ label parlorStart:
         "The expensive one":
             "Well, at least I won't go hungry with this choice."
             $ ice_cream = "expensive"
-            $ cash = cash - 24000
+            $ paycash(24000)
         "The cheap one":
             "Sorry, Cat. I just don't have the money."
             $ ice_cream = "cheap"
-            $ cash = cash - 6000
+            $ paycash(6000)
         "Her favorite":
             "She might not admit it, but I'm sure she'll be happy."
             $ ice_cream = "favorite"
-            $ cash = cash - 12000
+            $ paycash(12000)
     n "I'll have this one."
     cashier "Excellent choice, sir. Will you be eating here?"
     n "Yes."
@@ -688,7 +734,8 @@ label promiseTime:
     if cat_mood < 0:
         "She doesn't take that too kindly."
         c "Yeah, just like last time!"
-        "She gets up and storms out, leaving her half-eatean ice cream behind."
+        "She gets up and storms out, leaving her half-eaten ice cream behind."
+        $ affection_modify('Catherine', -2)
     else:
         "She seems a bit sad."
         c "I guess I just have to believe you. Again."
@@ -707,6 +754,7 @@ label promiseMovies:
     c "Lover's Abandon."
     "Darn, that's some boring chick flick."
     n "Ahaha, sounds great!"
+    $ affection_modify('Catherine', +2)
     return
 
 label offerDFO:
@@ -783,6 +831,9 @@ label parlorBreakUp:
         "She licks on her spoon, but says nothing."
         "For what feels like an eternity, we just sit there, together yet separate."
 
+    $ broken_up = True
+    $ affection_modify('Catherine', -2)
+        
     return
 
 label parlorArgue:
@@ -796,10 +847,14 @@ label parlorArgue:
         n "Gaming keeps me together! Why can't you get that!?"
         c "Whatever. Just keep playing your games. No need to call."
         "With that, she storms out."
+        $ broken_up = True
+        $ affection_modify('Catherine', -2)
     else:
         "She looks down at her ice cream."
         c "It wouldn't be any better."
+        
 
+        
     return
 
 label parlorHypocrisy:
@@ -809,10 +864,13 @@ label parlorHypocrisy:
         c "It's stressful now! But at least I won't be dying alone in some godforsaken apartment playing a stupid video game because I have no life!"
         c "Whatever. Just keep playing your games. No need to call."
         "With that, she storms out."
+        $ broken_up = True
+        $ affection_modify('Catherine', -2)
     else:
         c "It's stressful now. But at least I'll get a proper job."
         c "Nick, please just let me help you..."
         "She tries to look endearingly into my eyes, but I avoid her gaze."
+        $ affection_modify('Catherine', 1)
 
     return
 
@@ -858,10 +916,13 @@ label quitDFO:
         c "That's not the real problem. Even if you stop playing, you won't change."
         c "Just... Goodbye, Nick."
         "She gets up and leaves."
+        $ broken_up = True
+        $ affection_modify('Catherine', -2)
     else:
         "Catherine doesn't say anything."
         "Then, she closes her eyes."
         c "Fine, if you promise. Nicholas, this is for your own good."
+        $ affection_modify('Catherine', 1)
 
     return
 
@@ -872,6 +933,8 @@ label parlorAccept:
     if cat_mood < 0:
         c "Yes. Well then, goodbye, Nicholas."
         "With that, she gets up and goes out the door."
+        $ broken_up = True
+        $ affection_modify('Catherine', -2)
     else:
         c "I don't want to leave you. But things can't go on like this anymore."
         n "Can we try? Just a little bit longer?"
@@ -885,6 +948,8 @@ label parlorPlead:
     if cat_mood < 0:
         c "I don't think so. This is it, Nicholas."
         "Before I have a chance to respond, she gets up and leaves."
+        $ broken_up = True
+        $ affection_modify('Catherine', -2)
     else:
         c "Fine. Let's try one last time."
         n "You don't realize how happy that makes me."
@@ -957,6 +1022,10 @@ label day:
 
     "It's day %(day)d."
     
+    if (day-1)%7 == 1:
+        "I get paid [work_counter*work_payment] bits for last week's work."
+        $ cash += work_counter*work_payment
+        $ work_counter = 0
 
     # Here, we want to set up some of the default values for the
     # day planner. In a more complicated game, we would probably
@@ -980,7 +1049,7 @@ label day:
 label morning:
 
     # Tell the user what period it is.
-    centered "Morning"
+    centered "{size=+10}{color=#fff}Morning{/color}{/size}{w=1.0}{nw}"
 
     # Set these variables to appropriate values, so they can be
     # picked up by the expression in the various events defined below.
@@ -1004,7 +1073,7 @@ label afternoon:
 
     # The rest of this is the same as for the morning.
 
-    centered "Afternoon"
+    centered "{size=+10}{color=#fff}Afternoon{/color}{/size}{w=1.0}{nw}"
 
     $ period = "afternoon"
     $ act = afternoon_act
@@ -1019,7 +1088,7 @@ label evening:
     if check_skip_period():
         jump night
 
-    centered "Evening"
+    centered "{size=+10}{color=#fff}Evening{/color}{/size}{w=1.0}{nw}"
 
     $ period = "evening"
     $ act = evening_act
@@ -1033,9 +1102,11 @@ label night:
     # events can be run. We put some boilerplate end-of-day text
     # in here.
 
-    centered "Night"
+    centered "{size=+10}{color=#fff}Night{/color}{/size}{w=1.0}{nw}"
 
     "It's getting late, so I decide to go to sleep."
+    
+    $ fitness -= 2
     
     python:
         forgotten_promises = set()
