@@ -420,6 +420,7 @@ label businessintro:
 
 label DFOServers:
     scene servers
+    $ work_counter += 1
     "I'm pretty elated."
     "I get to clean at one of the server farms at DFO today!"
     "In one of the rooms I'm supposed to clean, I see a guy wearing cheap VR gear at one of the desks."
