@@ -1023,8 +1023,9 @@ label day:
     "It's day %(day)d."
     
     if (day-1)%7 == 1:
-        "I get paid [work_counter*work_payment] bits for last week's work."
-        $ cash += work_counter*work_payment
+        $ payment = work_counter*work_payment
+        "I get paid [payment] bits for last week's work."
+        $ cash += payment
         $ work_counter = 0
 
     # Here, we want to set up some of the default values for the
