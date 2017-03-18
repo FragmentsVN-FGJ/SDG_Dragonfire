@@ -18,7 +18,7 @@ init python:
     #register_stat("Intelligence", "intelligence", 10, 100)
     register_stat("Fitness", "fitness", 50, 100)
     register_stat("Stress", "stress", 3, 10)
-    register_stat("Bits", "cash", 24126, 999999)
+    register_stat("Bits", "cash", 27126, 999999)
 
     #dp_period("Morning", "morning_act")
     #dp_choice("Attend Class", "class")
@@ -72,7 +72,7 @@ init python:
         
     # WORK SYSTEM
     work_counter = 6
-    work_payment = 1500
+    work_payment = 9000
     # At the start of each week, you get work_payment bits for each day you've worked during the last week
     
     # AFFECTION AND TRUST
