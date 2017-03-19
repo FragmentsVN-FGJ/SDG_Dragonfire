@@ -36,8 +36,8 @@ style dp_label_text:
 # Make each choice button the same size, and centered.
 style dp_choice_button is button:
     size_group dp_choice
-    background '#0001'
-    hover_background '#fff3'
+    background '#fff6'
+    hover_background '#fffa'
     xalign 0.5
 
 style dp_choice_button_text is button_text
