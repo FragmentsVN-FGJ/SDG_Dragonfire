@@ -18,7 +18,7 @@ init python:
     #register_stat("Intelligence", "intelligence", 10, 100)
     register_stat("Fitness", "fitness", 50, 100)
     register_stat("Stress", "stress", 3, 10)
-    register_stat("Bits", "cash", 27126, 999999)
+    register_stat("μBC", "cash", 27126, 999999)
 
     #dp_period("Morning", "morning_act")
     #dp_choice("Attend Class", "class")
@@ -28,30 +28,33 @@ init python:
     #dp_choice("Fly to the Moon", "fly", show="strength >= 100 and intelligence >= 100")
 
     dp_period("Morning", "morning_act")
-    dp_choice("Swimming hall", "swimming")
-    dp_choice("Gym", "gym", show="day == 3")
-    dp_choice("Running track", "track")
-    dp_choice("Call Catherine", "callcat")
+    dp_choice("Swimming hall", "swimming", x=300, y=350, tooltip="Swimming Hall")
+    dp_choice("Gym", "gym", x=400, y=450)
+    dp_choice("Running Track", "track", x=150, y=200)
+    dp_choice("Call Catherine", "callcat", x=1100,y=675, show="not broken_up and day > 1")
+    dp_choice("Clean room", "clean", x=350, y=550)
 
+    
     dp_period("Afternoon", "afternoon_act")
     #dp_choice("Study", "study")
     #dp_choice("Hang Out", "hang")
-    dp_choice("Ice Cream Parlor", "parlor")
-    dp_choice("Restaurant", "restaurant")
+    dp_choice("Ice Cream Parlor", "parlor", x=175, y=450)
+    dp_choice("Restaurant", "restaurant", x=400, y=350)
     #dp_choice("Bowling", "bowling")
-    dp_choice("Mall", "mall")
-    dp_choice("Library", "library")
-    dp_choice("Work", "work")
-    dp_choice("Business school", "business")
+    dp_choice("Mall", "mall", x=425, y=180)
+    dp_choice("Library", "library", x=550, y=200)
+    dp_choice("Work", "work", x=150, y=550)
+    dp_choice("Business school", "business", x=200, y=100)
+
 
     dp_period("Evening", "evening_act")
     #dp_choice("Exercise", "exercise")
     #dp_choice("Play Games", "play")
-    dp_choice("Bar", "bar")
-    dp_choice("Movie theatre", "movies")
-    dp_choice("VR Arcade", "arcade")
-    dp_choice("Clean room", "clean")
-    dp_choice("Catherine's apartment", "cathouse")
+    
+    dp_choice("Bar", "bar", x=650, y=400)
+    dp_choice("Movie theatre", "movies", x=350, y=500)
+    dp_choice("VR Arcade", "arcade", x=150, y=400)
+    dp_choice("Catherine's apartment", "cathouse", x=200, y=150)
     
     # PROMISE SYSTEM
     
@@ -65,6 +68,7 @@ init python:
     
     # CASH SYSTEM
     def paycash(amount):
+        global cash
         if amount > cash:
             return False
         cash -= amount
@@ -82,6 +86,7 @@ init python:
     trust = {'Catherine': 5, 'Silvia': 5}
     
     def affection_modify(person, amount):
+        global affection
         affection[person] = affection[person] + amount
         if affection[person] > max_affection:
             affection[person] = max_affection
@@ -90,6 +95,7 @@ init python:
         return
             
     def trust_modify(person, amount):
+        global trust
         trust[person] = trust[person] + amount
         if trust[person] > max_trust:
             trust[person] = max_trust
@@ -99,11 +105,16 @@ init python:
         
 
 # Define characters
-define a = Character("Aerith")
-define n = Character("Nicholas")
-define s = Character("Silvia")
-define c = Character("Catherine")
+define a = Character("Aerith", color="#FF1493")
+define n = Character("Nicholas", color="#191970")
+define s = Character("Silvia", color="#9932CC")
+define c = Character("Catherine", color="DC143C")
 define nvlNarrator = Character(None, kind=nvl)
+
+image cat_torso red flip = im.Flip("cat_torso red.png", horizontal = True)
+image cat normal_down flip = im.Flip("cat normal_down.png", horizontal = True)
+#image cat_torso red close = im.Scale("cat_torso red.png", width=1660, height=1540)
+#image cat normal close = im.Scale("cat normal.png", width=1660, height=1540)
 
 label pay(amount):
     $ pay_successful = paycash(amount)
@@ -508,9 +519,12 @@ label WeaselVictory:
 
 label RoomDescription:
     play music "bgm/buzz.wav"
+
+    scene player_room with dissolve
+
     nvlNarrator "Not that there's much to see, in any case."
     nvlNarrator "It's a small, dirty one-room apartment overlooked by a single, large window with eternally closed curtains."
-    nvlNarrator "Not like there’s anything meaningful behind them anyway. Just the gray exterior of another apartment building."
+    nvlNarrator "There's not anything meaningful behind them anyway. Just the gray exterior of another apartment building."
     nvlNarrator "Why they even bothered making a window so large for such a dreadful view is beyond me."
     nvlNarrator "My eyes linger on the shadows of empty coke bottles and assorted trash littering the small, barely sun-lit floor space."
     nvlNarrator "I really should throw that pizza slice away."
@@ -527,11 +541,13 @@ label RoomDescription:
     nvlNarrator "I detach the treadmill's harnest from my waist, proceeding to hop off."
     nvl clear
     play music "bgm/hope(Ver1.00).ogg"
+    scene bg_vr with dissolve
     nvlNarrator "After the natural disorientation and nausea of entering the bleaker tonalities of reality has passed away, I place the HMD on the floor."
     nvlNarrator "The headset's brand new, with fresnel lens and dual 8k-screens providing a 210-degree field of view at 120 frames per second."
     nvlNarrator "In other words, virtually indistinguishable from reality. Though just try to run photorealistic graphics at those speeds!"
     nvlNarrator "Only the new line of GPUs Nvidia released last year is anywhere near capable of outputting those resolutions. I need eight of them just to run Dragonfire Online."
     nvl clear
+    scene player_room with dissolve
     nvlNarrator "I start to take off the haptic feedback suit."
     nvlNarrator "This is the most annoying part of the process. It takes forever to set up and disassemble all the equipment."
     nvlNarrator "I've gotten rather skilled at it, though, getting down from about half an hour to just around ten minutes."
@@ -547,7 +563,7 @@ label RoomDescription:
     nvlNarrator "One of these days, for certain..."
     "Suddenly, my wristband vibrates to signal a call."
     "I read the name projected on my forearm."
-    "Catherine." # Can this be colored red?
+    "{color=#f00}Catherine.{/color}" # Can this be colored red?
     "My heart skips a beat, and I hover my finger over the ignore button."
     "Then, I manage to get a hold of myself. Lifting my index finger to my ear, I pick up the call."
     n "Hi."
@@ -615,17 +631,23 @@ label RoomDescription:
     jump day
 
 label parlorStart:
-    show parlor with dissolve
     $ cat_mood = 0
+
+    scene parlour_in
+
     $ ice_cream = None
     "Queens Gelateria is a mixed Italian-American -style ice cream parlor close to the center."
     "The place is surprisingly full even though it's already February."
     "I mean, summer's basically over, right?"
-    "It's only 21 degrees Celsius outside. You almost need a jacket."
+    "It's only 21 degrees Celsius outside. After the heat wave last week, you almost need a jacket."
     "We used to come to this place often with Catherine."
     "She can't get enough of the ice cream here."
     "It is good, I'll admit. But also ridiculously expensive."
     "I suppose being right across from the stock exchange guarantees rich customers."
+
+    show cat normal_down flip at right
+    show cat_torso red flip at right behind cat
+
     "Today she's not as elated as usual. Something's on her mind."
     "Well, I guess it's obvious what."
     c "Which one should I choose...?"
@@ -676,6 +698,8 @@ label parlorStart:
     jump parlorConversation
 
 label parlorConversation:
+    show cat normal_down at center
+    show cat_torso red at center behind cat
     "There's a bit of an awkward silence as we sit down. Cat is staring at the table, avoiding eye contact."
     "She's fiddling with a napkin, deliberating something, but can't get the words out."
     $ parlorwait = False
@@ -691,6 +715,7 @@ label parlorConversation:
 
 label parlorApology:
     $ parlorapology = True
+    show cat normal_downright
     n "Look, Cat, I'm sorry for not calling you for a while. I've been really busy."
     "She squeezes the napkin with her hands."
     c "Busy with Dragonfire Online, that is."
@@ -713,6 +738,7 @@ label parlorApology:
 label parlorMakeUp:
     n "Look, I'll make it up to you! I'm honestly sorry for what I did. You can't stay mad at me, right?"
     "She frowns."
+    show cat frown
     $ cat_mood += 1
     c "We'll just have to see about that, won't we?"
     n "I'll take you somewhere, let's go to the movies or..."
@@ -733,10 +759,12 @@ label promiseTime:
 
     if cat_mood < 0:
         "She doesn't take that too kindly."
+        show cat anger
         c "Yeah, just like last time!"
         "She gets up and storms out, leaving her half-eaten ice cream behind."
         $ affection_modify('Catherine', -2)
     else:
+        show cat longing
         "She seems a bit sad."
         c "I guess I just have to believe you. Again."
     return
@@ -744,6 +772,7 @@ label promiseTime:
 label promiseMovies:
     n "I'll take you to the movies."
 
+    show cat longing
     if cat_mood < 0:
         "She purses her lips."
     else:
@@ -763,9 +792,11 @@ label offerDFO:
     n "... Let's play some DFO together! What do you say?"
 
     if cat_mood < 0:
+        show cat something
         "Her expression alternates between anger and frustration."
         c "What makes you think I'd be interested in that stupid game?"
     else:
+        show cat longing
         "She looks away from me. I guess that's a no."
         c "I'm willing to accept that you like the game. But..."
 
@@ -777,6 +808,7 @@ label offerDFO:
 label parlorIdle:
     "I try to force a smile."
     n "You curious about the ice cream I ordered?"
+    show cat something
     "She clenches her teeth."
     c "Not particularly."
     "Darn, she's really upset, isn't she?"
@@ -787,7 +819,9 @@ label parlorConsole:
     n "Kittie..."
     $ cat_mood -= 1
     "She slams her fist on the table."
+    show cat something2
     c "Don't call me that! First you disappear for two weeks, then I call you and you act as if nothing has happened!"
+    show cat something
 
     menu:
         "Get angry":
@@ -806,7 +840,9 @@ label parlorConsole:
 
 label parlorAngry:
     n "You don't control my life, and you can't tell me what to do!"
+    show cat angry
     c "Nick, I'm only trying to help you! Can't you see you're hurting yourself!?"
+    show cat anger
     c "You're 23 and working as some cleaner because you can't be bothered to study and actually get yourself somewhere in life!"
     menu:
         "Threaten to break up with her":
@@ -826,8 +862,10 @@ label parlorBreakUp:
 
     if cat_mood < 0:
         "She blinks, her eyes wet with tears."
+        show cat normal
         "Without showing me any, she gets up and leaves."
     else:
+        show cat normal
         "She licks on her spoon, but says nothing."
         "For what feels like an eternity, we just sit there, together yet separate."
 
@@ -843,6 +881,7 @@ label parlorArgue:
     n "If only reality was more like a game..."
 
     if cat_mood < 0:
+        show cat anger
         c "You're a fucking addict, you know that?"
         n "Gaming keeps me together! Why can't you get that!?"
         c "Whatever. Just keep playing your games. No need to call."
@@ -850,6 +889,7 @@ label parlorArgue:
         $ broken_up = True
         $ affection_modify('Catherine', -2)
     else:
+        show cat normal_down
         "She looks down at her ice cream."
         c "It wouldn't be any better."
         
@@ -861,14 +901,18 @@ label parlorHypocrisy:
     n "You're critisizing me for not studying. But you're the one who's always complaining how stressful it is to not have time for anything else!"
 
     if cat_mood < 0:
+        show cat angry
         c "It's stressful now! But at least I won't be dying alone in some godforsaken apartment playing a stupid video game because I have no life!"
+        show cat something
         c "Whatever. Just keep playing your games. No need to call."
         "With that, she storms out."
         $ broken_up = True
         $ affection_modify('Catherine', -2)
     else:
         c "It's stressful now. But at least I'll get a proper job."
+        show cat longing
         c "Nick, please just let me help you..."
+        show cat normal
         "She tries to look endearingly into my eyes, but I avoid her gaze."
         $ affection_modify('Catherine', 1)
 
@@ -877,6 +921,7 @@ label parlorHypocrisy:
 label parlorWait:
     $ parlorwait = True
     "After a little bit of silence, she speaks up."
+    show cat normal_downright
     c "Nick... I think we should break up."
     "There. She said it. But I didn't expect it to hurt this much."
     n "Catherine... please..."
@@ -894,6 +939,7 @@ label parlorWait:
 
 label parlorBeg:
     n "Please, Catherine. Not yet. I'll change."
+    show cat longing
     c "I wish I could believe that."
     $ cat_mood += 1
     "I blink so as to hide the tears. I want to just go under the table and cry."
@@ -912,8 +958,10 @@ label quitDFO:
     n "If you want, I'll... I'll even stop playing DFO. Just, please..."
 
     if cat_mood < 0:
+        show cat frown
         "Cat frowns."
         c "That's not the real problem. Even if you stop playing, you won't change."
+        show cat normal_downright
         c "Just... Goodbye, Nick."
         "She gets up and leaves."
         $ broken_up = True
@@ -929,28 +977,37 @@ label quitDFO:
 label parlorAccept:
     n "If you really want to leave me, I guess I just have to... accept it."
     "Cat sighs."
+    show cat normal_down
 
     if cat_mood < 0:
         c "Yes. Well then, goodbye, Nicholas."
+        hide cat with dissolve
+        hide cat_torso with dissolve
         "With that, she gets up and goes out the door."
         $ broken_up = True
         $ affection_modify('Catherine', -2)
     else:
         c "I don't want to leave you. But things can't go on like this anymore."
         n "Can we try? Just a little bit longer?"
+        show cat normal
         c "One more time. Don't blow it."
     return
 
 label parlorPlead:
     n "Please don't give up on me yet. We'll figure this out."
+    show cat longing
     "At first, just for a moment, she hesitates."
 
     if cat_mood < 0:
+        show cat frown
         c "I don't think so. This is it, Nicholas."
+        hide cat with dissolve
+        hide cat_torso with dissolve
         "Before I have a chance to respond, she gets up and leaves."
         $ broken_up = True
         $ affection_modify('Catherine', -2)
     else:
+        show cat normal
         c "Fine. Let's try one last time."
         n "You don't realize how happy that makes me."
         "Contrary to my intentions, my comment just makes her sulk."
@@ -965,9 +1022,11 @@ label parlorInterrupt:
         n "Thank you."
 
         if cat_mood < 0:
+            show cat frown
             c "That's what you got me? The cheapest one on the menu?"
             c "Is this some kind of joke?"
         else:
+            show cat normal_right
             "Catherine doesn't seem too impressed with the ice cream I got her."
             "Still, she sticks a spoon in it and begins eating."
 
@@ -979,9 +1038,11 @@ label parlorInterrupt:
         n "Thank you."
 
         if cat_mood < 0:
+            show cat surprise
             "Catherine looks a bit surprised."
             c "Why'd you get such a big one? I can't eat that much!"
         else:
+            show cat surprise
             "Catherine gasps."
             c "Nicholas, isn't that the most expensive thing on the menu? Why did you..."
 
@@ -997,6 +1058,7 @@ label parlorInterrupt:
         n "Thank you."
 
         if cat_mood < 0:
+            show cat frown
             "Catherine doesn't look as happy as I had hoped."
             c "Oh, I get it. You saw that I hadn't exercised today..."
             c "... and bought that just to tease me!"
@@ -1004,6 +1066,7 @@ label parlorInterrupt:
             "If more sarcasm was dripping from her voice, we would have a flood."
             $ cat_mood -= 1
         else:
+            show cat fuun
             "Catherine seems to slightly cheer up as she sees what I bought her."
             c "Oh, thanks, Nick. That was thoughtful of you."
             $ cat_mood += 1
@@ -1042,7 +1105,9 @@ label day:
     # Now, we jump the day planner, which may set the act variables
     # to new values. We jump it with a list of periods that we want
     # to compute the values for.
+    window hide
     call screen image_planner("Morning")
+    window show
     #(["Morning", "Afternoon", "Evening"])
 
 
@@ -1059,7 +1124,9 @@ label morning:
 
     # Execute the events for the morning.
     call events_run_period
+    window hide
     call screen image_planner("Afternoon")
+    window show
 
     # That's it for the morning, so we fall through to the
     # afternoon.
@@ -1080,7 +1147,9 @@ label afternoon:
     $ act = afternoon_act
 
     call events_run_period
+    window hide
     call screen image_planner("Evening")
+    window show
 
 
 label evening:

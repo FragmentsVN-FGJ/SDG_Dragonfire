@@ -4,16 +4,20 @@ init:
     $ broken_up = False # Implement this later
     $ call_ignored = False
     
-    $ event("callCatherine", "act == 'callcat'", event.only(), priority=5)
+    $ event("callCatherine", "act == 'callcat' and not broken_up", event.only(), priority=5)
     
     # $ event("Catherine_movie_scene", "act == 'movies'", event.only(), event.once(), priority=5)
-    $ event("Catherine_broken_up_mall", "act == 'mall' and broken_up", event.only(), event.once(), priority=5)
-    $ event("DFOServers", "act == 'work'", event.once(), event.only(), priority=5)
+    $ event("Catherine_broken_up_mall", "act == 'mall' and broken_up", event.only(), event.once(), event.random(0.3), priority=50)
+    $ event("Catherine_gym_broken_up", "act == 'gym' and broken_up and day%4==1", event.only(), priority=50)
+    $ event("DFOServers", "act == 'work'", event.once(), event.only(), event.random(0.1), priority=50)
     
-    $ event("Catherine_study_together", "act == 'cathouse' and not broken_up", event.only(), priority=200)
-    $ event("Catherine_gym_together", "act == 'gym' and not broken_up", event.only(), event.once(), priority=50)
-    $ event("sauna_accident", "act == 'swimming'", event.only(), event.depends("swimminghallintro"), event.once(), priority=50)
-    $ event("Catherine_running_together", "broken_up == False and act == 'track'", event.once(), event.only(), priority=50)
+    $ event("Catherine_study_together", "act == 'cathouse' and not broken_up", event.only(), event.depends('Catherine_parlor'), priority=200)
+    $ event("Catherine_gym_together", "act == 'gym' and not broken_up and day%4==1", event.only(), event.once(), event.depends('Catherine_parlor'), priority=50)
+    $ event("sauna_accident", "act == 'swimming' and day%4==3", event.only(), event.depends("swimminghallintro"), event.depends('Catherine_parlor'), event.once(), event.random(0.14), priority=50)
+    $ event("Catherine_running_together", "broken_up == False and act == 'track' and day%4==2", event.only(), event.depends('Catherine_parlor'), priority=50)
+    
+    $ event("Catherine_parlor", "act == 'parlor' and (act, day) in promises.keys()", event.only(), event.once(), priority=5)
+    $ event("Catherine_movie_scene", "act == 'movies' and (act, day) in promises.keys()", event.only(), event.once(), priority=5)
     
     $ event("generic_promise_event", "(act, day) in promises.keys()", event.only(), priority=10)
     
@@ -60,6 +64,24 @@ init python:
             return sd*Z_0 + mean
             
        hub_seen_labels = []
+       
+label Catherine_parlor:
+    python:
+        kept_promises = set()
+        for promise in promises[(act, day)].keys():
+            if promise[1] == "meet":
+                promises[(act,day)][promise] = True
+                kept_promises.add(promise[0])
+                unkept_promises_personal_counter[promise[0]] = 0 # Reset the unkept promises counter for the given person
+        if len(kept_promises) == 1:
+            kept_people = kept_promises.pop()
+            promise_pluralized = "promise"
+        else:
+            list_kept = list(kept_promises)
+            kept_people = ", ".join(list_kept[0:len(list_kept)-1]) + " and " + list_kept[-1]
+            promise_pluralized = "promises"
+        events_executed["icecreamparlorintro"] = True
+    jump parlorStart
        
 label callCatherine:
     $ i = renpy.random.random()
@@ -326,10 +348,7 @@ label generic_promise_event:
             list_kept = list(kept_promises)
             kept_people = ", ".join(list_kept[0:len(list_kept)-1]) + " and " + list_kept[-1]
             promise_pluralized = "promises"
-    if act == "parlor" and day == 1:
-        $ events_executed["icecreamparlorintro"] = True
-        jump parlorStart
-    elif act == "movies":
+    if act == "movies":
         jump MovieTheatreDate
     elif act == "arcade":
         jump VRArcadeDate
@@ -344,6 +363,7 @@ label generic_promise_event:
 # Special Scenes, Catherine
 
 label sauna_accident:
+    scene city_street
     $ cash -= prices['swimminghall']
     "I yawn while navigating the labyrinthine hallways of the swimming hall."
     "I didn't sleep that well, and I'm feeling really tired today."
@@ -358,10 +378,13 @@ label sauna_accident:
     "This is the life. I'm so relaxed, I'm practically dozing... off..."
     "Someone comes in and sits beside me, a bit further away."
     "Then, the person seems to recognize me, and I'm jolted awake."
+    show cat question with dissolve
+    show cat_torso naked with dissolve
     c "Nick...?"
     "W-wait, what's Catherine doing on the men's side?"
     "Suddenly, I realize why something felt off before."
     "This is not the men's side at all, is it!?"
+    show cat uneasy
     menu:
         "Engage!":
             n "I, uh, I am... I..."
@@ -375,8 +398,11 @@ label sauna_accident:
         "Run away!":
             $ affection_modify('Catherine', -1)
             "I run away as fast as I can!"
+            show cat angry
             c "Nick, what the hell are you doing!?"
             "I almost slip on the wet floor, but manage to get away, with no time to close the door behind me."
+            hide cat
+            hide cat_torso
             "Damn! I can hear Catherine following right behind me. Thankfully, she's walking rather than sprinting."
             "Quick, I need to hide somewhere!"
             $ locker = False
@@ -407,11 +433,17 @@ label sauna_accident:
     return
 
 label .Catherine_investigation(visibility, place):
+    show cat frown with dissolve
+    show cat_torso naked with dissolve
     "Catherine walks in, and [visibility] I can see her investigating the perimeter."
     c "Nick, I know you're in here somewhere!"
+    show cat normal_right
     "I'm holding my breath, praying that she won't come [place]."
     "Finally, she appears to lose interest."
+    show cat anger
     c "Whatever. We'll talk when you're ready to act like an adult."
+    hide cat with dissolve
+    hide cat_torso with dissolve
     "I hold back a sigh of relief until she is no longer visible."
     return
             
@@ -425,20 +457,27 @@ label .Catherine_conversation:
             n "Please don't hurt me!"
         "I'm sorry!":
             n "I'm so sorry, I'm so sorry, please don't beat me up!"
+    show cat frown
     "Cat frowns and blinks, as if confused, but then..."
+    show cat fuun
     "... she starts giggling!"
+    show cat normal
     $ affection_modify('Catherine', 1)
     c "Oh yeah, I'll send you blasting off again!"
     c "Nicky, you really watch too much anime, don't you?"
     c "Why would I beat you? I'm not that scary, am I?"
+    show cat seductive_or_something
     "She's teasing me now."
     c "And it's not like you haven't seen me naked before..."
+    hide cat with dissolve
+    hide cat_torso with dissolve
     "I storm out, all red, hoping that I don't meet anyone on the way out."
     return
     
     
 label Catherine_gym_broken_up:
     $ cash -= prices[gym]
+    scene city_street
     "As I arrive at the gym, I see that Catherine is already here."
     "I don't really want to face her like this, but I did come here to exercise."
     menu:
@@ -486,6 +525,8 @@ label Catherine_gym_together:
     $ i = renpy.random.random()
     
     $ cash -= prices['gym']
+    
+    scene city_street
     
     "Upon arrival, I see that Catherine is already here, in full exercise mode."
     menu:
@@ -754,6 +795,9 @@ label .victory:
     return
         
 label Catherine_running_together:
+
+    scene city_street
+
     "I go to the running track to run a few laps."
     "As I'm running, Catherine arrives, and I slow down to meet her."
     # Catherine introductions
@@ -805,6 +849,7 @@ label Catherine_study_together:
     # For now, assuming this happens at Cat's house, though I'd like the player to
     # be able to choose between that, the library and the parlor.
     $ cat_mood = 0
+    scene city_street
     "I'm standing in front of the door to Catherine's apartment."
     "It's just an ordinary apartment in a small tower block right by the docks."
     "It still manages to be far more fancy than mine, though, with an entrance, two rooms and a kitchen."
@@ -1421,6 +1466,7 @@ label Catherine_movie_scene:
     $ price_asked = False
     $ seen_before_asked = False
     $ cat_mood = 0
+    scene city_street
     call .date_intro
     n "Anyway, let's go."
     "We arrive at the ticket booth."
@@ -1691,6 +1737,7 @@ label .date_intro:
     return
  
 label Catherine_broken_up_mall:
+    scene city_street
     "While walking at the mall, I spot Catherine inspecting some clothes."
     menu:
         "Should I go talk to her?"

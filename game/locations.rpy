@@ -14,6 +14,7 @@ init:
     $ event("work", "act == 'work'", priority=200)
     $ event("clean", "act == 'clean'", priority=200)
     $ event("business", "act == 'business'", priority=200)
+    $ event("cathouse", "act == 'cathouse'", priority=200)
     
     $ event("icecreamparlorintro", "act == 'parlor'", event.once())
     $ event("restaurantintro", "act == 'restaurant'", event.once())
@@ -48,13 +49,20 @@ define cashier = Character("Cashier")
 
 # Location-specific actions
 label business:
+    scene city_street
     "I wander around the hallways for a bit. Why did I even come here in the first place?"
     
     $ stress += stress_modifiers['business']
     
     return
+
+label cathouse:
+    scene city_street
+    "I visit Catherine's apartment, but she doesn't appear to be in right now."
+    return
                
 label work:
+    scene city_street
     "I clean up at some organization."
     
     $ i = renpy.random.random()
@@ -87,6 +95,9 @@ label work:
     return
     
 label clean:
+
+    scene player_room
+
     "I clean up the litter that's accumulated on the floor of my apartment."
     
     $ stress += stress_modifiers['clean']
@@ -94,6 +105,7 @@ label clean:
     return
     
 label icecreamparlor:
+    scene parlour_out
     "I eat some ice cream."
     if broken_up:
         "Eating here reminds me of Catherine. The sweetness of the ice cream mixes with the bitterness of my emotions."
@@ -105,8 +117,9 @@ label icecreamparlor:
     
 label restaurant:
     # Restaurant, choose something to eat.
+    scene city_street
     
-    if cash < prices['restaurant']:
+    if cash < prices['restaurant_cheap']:
         "I walk past the restaurant, feeling grim."
         "I don't have enough bits to eat here right now."
     
@@ -118,6 +131,8 @@ label restaurant:
     
 label movietheatre:
     # Movie theatre, choose a movie to go to
+    
+    scene city_street
     
     $ genre = NonUniformRandom( [("action", 2), ("romantic comedy", 1), ("horror", 1)] ).pick()
     
@@ -132,6 +147,8 @@ label movietheatre:
     
 label vrarcade:
     # Arcade, choose a game to play
+    
+    scene city_street
     
     $ game1 = NonUniformRandom([("Ghosts & Goblins", 1), ("BlazBlue",1), ("Metal Slug 2",1)]).pick()
     $ game2 = NonUniformRandom([("Mortal Kombat", 1), ("Street Fighter II", 1), ("Space Invaders", 1)]).pick()
@@ -149,6 +166,8 @@ label vrarcade:
 label bowling:
     # Bowling, pay for it
     
+    scene city_street
+    
     if cash >= prices['bowling']:
         "I do some bowling by myself."
         $ cash -= prices['bowling']
@@ -160,6 +179,8 @@ label bowling:
     
 label bar:
     # Bar, choose a drink
+    
+    scene city_street
     
     if cash >= prices['bar_cheap']:
         "I buy a drink and enjoy the beat."
@@ -178,6 +199,8 @@ label bar:
 label swimminghall:
     # Leisure swimming vs. Exercise
     
+    scene city_street
+    
     if cash >= prices['swimminghall']:
         "I go for a bit of a swim, relaxing in the sauna afterwards."
         $ cash -= prices['swimminghall']
@@ -193,6 +216,8 @@ label swimminghall:
     
 label gym:
     # Choose an exercise
+    
+    scene city_street
     
     $ i = renpy.random.random()
     
@@ -228,6 +253,8 @@ label gym:
     
 label runningtrack:
     # Running
+    scene city_street
+    
     "I run the lap a few times."
     
     $ fitness += fitness_bonuses['runningtrack']
@@ -237,6 +264,8 @@ label runningtrack:
     
 label mall:
     # Buy random items
+    
+    scene city_street
     
     $ price = NonUniformRandom( [ ("mall_expensive", 2), ("mall_medium", 4), ("mall_cheap", 4) ] ).pick()
     
@@ -275,6 +304,8 @@ label mall:
 label library:
     # Choose a subject to read about
     
+    scene city_street
+    
     $ i = renpy.random.random()
     
     if i < 0.1:
@@ -306,12 +337,18 @@ label library:
     
     
 label icecreamparlorintro:
+
+    scene city_street
+
     "Queens Gelateria is a mixed Italian-American -style ice cream parlor close to the center."
     
     return
     
 label restaurantintro:
     # Restaurant, choose something to eat.
+    
+    scene city_street
+    
     "The Wind Horse Tavern is located near the stalls of the local horse racing track."
     "I like it due to its pseudo-medieval atmosphere. Kind of reminds me of Dragonfire Online."
     "Taste is the one sense we still haven't cracked in virtual reality."
@@ -322,6 +359,7 @@ label restaurantintro:
     
 label movietheatreintro:
     # Movie theatre, choose a movie to go to
+    scene city_street
     "Despite virtual reality providing a generally more immersive experience, movie theaters still exist."
     "Basically everything is in 3D on huge IMAX screens."
     "But it still doesn't beat VR."
@@ -331,6 +369,7 @@ label movietheatreintro:
     
 label vrarcadeintro:
     # Arcade, choose a game to play
+    scene city_street
     "TechnoLazers is an arcade in the upper part of the city. It's not terribly popular anymore."
     "A couple years back, arcades made a huge comeback by providing affordable VR experiences to the general populace."
     "But now that you can get relatively high-quality virtual reality in the consumer price range, these renewed VR arcades are falling in popularity."
@@ -341,17 +380,20 @@ label vrarcadeintro:
    
 label bowlingintro:
     # Bowling, pay for it
+    scene city_street
     "The bowling place looks about as you'd expect, dark lighting and music and all."
     return
     
 label barintro:
     # Bar, choose a drink
+    scene city_street
     "It's really more of a techno club than a bar, hidden away in the side streets. I've taken Cat here before, but she's not into the place."
     
     return
     
 label swimminghallintro:
     # Leisure swimming vs. Exercise
+    scene city_street
     "This is a secluded, relatively unpopular swimming hall mostly frequented by the elderly."
     "No-one comes here because of the labyrinthine architecture."
     "I swear, I get lost in the hallways every time I decide to visit."
@@ -360,6 +402,7 @@ label swimminghallintro:
     
 label gymintro:
     # Choose an exercise
+    scene city_street
     "This is the gym Catherine frequents. I think she has classes daily here."
     "It's mostly for CrossFit people, so I don't come here that often."
     "Frankly, I find these muscular CrossFit guys a bit intimidating. Even though I'm in good shape myself."
@@ -369,12 +412,14 @@ label gymintro:
     
 label runningtrackintro:
     # Running
+    scene city_street
     "The local running track. Not much to see here, though I know Cat comes here every now and then as a part of her workout schedule."
     
     return
     
 label mallintro:
     # Buy random items
+    scene city_street
     "The biggest shopping mall in town, right in the center. I've never really liked the crowds."
     
     return
@@ -382,6 +427,7 @@ label mallintro:
 label libraryintro:
     # Choose a subject to read about
     
+    scene city_street
     "You'd think libraries would be a thing of the past in an era where every book ever made is easily available on the internet."
     "But you would be wrong. Libraries are still going strong."
     "Aside from providing access to rare antique titles, most libraries have become sorts of community makerspaces, with high-quality 3D-printers and loads of other tools."
@@ -390,6 +436,7 @@ label libraryintro:
     return
     
 label workintro:
+    scene city_street
     "I work at a rental cleaning service."
     "Ironically, cleaning is one of the jobs that the robots haven't taken yet."
     "I mean, of course everybody including us is using vacuuming bots and the like."
@@ -400,6 +447,9 @@ label workintro:
     return
     
 label cleanintro:
+
+    scene player_room
+
     "Considering my line of work, it's ironic that my room is so cluttered."
     "I guess a shoemaker's children really do go barefoot."
     "Normally I'm too exhausted from work to do any cleaning at my own place."
@@ -409,6 +459,7 @@ label cleanintro:
     return
     
 label businessintro:
+    scene city_street
     "This is the business school Catherine goes to. Ridiculously high class."
     "Well, someone with her natural abilities deserves only the best, I guess."
     "It's kinda depressing. I could never make it here."

@@ -41,7 +41,7 @@ init python in director:
     tag_blacklist = { "black", "text", "vtext" }
 
     # A set of tags that should only be used with the scene statement.
-    scene_tags = { "bg" }
+    scene_tags = { "bg_fort", "bg_temple", "city_street", "parlour_in", "parlour_out", "player_room", "bg_vr", "servers" }
 
     # The set of tags that should only be used with the show statement.
     show_tags = set()

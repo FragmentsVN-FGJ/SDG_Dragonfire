@@ -84,6 +84,7 @@ label ForestGuy2:
     return
 
 label VRArcadeDate:
+    scene city_street
     call date_arrival
     $ cat_mood = 0
     call .payment
@@ -202,6 +203,7 @@ label MovieTheatreDate:
     #call .opinions
     #call .onhermind
     #call .dateend
+    scene city_street
     call date_arrival
     $ cat_mood = 0
     call .tickets
