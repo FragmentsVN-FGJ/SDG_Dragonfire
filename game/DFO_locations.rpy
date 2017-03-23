@@ -562,6 +562,7 @@ label .victorious:
         show sil wot
         s "Did it not match your expectations, liege?"
         np "Sure it did. Well, let's move on."
+    play music "bgm/hope(Ver1.00).ogg"
     return
         
 label RuinsStart:
@@ -702,6 +703,7 @@ label Silvia_oob:
     
 label Ruins_entrance:
     scene bg_temple with fade
+    play music "bgm/LanayruDesert.mp3"
     show sil cat
     "The cathedral's teleporter sends us to the entrance of the dungeon."
     np "This is just a test run, so I didn't want to get spoiled."
@@ -758,6 +760,8 @@ label DFO_init:
     return
     
 label DFO_login:
+    scene player_room_gradient_map
+    play music "bgm/EnterNewLife.mp3"
     "Oh yeah, it's time to play some DFO!"
     "I've assembled the equipment and I'm raring to go!"
     "It took some soldering, but the mod is ready now too."
