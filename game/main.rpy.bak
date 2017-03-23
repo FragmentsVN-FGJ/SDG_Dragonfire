@@ -45,7 +45,6 @@ init python:
     dp_choice("Library", "library", x=550, y=200)
     dp_choice("Work", "work", x=150, y=550)
     dp_choice("Business school", "business", x=200, y=100)
-    dp_choice("Ruins of Kvaagwyr", "ruins")
 
 
     dp_period("Evening", "evening_act")
@@ -103,6 +102,7 @@ init python:
         if trust[person] < 0:
             trust[person] = 0
         return
+        
 
 # Define characters
 define a = Character("Aerith", color="#FF1493")
@@ -135,10 +135,6 @@ label start:
     # Initialize the default values of some of the variables used in
     # the game.
     $ day = 0
-    
-    # Tooltips for menus
-    $ tooltips = {}
-
 
     $ blade_sphere_control = False
     $ Aerith_angry = False
@@ -281,14 +277,7 @@ label WeaselProtectAerith:
         "Her light barrier is still protecting her, but who knows how long it'll last."
 
     "Well, I'm a guardian, so I should be able to do this, right?"
-    
-    $ tooltips = {}
-    $ tooltips["Offensive technique: Furious strike!"] = "Bash a foe with utmost fury. If they attempt to parry, their weapons will surely be broken, and their allies shall flee in terror!"
-    $ tooltips["Protective technique: Blade Sphere Control!"] = "Ultimate protective technique. Blocks all physical attacks around you regardless of direction."
-    $ tooltips["Aerith Spell: Depths of Slumber!"] = "Sleeping powder causes weak enemies to fall asleep."
-    $ tooltips["Silvia Technique: Hail of Daggers!"] = "Raining death from above. Just make sure your allies are not caught in the range!"
-    $ current_tooltip = "What should I do?"
-    
+
     menu:
         "Offensive technique: Furious strike!":
             jump WeaselFuriousStrike
@@ -549,7 +538,7 @@ label RoomDescription:
     nvlNarrator "Well, I have to be, to be able to use this for longer than an hour at a time."
     nvlNarrator "Most other people don't care about immersion as much as I do, so they just have a basic setup that they can use seated."
     nvlNarrator "Plebs."
-    nvlNarrator "I detach the treadmill's harness from my waist, proceeding to hop off."
+    nvlNarrator "I detach the treadmill's harnest from my waist, proceeding to hop off."
     nvl clear
     play music "bgm/hope(Ver1.00).ogg"
     scene bg_vr with dissolve
@@ -756,13 +745,13 @@ label parlorMakeUp:
     c "Nick, you don't have to take me anywhere. Just - please - don't ignore me."
     menu:
         "Promise to spend more time with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump promiseTime
         "Promise to go to the movies with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump promiseMovies
         "Offer to play DFO with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump offerDFO
 
 label promiseTime:
@@ -857,13 +846,13 @@ label parlorAngry:
     c "You're 23 and working as some cleaner because you can't be bothered to study and actually get yourself somewhere in life!"
     menu:
         "Threaten to break up with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump parlorBreakUp
         "Argue with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump parlorArgue
         "Call her out on her hypocrisy":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump parlorHypocrisy
 
 label parlorBreakUp:
@@ -956,13 +945,13 @@ label parlorBeg:
     "I blink so as to hide the tears. I want to just go under the table and cry."
     menu:
         "Promise to quit DFO":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump quitDFO
         "Accept the situation":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump parlorAccept
         "Plead with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump parlorPlead
 
 label quitDFO:
@@ -1134,7 +1123,7 @@ label morning:
     $ act = morning_act
 
     # Execute the events for the morning.
-    call events_run_period 
+    call events_run_period
     window hide
     call screen image_planner("Afternoon")
     window show
@@ -1157,7 +1146,7 @@ label afternoon:
     $ period = "afternoon"
     $ act = afternoon_act
 
-    call events_run_period 
+    call events_run_period
     window hide
     call screen image_planner("Evening")
     window show
@@ -1174,7 +1163,7 @@ label evening:
     $ period = "evening"
     $ act = evening_act
 
-    call events_run_period 
+    call events_run_period
 
 
 label night:
@@ -1216,7 +1205,7 @@ label night:
         "Just as I'm going to sleep, I realize I forgot my [promise_pluralized] to [forgotten_people]."
 
     # We call events_end_day to let it know that the day is done.
-    call events_end_day 
+    call events_end_day
 
     # And we jump back to day to start the next day. This goes
     # on forever, until an event ends the game.

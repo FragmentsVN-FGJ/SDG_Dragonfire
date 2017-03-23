@@ -85,19 +85,18 @@ label ForestGuy2:
 
 label VRArcadeDate:
     scene city_street
-    call date_arrival 
+    call date_arrival
     $ cat_mood = 0
-    call .payment 
-    call .what_to_do 
+    call .payment
+    call .what_to_do
     jump date_end
     
 label .payment:
     if not visited['arcade']:
         "Like most arcades of the modern era, TechnoLazers has an entrance fee. The games themselves are completely free."
     "I wonder if I should pay for Catherine as well?"
-    call check_wallet 
-    $ entrance_fee = prices['arcade']
-    "The entrance fee is [entrance_fee], eh."
+    call check_wallet
+    "The entrance fee is [prices['arcade']], eh."
     jump .payment_menu
     
 label .payment_menu:
@@ -105,18 +104,18 @@ label .payment_menu:
         "Go for it." if cash > prices['arcade_both']:
             n "I'll pay for you, Cat."
             c "Oh? Thanks, Nick."
-            call pay(prices['arcade_both']) 
+            call pay(prices['arcade_both'])
             if not pay_successful:
                 "It seems I don't have enough money after all..."
                 jump .payment_menu
             $ cat_mood += 2
         "Better just pay for yourself.":
-            call pay(prices['arcade']) 
+            call pay(prices['arcade'])
             if not pay_successful:
                 n "Well, this is embarrassing."
-                call .cat_pays 
+                call .cat_pays
         "No, no. She's the one who should pay.":
-            call .cat_pays 
+            call .cat_pays
     return
 
 label .cat_pays:
@@ -205,9 +204,9 @@ label MovieTheatreDate:
     #call .onhermind
     #call .dateend
     scene city_street
-    call date_arrival 
+    call date_arrival
     $ cat_mood = 0
-    call .tickets 
+    call .tickets
     return
     
 # The date start should depend on:
@@ -266,7 +265,7 @@ label .payment:
     cashier "That was one student, one adult, right?"
     n "Yes."
     cashier "That'll be [prices['movies_student']] and [prices['movies']] bits, please."
-    call check_wallet 
+    call check_wallet
     jump .payment_menu
     
     
@@ -277,7 +276,7 @@ label .payment_menu:
             c "Nick..."
             "She starts to say something, but holds her tongue."
             cashier "[prices['movies_both']] bits."
-            call pay(prices['movies_both']) 
+            call pay(prices['movies_both'])
             if not pay_successful:
                 n "Oh. Not enough bits."
                 $ pay_both_tried = True
@@ -286,15 +285,15 @@ label .payment_menu:
         "Pay for yourself.":
             "Sorry, Catherine. I only have cash to pay for myself."
             "I don't think she really minds, though."
-            call pay(prices['movies']) 
+            call pay(prices['movies'])
             if not pay_successful:
                 n "Well, this is an embarrasment."
-                call .catpays 
+                call .catpays
         "Ask Catherine to pay for you.":
-            call .catpays 
+            call .catpays
     "We go inside the theater, picking our seats, and I slouch back as the movie starts playing."
     $ cat_opinion = 0
-    call expression target 
+    call expression target
     jump .opinion
     
 label .catpays:
@@ -365,9 +364,9 @@ label date_arrival:
     $ catlate = False
     $ nicklate = False
     $ walkingspeed = "walk"
-    call .setuplocation 
-    call .setupweather 
-    call .setupnickcondition 
+    call .setuplocation
+    call .setupweather
+    call .setupnickcondition
     $ i = renpy.random.random()
     if i <= 0.45:
         # Nick is hurrying to the scene
@@ -380,7 +379,7 @@ label date_arrival:
         
         $ j = renpy.random.random()
         
-        call .setupcatdescription 
+        call .setupcatdescription
         
         if j < 0.5:
             "date_arrival] the [location],[nickcondition] I [see] that Catherine is not here yet."
@@ -393,7 +392,7 @@ label date_arrival:
                 "She couldn't have just ditched me, right?"
             else:
                 "She must be coming shortly."
-            call .wait 
+            call .wait
         else:
             $ nicklate = True
             "date_arrival] the [location],[nickcondition] I [see] that Catherine is already here[catdescription]."
@@ -402,7 +401,7 @@ label date_arrival:
         $ ontime = renpy.random.choice(["right on time", "on time", "well on time", "just in time"])
         "I arrive at the [location] [ontime]."
         "It seems that Catherine is not here yet."
-        call .wait 
+        call .wait
     else:
         # Nick and Cat arrive at the same time
         "Coincidentally, it seems both Cat and I arrive at the [location] at precisely the same time."
@@ -417,7 +416,7 @@ label .wait:
         $ waitingdescription = renpy.random.choice(["After a long wait", "After what seems like an eternity", "After waiting there for a long time"])
     else:
         $ waitingdescription = renpy.random.choice(["After a short while", "In a short while", "Not much later", "Pretty soon", "A bit later"])
-    call .setupcatdescription 
+    call .setupcatdescription
     $ j = renpy.random.random()
     if j < 0.5:
         "[waitingdescription], Catherine appears from behind a corner[catdescription]."
@@ -520,7 +519,7 @@ label .setupweather:
 label .conversation_start:
     # construct a set of appropriate labels, pick at random
     $ conv = "start"
-    call run_dialogue_events 
+    call run_dialogue_events
     n "Well, let's go in."
     return
     

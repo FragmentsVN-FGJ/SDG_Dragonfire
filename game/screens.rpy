@@ -107,7 +107,7 @@ screen say(who, what):
                 style "namebox"
                 text who id "who"
 
-        text what id "what"
+        text what id "what" xpos 268 ypos 50 xsize 744
 
 
     ## If there's a side image, display it above the text. Do not display on the
@@ -155,7 +155,6 @@ style say_dialogue:
     xsize gui.dialogue_width
     ypos gui.dialogue_ypos
 
-
 ## Input screen ################################################################
 ##
 ## This screen is used to display renpy.input. The prompt parameter is used to
@@ -201,10 +200,18 @@ style input:
 
 screen choice(items):
     style_prefix "choice"
-
+    default tt = Tooltip("")
+    
     vbox:
         for i in items:
-            textbutton i.caption action i.action
+            
+            if i.caption in tooltips:
+                textbutton i.caption action i.action hovered tt.Action(tooltips[i.caption])
+            else:
+                textbutton i.caption action i.action
+    
+    if tt.value != "":
+        use say(None, tt.value)
 
 
 ## When this is true, menu captions will be spoken by the narrator. When false,

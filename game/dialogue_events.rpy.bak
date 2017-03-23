@@ -68,7 +68,7 @@ label run_dialogue_events:
         $ _event = dialogue_events.pop(0)
         $ events_executed[_event] = True
 
-        call expression _event from _call_expression
+        call expression _event
 
     return
 

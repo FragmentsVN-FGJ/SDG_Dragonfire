@@ -266,7 +266,7 @@ label Catherine_afternoon_call1:
     menu:
         "Answer":
             $ call_ignored = False
-            call answer_Catherine_ignored_call 
+            call answer_Catherine_ignored_call
         "Ignore":
             $ call_ignored = True
             "I click the ignore button again."
@@ -279,7 +279,7 @@ label Catherine_evening_call1:
     menu:
         "Answer":
             $ call_ignored = False
-            call answer_Catherine_ignored_call 
+            call answer_Catherine_ignored_call
         "Ignore":
             $ call_ignored = True
             "I click the ignore button and hope she doesn't call again."
@@ -390,11 +390,11 @@ label sauna_accident:
             n "I, uh, I am... I..."
             "Damn, I'm so sleepy I can barely put a coherent sentence together!"
             "Catherine seems at a loss for words as well."
-            call .Catherine_conversation 
+            call .Catherine_conversation
         "Take cover!":
             "I stumble to cover up my private parts!"
             "Catherine's looking at me, eyes agape."
-            call .Catherine_conversation 
+            call .Catherine_conversation
         "Run away!":
             $ affection_modify('Catherine', -1)
             "I run away as fast as I can!"
@@ -410,15 +410,15 @@ label sauna_accident:
                 "Inside the locker!":
                     "The locker looks just barely big enough."
                     "I cram myself in, and close the door just in time!"
-                    call .Catherine_investigation("through the slits in the door", "to check the lockers") 
+                    call .Catherine_investigation("through the slits in the door", "to check the lockers")
                     $ locker = True
                 "Under the benches!":
                     "I crawl under the bench just in time!"
-                    call .Catherine_investigation("up from here,", "and look under the benches") 
+                    call .Catherine_investigation("up from here,", "and look under the benches")
                 "Behind the column!":
                     "It's not much of a hiding place, but I need to be quick!"
                     "I hide behind the column just in time!"
-                    call .Catherine_investigation(", in the corner of my vision,", "near the column") 
+                    call .Catherine_investigation(", in the corner of my vision,", "near the column")
             "After Catherine has left, the absurdity of my sleep-addled reaction hits me."
             if locker:
                 "And as I try to leave the locker, I realize it's locked!"
@@ -476,7 +476,7 @@ label .Catherine_conversation:
     
     
 label Catherine_gym_broken_up:
-    $ cash -= prices['gym']
+    $ cash -= prices[gym]
     scene city_street
     "As I arrive at the gym, I see that Catherine is already here."
     "I don't really want to face her like this, but I did come here to exercise."
@@ -519,7 +519,6 @@ label Catherine_gym_broken_up:
     "Well, at least I really gave it my all this time."
     "Although my arms sure are going to ache tomorrow..."
     $ fitness += 10
-    return
     
 label Catherine_gym_together:
     # Fight with the robot
@@ -599,24 +598,24 @@ label .act_phase:
     menu:
         #Implement
         "Struggle to break free!" if nick_in_air and struggle_counter == 0:
-            call .struggle 
+            call .struggle
         "Struggle some more!" if nick_in_air and struggle_counter > 0:
-            call .struggle 
+            call .struggle
         "Attack!" if not nick_in_air:
-            call .attack 
+            call .attack
         "Tell Catherine to press the red button!" if robot_focusing == "Nick":
-            call .Catherine_press 
+            call .Catherine_press
         "Press the red button" if not nick_in_air and robot_focusing == "Catherine":
-            call .press 
+            call .press
         "Ask Catherine to distract it!" if robot_focusing == "Nick":
-            call .Catherine_distract 
+            call .Catherine_distract
         "Try to catch its attention!" if robot_focusing == "Catherine":
-            call .distract 
+            call .distract
     if victorious:
         jump .victory
     if cat_in_air:
-        call .Catherine_struggle 
-    call .robot_act 
+        call .Catherine_struggle
+    call .robot_act
     jump .act_phase # Loop act phase until victory
 
     
@@ -709,7 +708,7 @@ label .react_phase:
     menu:
         #Implement
         "Jump out of the way!" if robot_focusing == "Nick":
-            call .dodge("jump") 
+            call .dodge("jump")
         "Strike!" if robot_focusing == "Nick":
             "I stomp on one of its arms right as it's about to grapple me!"
             "If robots feel pain, I'm sincerely sorry!"
@@ -717,7 +716,7 @@ label .react_phase:
             $ robot_stunned = True
             $ stun_counter = 0
         "Roll!" if robot_focusing == "Nick":
-            call .dodge("roll") 
+            call .dodge("roll")
         "Jump to protect her!" if robot_focusing == "Catherine":
             "I jump in front of the robots arms!"
             c "Nick, get out of my way!"
@@ -1095,14 +1094,14 @@ label .probability1:
     c "You roll two normal, six-sided dice. What is the probability that the sum of their values is 11?"
     menu:
         "2/36":
-            call .right_answer1 
+            call .right_answer1
             jump .math_question2
         "11/36":
-            call .wrong_answer1 
-            call .probability1_explanation 
+            call .wrong_answer1
+            call .probability1_explanation
         "2/11":
-            call .wrong_answer1 
-            call .probability1_explanation 
+            call .wrong_answer1
+            call .probability1_explanation
     jump .interrupt
         
 label .probability1_explanation:
@@ -1125,14 +1124,14 @@ label .probability2:
     c "You roll three dice. What is the probability that at least one of them is a 6?"
     menu:
         "3/6":
-            call .wrong_answer2 
-            call .probability2_explanation 
+            call .wrong_answer2
+            call .probability2_explanation
         "91/216":
-            call .right_answer2 
+            call .right_answer2
             jump .math_question3
         "215/216":
-            call .wrong_answer2 
-            call .probability2_explanation 
+            call .wrong_answer2
+            call .probability2_explanation
     jump .interrupt
     
 label .probability2_explanation:
@@ -1164,13 +1163,13 @@ label .probability3:
     c "The probability that one of the busts really does contain the pearl is 1/2. Five of the busts have been destroyed. What is the probability that there is a pearl inside the last one?"
     menu:
         "1/2":
-            call .wrong_answer3 
+            call .wrong_answer3
             call .probability3_explanation
         "1/12":
-            call .wrong_answer3 
-            call .probability3_explanation 
+            call .wrong_answer3
+            call .probability3_explanation
         "1/7":
-            call .right_answer3 
+            call .right_answer3
     jump .interrupt
     
 label .probability3_explanation:
@@ -1216,14 +1215,14 @@ label .calculus1:
     c "What is the derivative of x^2 + ln(x) relative to x?"
     menu:
         "2x + 1/x":
-            call .right_answer1 
+            call .right_answer1
             jump .math_question2
         "2x + e^x":
-            call .wrong_answer1 
-            call .calculus1_explanation 
+            call .wrong_answer1
+            call .calculus1_explanation
         "x^2*ln(x) + 2":
-            call .wrong_answer1 
-            call .calculus1_explanation 
+            call .wrong_answer1
+            call .calculus1_explanation
     jump .interrupt
     
 label .calculus1_explanation:
@@ -1238,14 +1237,14 @@ label .calculus2:
     c "What is the minimum point of the parabola x^2 + x + 1?"
     menu:
         "(3/4, -1/2)":
-            call .wrong_answer2 
-            call .calculus2_explanation 
+            call .wrong_answer2
+            call .calculus2_explanation
         "(-1/2, 3/4)":
-            call .right_answer2 
+            call .right_answer2
             jump .math_question3
         "(0, 1)":
-            call .wrong_answer2 
-            call .calculus2_explanation 
+            call .wrong_answer2
+            call .calculus2_explanation
     jump .interrupt
     
 label .calculus2_explanation:
@@ -1263,15 +1262,15 @@ label .calculus3:
     c "What is the 2nd-degree Maclaurin polynomial for the function sin(x)?"
     menu:
         "1 + x + (x^2)/2":
-            call .wrong_answer3 
-            call .calculus3_explanation 
+            call .wrong_answer3
+            call .calculus3_explanation
         "x - (x^2)/2 + (x^4)/24":
-            call .wrong_answer3 
-            call .calculus3_explanation 
+            call .wrong_answer3
+            call .calculus3_explanation
         "x - (x^3)/6 + (x^5)/120":
             "Her expression melts into astonishment."
             c "W-what!?"
-            call .right_answer3 
+            call .right_answer3
     jump .interrupt
     
 label .calculus3_explanation:
@@ -1283,14 +1282,14 @@ label .geometry1:
     c "You have a right-angled triangle with the hypotenuse of length 5 and one leg of length 3. What is the length of the remaining leg?"
     menu:
         "4":
-            call .right_answer1 
+            call .right_answer1
             jump .math_question2
         "34":
-            call .wrong_answer1 
-            call .geometry1_explanation 
+            call .wrong_answer1
+            call .geometry1_explanation
         "The square root of 34":
-            call .wrong_answer1 
-            call .geometry1_explanation 
+            call .wrong_answer1
+            call .geometry1_explanation
     jump .interrupt
 
 label .geometry1_explanation:
@@ -1311,14 +1310,14 @@ label .geometry2:
     c "Focus, Nick!"
     menu:
         "110\%":
-            call .wrong_answer2 
-            call .geometry2_explanation 
+            call .wrong_answer2
+            call .geometry2_explanation
         "9\%":
-            call .right_answer2 
+            call .right_answer2
             jump .math_question3
         "8\%":
-            call .wrong_answer2 
-            call .geometry2_explanation 
+            call .wrong_answer2
+            call .geometry2_explanation
     jump .interrupt
     
 label .geometry2_explanation:
@@ -1341,13 +1340,13 @@ label .geometry3:
     c "Heh, I take it you can't answer?"
     menu:
         "4*pi":
-            call .wrong_answer3 
-            call .geometry3_explanation 
+            call .wrong_answer3
+            call .geometry3_explanation
         "2":
-            call .wrong_answer3 
-            call .geometry3_explanation 
+            call .wrong_answer3
+            call .geometry3_explanation
         "8*pi/3":
-            call .right_answer3 
+            call .right_answer3
     jump .interrupt
     
 label .geometry3_explanation:
@@ -1468,11 +1467,11 @@ label Catherine_movie_scene:
     $ seen_before_asked = False
     $ cat_mood = 0
     scene city_street
-    call .date_intro 
+    call .date_intro
     n "Anyway, let's go."
     "We arrive at the ticket booth."
     cashier "Yes? Which movie would you like to see?"
-    call .cashier 
+    call .cashier
     return
 
 label .cashier:
@@ -1513,7 +1512,7 @@ label .cashier:
 label .payment:
     cashier "That will be 15 000 and 7 500 bits."
     # Check money status
-    call check_wallet 
+    call check_wallet
     jump .payment_menu
     
 label .payment_menu:
@@ -1522,7 +1521,7 @@ label .payment_menu:
             n "I'll pay for both."
             c "Nick, you don't need to..."
             n "It's fine, Catherine. Let me treat you to something for a change."
-            call pay(22500) 
+            call pay(22500)
             if not pay_successful:
                 n "Drat. I don't have enough money."
                 $ pay_both_tried = True
@@ -1530,7 +1529,7 @@ label .payment_menu:
         "Pay for yourself." if not pay_yourself_tried:
             "We both pay for the tickets ourselves."
             "It would have been more chivalrous to pay for Cat's ticket, but I need to think of my wallet as well."
-            call pay(15000) 
+            call pay(15000)
             if not pay_successful:
                 n "I don't even have enough money for this!?"
                 $ pay_yourself_tried = True
@@ -1663,16 +1662,16 @@ label .flashback:
         "So I went to help her.":
             "Being the strongheaded fool I was, I went to tell those idiots to lay off."
             "They started spreading some bad rumours about me, but it's not like I cared."
-            call .friends 
+            call .friends
         "So I cheered her up afterwards.":
             "Well, I was actually too timid to do anything about it at that specific moment."
             "But later that day, I saw her crying by a tree, so I went to cheer her up, telling her to ignore those idiots."
-            call .friends 
+            call .friends
         "So I went to join the bullies":
             $ affection_modify('Catherine', -1)
             "So being the total jerkass I used to be, I went to join in on the fun."
             "But I felt really sorry after she started crying, and secretly went to her to apologize, begging for her forgiveness."
-            call .friends 
+            call .friends
     jump .opinion
     
 label .friends:
