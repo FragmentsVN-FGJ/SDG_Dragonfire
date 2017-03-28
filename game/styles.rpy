@@ -4,7 +4,7 @@
 
 # Place the day planner.
 style dayplanner_window:
-    background "images/fullmap.png"
+    background "images/fullmap_4.png"
     xalign 0.5
     yalign 0
 

@@ -87,7 +87,10 @@ label VRArcadeDate:
     scene city_street
     call date_arrival 
     $ cat_mood = 0
-    call .payment 
+    call .payment
+    scene arcade with dissolve
+    show cat normal at left
+    show cat_torso orange at left
     call .what_to_do 
     jump date_end
     
@@ -95,6 +98,9 @@ label .payment:
     if not visited['arcade']:
         "Like most arcades of the modern era, TechnoLazers has an entrance fee. The games themselves are completely free."
     "I wonder if I should pay for Catherine as well?"
+    show cat normal at left
+    show cat_torso orange at left
+    with moveinleft
     call check_wallet 
     $ entrance_fee = prices['arcade']
     "The entrance fee is [entrance_fee], eh."
@@ -104,6 +110,7 @@ label .payment_menu:
     menu:
         "Go for it." if cash > prices['arcade_both']:
             n "I'll pay for you, Cat."
+            show cat smile
             c "Oh? Thanks, Nick."
             call pay(prices['arcade_both']) 
             if not pay_successful:
@@ -122,6 +129,7 @@ label .payment_menu:
 label .cat_pays:
     n "Cat, do you think you could pay for me?"
     n "I'm in dire straits."
+    show cat eyes_closed
     "She sighs and pays for my ticket."
     "Sorry..."
     $ cat_mood -= 2
@@ -132,24 +140,29 @@ label .what_to_do:
     menu:
         "Let's play retro games.":
             n "Here, you've tried any retro games before?"
+            show cat normal_downright
             c "With you, yes. I wasn't too impressed."
             n "Um, I'm sure you'll like it this time."
+            show cat normal
             c "I hope so too."
             menu:
                 "Show her a fighting game.":
                     $ game = renpy.random.choice(["Mortal Kombat", "Garou: Mark of the Wolves", "Super Street Fighter II"])
                     "I show her [game], but she's not too interested in playing it."
+                    show cat frown
                     c "So you like these kinds of violent games, huh..."
                     $ cat_mood -= 1
                 "Show her a racing game.":
                     $ game = renpy.random.choice(["F-Zero AX", "Crazy Taxi", "Race Driver: GRID"])
                     "We play [game] for a while."
                     "As expected, she's pretty terrible at it."
+                    show cat normal_left
                     c "See, this is why I'm getting an autonomous as soon as they become affordable..."
                 "Show her a quiz game.":
                     $ game = renpy.random.choice(["Quiz: Ah! My Goddess", "Professor Pac-Man", "Quiz & Dragons"])
                     "We spend our time playing [game]."
                     "Suprisingly, she actually seems to find the game exciting."
+                    show cat fuun
                     c "That was pretty fun. Weird, but fun."
                     $ cat_mood += 1
         "I'll show you some of the VR demos.":
@@ -158,13 +171,17 @@ label .what_to_do:
                 "Show her something artsy.":
                     "Desaline is a slow, mystic virtual reality experience where movement is controlled by breathing."
                     "Catherine seems disoriented as she takes off the headset."
+                    show cat question
                     c "That... was... perplexing."
+                    show cat smile
                     c "But somehow eye-opening."
                     $ cat_mood += 2
                 "Time for some horror.":
                     "There they die is one of the great classics of VR horror games."
                     "You navigate a city with a foul secret, doing your best to escape the clutches of the many abominable stalkers of the night, looking for prey."
+                    show cat shock
                     c "That was horrible! Nick, why did you make me play that!?"
+                    show cat surprise_down
                     n "See? I told you you would like it!"
                 "A galactic shooter should do.":
                     "EVA: Keres is one of the most iconic space shooters in the history of virtual reality games."
@@ -172,26 +189,33 @@ label .what_to_do:
                     "The early age of modern VR is almost synonymous with space shooters, since being stuck in a cockpit provides a natural reason for the player to sit."
                     "And it's also effective for alleviating the nausea."
                     "Catherine doesn't seem to be very good at this game, though."
+                    show cat question
                     c "I can't decide whether that was exhilarating or frustrating."
         "Want to play laser tag?":
             "Her eyes light up as she processes the suggestion."
+            show cat fuun
             c "That sounds interesting!"
             c "Do you know how to play?"
             menu:
                 "No, but we'll figure it out.":
+                    show cat smile
                     c "Uh-uh. Maybe it'll be more fun that way."
                 "Yes, I'm a pro.":
+                    show cat seductive_or_something
                     c "Hah, we'll see about that!"
                     $ cat_mood += 1
                 "I'm alright.":
+                    show cat blush
                     c "Remember to go easy on me."
             "We spend our time playing with Catherine. She looks pretty happy."
         "Let's watch a robot brawl!":
             c "Okay. No harm in trying it out."
             "You can also remote control the robots here, but it's pretty costly, so better stick to just watching the show for now."
             "The sparks and hydraulic fluid spraying all around really get my heart pounding!"
+            show cat tired
             "Catherine is less enthusiastic, however."
             n "Pretty amazing what those bots can do, huh?"
+            show cat normal_downright
             c "I suppose it qualifies as entertainment."
             $ cat_mood -= 1
     return
@@ -250,6 +274,7 @@ label .movie_choices:
             $ target = choice3[1]
         "These choices suck.":
             $ cat_mood -= 1
+            show cat frown
             c "Nick!"
             cashier "Well, if you don't like them, just leave."
             menu:
@@ -257,6 +282,7 @@ label .movie_choices:
                     jump .movie_choices
                 "Leave.":
                     n "Let's ditch this place, Catherine."
+                    show cat question
                     c "Seriously? Well, all right..."
                     return
     jump .payment
@@ -274,6 +300,7 @@ label .payment_menu:
     menu:
         "Pay for both." if not pay_both_tried:
             n "I'll pay for both."
+            show cat smile
             c "Nick..."
             "She starts to say something, but holds her tongue."
             cashier "[prices['movies_both']] bits."
@@ -288,10 +315,15 @@ label .payment_menu:
             "I don't think she really minds, though."
             call pay(prices['movies']) 
             if not pay_successful:
-                n "Well, this is an embarrasment."
+                n "Well, this is an embarrassment."
                 call .catpays 
         "Ask Catherine to pay for you.":
             call .catpays 
+    hide cat
+    hide cat_torso
+    with moveoutright
+    scene movie_theatre
+    scene movie_theatre dark with Dissolve(8.00)
     "We go inside the theater, picking our seats, and I slouch back as the movie starts playing."
     $ cat_opinion = 0
     call expression target 
@@ -300,8 +332,12 @@ label .payment_menu:
 label .catpays:
     n "Uh, Catherine? Could you pay for me, just this once?"
     # If this happened last time as well, she tries to refuse.
+    show cat frown
     c "You invite me on a date and then ask me to pay for you?"
+    show cat eyes_closed
     c "Whatever, let's just go in."
+    hide cat
+    hide cat_torso with moveoutright
     "She pays for both our tickets with her wristband."
     $ cat_mood -= 2
     return
@@ -396,6 +432,9 @@ label date_arrival:
             call .wait 
         else:
             $ nicklate = True
+            show cat frown at right, flip
+            show cat_torso orange at right, flip
+            with moveinright
             "date_arrival] the [location],[nickcondition] I [see] that Catherine is already here[catdescription]."
     elif i <= 0.9:
         # Nick is well on time
@@ -405,6 +444,9 @@ label date_arrival:
         call .wait 
     else:
         # Nick and Cat arrive at the same time
+        show cat smile
+        show cat_torso orange
+        with moveinright
         "Coincidentally, it seems both Cat and I arrive at the [location] at precisely the same time."
     jump .conversation_start
     
@@ -419,6 +461,9 @@ label .wait:
         $ waitingdescription = renpy.random.choice(["After a short while", "In a short while", "Not much later", "Pretty soon", "A bit later"])
     call .setupcatdescription 
     $ j = renpy.random.random()
+    show cat tired
+    show cat_torso orange
+    with moveinright
     if j < 0.5:
         "[waitingdescription], Catherine appears from behind a corner[catdescription]."
     else:

@@ -1,18 +1,17 @@
 # Events for the day planner
 
 init:
-    $ broken_up = False # Implement this later
+    $ broken_up = False
     $ call_ignored = False
     
     $ event("callCatherine", "act == 'callcat' and not broken_up", event.only(), priority=5)
     
     # $ event("Catherine_movie_scene", "act == 'movies'", event.only(), event.once(), priority=5)
-    $ event("Catherine_broken_up_mall", "act == 'mall' and broken_up", event.only(), event.once(), event.random(0.3), priority=50)
-    $ event("Catherine_gym_broken_up", "act == 'gym' and broken_up and day%4==1", event.only(), priority=50)
-    $ event("DFOServers", "act == 'work'", event.once(), event.only(), event.random(0.1), priority=50)
+    $ event("Catherine_broken_up_mall", "(act == 'mall' or act == 'cathouse') and broken_up", event.only(), event.random(0.2), priority=50)
+    $ event("Catherine_gym_broken_up", "act == 'gym' and broken_up and day%4==1 and cash >= prices['gym']", event.only(), priority=50)
     
     $ event("Catherine_study_together", "act == 'cathouse' and not broken_up", event.only(), event.depends('Catherine_parlor'), priority=200)
-    $ event("Catherine_gym_together", "act == 'gym' and not broken_up and day%4==1", event.only(), event.once(), event.depends('Catherine_parlor'), priority=50)
+    $ event("Catherine_gym_together", "act == 'gym' and not broken_up and day%4==1 and cash >= prices['gym']", event.only(), event.once(), event.depends('Catherine_parlor'), priority=50)
     $ event("sauna_accident", "act == 'swimming' and day%4==3", event.only(), event.depends("swimminghallintro"), event.depends('Catherine_parlor'), event.once(), event.random(0.14), priority=50)
     $ event("Catherine_running_together", "broken_up == False and act == 'track' and day%4==2", event.only(), event.depends('Catherine_parlor'), priority=50)
     
@@ -21,16 +20,19 @@ init:
     
     $ event("generic_promise_event", "(act, day) in promises.keys()", event.only(), priority=10)
     
+    $ event("Catherine_house_calls_ignored1", "act == 'cathouse' and call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1", event.only(), priority=100)
+    $ event("Catherine_house_calls_ignored2", "act == 'cathouse' and call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] >= 2")
     
     $ event("Catherine_afternoon_call_ignored2", "call_ignored and 'Catherine' not in forgotten_promises and unkept_promises_personal_counter['Catherine'] >= 3 and period == 'afternoon'", priority=5)
     $ event("Catherine_afternoon_call_ignored", "call_ignored and 'Catherine' not in forgotten_promises and unkept_promises_personal_counter['Catherine'] == 1 and period == 'afternoon'", priority=5)
-    $ event("Catherine_morning_call3", "'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] > 2 and period == 'morning'", priority=5)
-    $ event("Catherine_evening_call3", "call_ignored and 'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] > 2 and period == 'evening'", priority=210)
-    $ event("Catherine_afternoon_call2", "'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] == 2 and period == 'afternoon'", priority=5)
-    $ event("Catherine_morning_call1", "'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] == 1 and period == 'morning'", priority=5)
-    $ event("Catherine_afternoon_call1", "call_ignored and 'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] == 1 and period == 'afternoon'", priority=5)
-    $ event("Catherine_evening_call1", "call_ignored and 'Catherine' in forgotten_promises and unkept_promises_personal_counter['Catherine'] == 1 and period == 'evening'", priority=5)
+    $ event("Catherine_morning_call3", "'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] > 2 and period == 'morning'", priority=5)
+    $ event("Catherine_evening_call3", "call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] > 2 and period == 'evening'", priority=210)
+    $ event("Catherine_afternoon_call2", "'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 2 and period == 'afternoon'", priority=5)
+    $ event("Catherine_morning_call1", "'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1 and period == 'morning' and not call_ignored", priority=5)
+    $ event("Catherine_afternoon_call1", "call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1 and period == 'afternoon'", priority=5)
+    $ event("Catherine_evening_call1", "call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1 and period == 'evening'", priority=5)
     
+image movie_theatre dark = im.MatrixColor("movie_theatre.png", im.matrix.brightness(-0.5))
  
 init python:
        import math
@@ -65,6 +67,60 @@ init python:
             
        hub_seen_labels = []
        
+image cat lookaround:
+    "cat normal.png"
+    pause 0.25
+    "cat normal_left.png"
+    pause 0.25
+    "cat normal.png"
+    pause 0.25
+    "cat normal_right.png"
+    pause 0.25
+    repeat
+       
+label Catherine_house_calls_ignored1:
+    $ unhandled = unhandled_forgotten_promises.pop('Catherine')
+    $ time = say_days(day-unhandled[1])
+    $ location = unhandled[0]
+    $ call_ignored = False
+    "Catherine opens the door as I knock."
+    c "Nick? Well, this is a surprise!"
+    c "Why haven't you been answering my calls?"
+    call answer_Catherine_ignored_call.cat_question
+    "She walks into the apartment."
+    c "You can come in, you know..."
+    if location == "parlor":
+        c "Let's meet at the parlor tomorrow. That all right with you?"
+        n "S-sure."
+        python:
+            if (location, day+1) in promises.keys():
+                promises[(location, day+1)][("Catherine", "meet")] = False
+            else:
+                promises[(location, day+1)] = {("Catherine", "meet"): False}
+    return
+    
+label Catherine_house_calls_ignored2:
+    $ unhandled = unhandled_forgotten_promises.pop('Catherine')
+    $ call_ignored = False
+    "Catherine arrives around the same time as I do."
+    c "Oh, Nicholas. Hi."
+    "We just stand there, a bit awkward."
+    c "Why have you not been answering my calls? Do you just hate me, or something?"
+    menu:
+        "Kinda.":
+            n "Um..."
+            "She tears up."
+            c "I knew it."
+            "Before I have time to respond, she escapes into her apartment."
+            "The clink of the lock is left echoing in my mind."
+            $ broken_up = True
+        "Of course not.":
+            n "No... Of course not."
+            c "I see..."
+            c "I... I'd appreciate it if you don't come in right now. It's kind of messy."
+            "I wonder if that's actually true..."
+    return
+              
 label Catherine_parlor:
     python:
         kept_promises = set()
@@ -92,6 +148,15 @@ label callCatherine:
         "I call, and Catherine picks up quickly."
     else:
         "It takes a while for Catherine to answer."
+    
+    if 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1:
+        if not call_ignored:
+            jump answer_Catherine_morning_call
+        else:
+            jump answer_Catherine_ignored_call
+    elif 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 2:
+        jump answer_Catherine_afternoon_call2
+        
     c "Hi?"
     n "Hi! I was wondering if you'd like to set up a date?"
     c "When?"
@@ -152,8 +217,14 @@ label Catherine_afternoon_call_ignored:
         "Ignore":
             $ call_ignored = True
             "I wonder how long we can keep this up?"
+    return
                 
 label Catherine_morning_call3:
+    scene player_room
+    $ unhandled = unhandled_forgotten_promises.pop('Catherine')
+    $ time = say_days(day-unhandled[1])
+    $ location = unhandled[0]
+    $ at_location = say_at_location(location)
     "I gulp as I feel the vibrations of my wristband."
     "Catherine must be furious. I really really really don't want to talk with her."
     menu:
@@ -162,8 +233,7 @@ label Catherine_morning_call3:
             "There's a moment of silence as I pick up. I just can't get the words out of my throat."
             c "Hello? Nicholas? I know you're there."
             n "H-hi, Cat..."
-            $ place = "movies" # Supplement later
-            c "So, didn't see you at the [place] yesterday."
+            c "So, didn't see you [at_location] yesterday."
             n "I-I guess I..."
             c "I don't really care what you're excuse is this time."
             c "I just can't trust you anymore, Nick."
@@ -178,6 +248,7 @@ label Catherine_morning_call3:
     return
     
 label Catherine_evening_call3:
+    scene player_room
     "Catherine is calling again."
     "Should I just answer it and get it over with?"
     "I can already guess what she is going to say."
@@ -217,6 +288,11 @@ label Catherine_afternoon_call2:
     return
     
 label answer_Catherine_afternoon_call2:
+    $ unhandled = unhandled_forgotten_promises.pop('Catherine')
+    $ time = say_days(day-unhandled[1])
+    $ location = unhandled[0]
+    $ at_location = say_at_location(location)
+    $ call_ignored = False
     n "Nicholas."
     c "Oh, I know very well who I'm calling. An inconsiderate jackass!"
     n "What's the problem?"
@@ -224,14 +300,14 @@ label answer_Catherine_afternoon_call2:
     c "You broke your promise the second time in a row! I'm just so... Argh!"
     menu:
         "Promise to meet her again":
-            n "Look, I'm sorry I messed up again. Let's go to the movies tomorrow, what do you say?"
+            n "Look, I'm sorry I messed up again. Let's meet [at_location] tomorrow, what do you say?"
             c "... I guess that would be nice. But if you ditch me again, it's over!"
             "The threat makes the hair of my neck stand up a bit."
             python:
-                if ('parlor', day+1) in promises.keys():
-                    promises[('movies', day+1)][("Catherine", "meet")] = False
+                if (location, day+1) in promises.keys():
+                    promises[(location, day+1)][("Catherine", "meet")] = False
                 else:
-                    promises[('movies', day+1)] = {("Catherine", "meet"): False}
+                    promises[(location, day+1)] = {("Catherine", "meet"): False}
         "Threaten to break up with her":
             # Should test for affection here
             n "Look, this is the way I am. Stop trying to change me, or I'll break up with you!"
@@ -247,6 +323,7 @@ label answer_Catherine_afternoon_call2:
     return
                 
 label Catherine_morning_call1:
+    scene player_room
     "I wake up to the vibrations of my wristband."
     "It's Catherine."
     menu:
@@ -287,7 +364,12 @@ label Catherine_evening_call1:
     
 label answer_Catherine_morning_call:
     n "Hi there."
-    c "Nick, what the hell? Weren't we supposed to meet yesterday?"
+    $ call_ignored = False
+    $ unhandled = unhandled_forgotten_promises.pop('Catherine')
+    $ time = say_days(day-unhandled[1])
+    $ location = unhandled[0]
+    $ at_location = say_at_location(location)
+    c "Nick, what the hell? Weren't we supposed to meet [time]?"
     menu:
         "Claim you forgot":
             n "Oh, we were? I guess I forgot."
@@ -296,19 +378,36 @@ label answer_Catherine_morning_call:
         "Say you were tired":
             n "I was just too tired to come."
     c "Just as long as you weren't playing that freaking game again!"
-    n "Look, I'll meet you at the parlor tomorrow, okay?"
+    n "Look, I'll meet you [at_location] tomorrow, okay?"
     c "You'd better come this time!"
     python:
-        if ('parlor', day+1) in promises.keys():
-            promises[('parlor', day+1)][("Catherine", "meet")] = False
+        if (location, day+1) in promises.keys():
+            promises[(location, day+1)][("Catherine", "meet")] = False
         else:
-            promises[('parlor', day+1)] = {("Catherine", "meet"): False}
+            promises[(location, day+1)] = {("Catherine", "meet"): False}
     "With that, she hangs up."
     return
     
 label answer_Catherine_ignored_call:
+    $ unhandled = unhandled_forgotten_promises.pop('Catherine')
+    $ time = say_days(day-unhandled[1])
+    $ location = unhandled[0]
+    $ at_location = say_at_location(location)
+    $ call_ignored = False
     n "H-hi."
     c "What's going on? Why didn't you answer me before?"
+    c "First you break your promise, then you don't even return my calls."
+    n "Oh, that? Let's meet tomorrow, [at_location]. Sound good?"
+    c "This time, you'd better actually be there!"
+    python:
+        if (location, day+1) in promises.keys():
+            promises[(location, day+1)][("Catherine", "meet")] = False
+        else:
+            promises[(location, day+1)] = {("Catherine", "meet"): False}
+    "She hangs up."
+    return
+                
+label .cat_question:
     menu:
         "Claim you didn't notice her call":
             n "Sorry, I hadn't noticed it until now."
@@ -318,18 +417,7 @@ label answer_Catherine_ignored_call:
             n "Sorry, Catherine. I've been too busy the whole day."
     c "Too busy playing DFO, I venture."
     n "C'mon, that's not fair."
-    c "First you break your promise, then you don't even return my calls."
-    n "Oh, that? Let's meet tomorrow, at the parlor. Sound good?"
-    c "This time, you'd better actually be there!"
-    python:
-        if ('parlor', day+1) in promises.keys():
-            promises[('parlor', day+1)][("Catherine", "meet")] = False
-        else:
-            promises[('parlor', day+1)] = {("Catherine", "meet"): False}
-    "She hangs up."
     return
-                
-
     
 # Promises
         
@@ -363,7 +451,7 @@ label generic_promise_event:
 # Special Scenes, Catherine
 
 label sauna_accident:
-    scene city_street
+    scene hallway
     $ cash -= prices['swimminghall']
     "I yawn while navigating the labyrinthine hallways of the swimming hall."
     "I didn't sleep that well, and I'm feeling really tired today."
@@ -374,12 +462,13 @@ label sauna_accident:
     "While standing under the warm pouring water, I'm struck by something strange."
     "The architecture feels really different today. Was that door always on that side?"
     "Aaaah, I should just let go of the tension and forget it."
+    scene black with dissolve
     "I go sit in the sauna, relaxing even further in the Eucalyptus-tinged vapours."
     "This is the life. I'm so relaxed, I'm practically dozing... off..."
     "Someone comes in and sits beside me, a bit further away."
     "Then, the person seems to recognize me, and I'm jolted awake."
-    show cat question with dissolve
-    show cat_torso naked with dissolve
+    show cat question at closeup with dissolve
+    show cat_torso naked at closeup with dissolve
     c "Nick...?"
     "W-wait, what's Catherine doing on the men's side?"
     "Suddenly, I realize why something felt off before."
@@ -392,6 +481,7 @@ label sauna_accident:
             "Catherine seems at a loss for words as well."
             call .Catherine_conversation 
         "Take cover!":
+            show cat surprise_down
             "I stumble to cover up my private parts!"
             "Catherine's looking at me, eyes agape."
             call .Catherine_conversation 
@@ -401,8 +491,8 @@ label sauna_accident:
             show cat angry
             c "Nick, what the hell are you doing!?"
             "I almost slip on the wet floor, but manage to get away, with no time to close the door behind me."
-            hide cat
-            hide cat_torso
+            hide cat with moveoutleft
+            hide cat_torso with moveoutleft
             "Damn! I can hear Catherine following right behind me. Thankfully, she's walking rather than sprinting."
             "Quick, I need to hide somewhere!"
             $ locker = False
@@ -433,17 +523,17 @@ label sauna_accident:
     return
 
 label .Catherine_investigation(visibility, place):
-    show cat frown with dissolve
-    show cat_torso naked with dissolve
+    show cat frown at right with moveinright
+    show cat_torso naked at right with moveinright
     "Catherine walks in, and [visibility] I can see her investigating the perimeter."
     c "Nick, I know you're in here somewhere!"
-    show cat normal_right
+    show cat lookaround
     "I'm holding my breath, praying that she won't come [place]."
     "Finally, she appears to lose interest."
     show cat anger
     c "Whatever. We'll talk when you're ready to act like an adult."
-    hide cat with dissolve
-    hide cat_torso with dissolve
+    hide cat with moveoutright
+    hide cat_torso with moveoutright
     "I hold back a sigh of relief until she is no longer visible."
     return
             
@@ -461,7 +551,7 @@ label .Catherine_conversation:
     "Cat frowns and blinks, as if confused, but then..."
     show cat fuun
     "... she starts giggling!"
-    show cat normal
+    show cat blush_smile
     $ affection_modify('Catherine', 1)
     c "Oh yeah, I'll send you blasting off again!"
     c "Nicky, you really watch too much anime, don't you?"
@@ -469,37 +559,48 @@ label .Catherine_conversation:
     show cat seductive_or_something
     "She's teasing me now."
     c "And it's not like you haven't seen me naked before..."
-    hide cat with dissolve
-    hide cat_torso with dissolve
+    hide cat with moveoutleft
+    hide cat_torso with moveoutleft
     "I storm out, all red, hoping that I don't meet anyone on the way out."
     return
     
     
 label Catherine_gym_broken_up:
     $ cash -= prices['gym']
-    scene city_street
+    scene gym
+    show cat normal_right at right
+    show cat_torso orange at right
     "As I arrive at the gym, I see that Catherine is already here."
     "I don't really want to face her like this, but I did come here to exercise."
     menu:
         "Stay and exercise":
             "I go as far away from Catherine as possible, deciding to lift some weights."
+            show cat
+            show cat_torso
+            with moveoutright
         "Leave":
             "I leave Catherine to her own gym devices."
             return
     "Eventually, Catherine comes over as well."
+    show cat normal_downright at right
+    show cat_torso orange at right
+    with moveinright
     "She doesn't even look at me, and starts lifting some weights."
     "Does she think she rules the place or something?"
     "I get some bigger weights and tighten my pace."
+    show cat frown
     "Seeing that, she does likewise."
     "Pretty soon, we're in a heated competition, trying to see who can lift the most!"
     "Other guys at the gym come around us, cheering for Catherine."
     "Yeesh, is she some sort of celebrity around these parts?"
+    show cat_torso green with Dissolve(10.0)
     if fitness < 45:
         "I'm in pretty poor shape."
         "I grit my teeth as I see her still going fast while my own arms scream with pain!"
         "Damnit! I'm never giving uuuuuuup!"
         "THUMP!"
         "Suddenly, all the strength disappears from my arms and legs, and I collapse to the ground."
+        show cat fuun
         "Everyone is laughing at my misfortune. Darn, how can she be so good?"
     elif fitness < 75:
         "I'm in good shape myself, but she's just amazing."
@@ -508,13 +609,22 @@ label Catherine_gym_broken_up:
         "The crowd breaks into a cheer as I collapse to the ground, giving up."
     elif fitness < 90:
         "She's in great shape, but I'm no pushover myself."
+        show cat something
         "I manage to keep up pace with her, and our combat ends in a draw."
         "The crowd seems a bit disappointed, and disperses."
     else:
         "She's in great shape, but she's still no match for me!"
+        show cat disgust_down
         "I can see her trying as hard as she can, but eventually she must acquiesce."
+        hide cat
+        hide cat_torso
+        with falldown
+        with vpunch
         "She sits on the ground panting heavily. The crowd boos, though I'm not sure if it's directed at me or at her."
     # Talk with Catherine here. If there's nothing to discuss...
+    hide cat
+    hide cat_torso
+    with moveoutright
     "I don't talk to her after that."
     "Well, at least I really gave it my all this time."
     "Although my arms sure are going to ache tomorrow..."
@@ -527,20 +637,27 @@ label Catherine_gym_together:
     
     $ cash -= prices['gym']
     
-    scene city_street
+    scene gym
     
     "Upon arrival, I see that Catherine is already here, in full exercise mode."
     menu:
         "Talk to her":
+            show cat normal
+            show cat_torso orange
+            with moveinright
             "I walk up to her to say hi."
             n "Already hard at work, I see."
         "No need to disturb her":
             "She's so deeply focused, I'd better not disturb her."
             "I go a bit further off, doing some acrobatic exercises."
             "She eventually comes over."
+            show cat normal
+            show cat_torso orange
+            with moveinright
             # Hi scene
             c "Hi!"
             n "Hello there! I guess you're almost done?"
+    show cat fuun
     c "Yeah, I've been developing a lot of muscle strength. Wanna see?"
     "She grins and holds her fist right below my nose."
     menu:
@@ -550,24 +667,35 @@ label Catherine_gym_together:
             n "No, no, I believe you."
         "Please don't hit me!":
             n "Please don't hurt me, it wasn't me!"
+            show cat surprise
             "Catherine looks surprised, and then blushes and whispers."
+            show cat blush
             c "Nick, you idiot! Don't embarrass me in front of the whole box!"
+            show cat lookaround
             "She glances around, trying to confirm that no-one heard my outburst."
             c "Anyway."
+    show cat eyes_closed_smile
     c "Just come over here, I'll show you."
     "She walks over to the sparring robot, still sporting a wide grin."
+    show cat normal
     c "I've been learning some martial arts on the side!"
     "She takes a fighting stick and approaches the bot."
     "However, just then, an older gray-haired guy comes over. Despite his age, he manages to boast a six-pack."
     o "Hi, Catherine. Daily workout almost done?"
     "He sizes me up."
     o "Is this your boyfriend?"
-    c "Hi, Jack. Jack this is Nicholas, my boyfriend. Nick, this is Jack, my trainer and the leader of this gym."
+    show cat eyes_closed_smile
+    c "Hi, Jack. Jack this is Nicholas, my boyfriend."
+    show cat normal
+    c "Nick, this is Jack, my trainer and the leader of this gym."
     n "Does he have an Onyx?"
+    show cat frown
     "Cat casts a sharp glance at me."
     jackquotes "Well, let's see what he's made of. You two, spar with the robot together."
+    show cat question
     c "There's a team mode?"
     jack "Sure there is. Let's crank up the difficulty a bit..."
+    show cat normal
     "He plays with the settings of the robot, and it sprouts two extra arms and legs!"
     jack "Ready... set... go!"
     "Jack recedes into the background as the robot springs to life!"
@@ -580,6 +708,7 @@ label Catherine_gym_together:
     $ victorious = False
     if i < 0.5:
         "Catherine!"
+        show catherine shock
         "The robot lunges its elongated arms forward, attempting to grapple her!"
         $ robot_focusing = "Catherine"
         jump .react_phase
@@ -616,18 +745,21 @@ label .act_phase:
         jump .victory
     if cat_in_air:
         call .Catherine_struggle 
-    call .robot_act 
-    jump .act_phase # Loop act phase until victory
-
+    jump .robot_act
     
 label .struggle:
     $ struggle_counter += 1
     "I exert all my strength to break free of its grip!"
+    with hpunch
     $ j = renpy.random.random()
     if j < 0.5:
         "But it's too strong!"
     else:
         "Suddenly, it loosens its grasp, and I fall gracefully to the ground!"
+        show cat
+        show cat_torso
+        with slideinbottom
+        with vpunch
         $ nick_in_air = False
         "It shifts its visor towards me, preparing to attack."
         $ robot_focusing = "Nick"
@@ -637,6 +769,7 @@ label .struggle:
 label .Catherine_struggle:
     # Catherine attempts to break free
     "Catherine struggles heroically in the robot's grasp!"
+    with hpunch
     $ j = renpy.random.random
     if j < 0.66:
         "However, she can't break free of its iron-grasp!"
@@ -652,12 +785,14 @@ label .attack:
     else:
         "I need to keep distracting it!"
     if cat_in_air:
+        with vpunch
         "I strike at the arm holding Catherine, forcing the robot to release its grip."
         "She rolls in the air and lands beside me."
         c "Thanks!"
         $ cat_in_air = False
         "The robot appears to be stunned by my strike."
     else:
+        with vpunch
         "I strike at one of the robot's arms, causing it to halt for a few seconds."
     $ robot_stunned = True
     $ stun_counter = 1
@@ -669,11 +804,15 @@ label .attack:
 label .Catherine_press:
     n "Catherine, press the button, quick!"
     c "O-okay!" # Y-yes!
+    hide cat
+    hide cat_torso
+    with moveoutleft
     if not robot_stunned:
         "Catherine approaches, but at the last moment, the robot notices her and evades the incursion!"
         if nick_in_air:
             "In the commotion, it accidentally releases me, and I land on the ground."
             $ nick_in_air = False
+            with vpunch
     else:
         # Victory
         "The robot does not have the time to react, and Cat manages to shut it down!"
@@ -682,6 +821,9 @@ label .Catherine_press:
     
 label .press:
     "While the machine is concentrating on Catherine, I sneak up on it, attempting to press the power down button on its back."
+    show cat
+    show cat_torso
+    with moveoutleft
     if not robot_stunned:
         "At the last moment, its head rotates 180 degrees to face me, and it lashes out at me!"
         $ robot_focusing = "Nick"
@@ -693,7 +835,11 @@ label .press:
     
 label .Catherine_distract:
     n "Catherine! Try to draw its attention!"
+    show cat something2
+    show cat_torso
+    with moveinright
     c "U-uh, hey you stupid robot, don't forget about me!"
+    with vpunch
     "Catherine strikes one of the robot's arms, and it turns its head towards her."
     $ robot_focusing = "Catherine"
     return
@@ -707,19 +853,24 @@ label .distract:
         
 label .react_phase:
     menu:
-        #Implement
         "Jump out of the way!" if robot_focusing == "Nick":
             call .dodge("jump") 
         "Strike!" if robot_focusing == "Nick":
+            with vpunch
             "I stomp on one of its arms right as it's about to grapple me!"
             "If robots feel pain, I'm sincerely sorry!"
             "The robot retracts its arms, giving me a few seconds to act!"
             $ robot_stunned = True
             $ stun_counter = 0
         "Roll!" if robot_focusing == "Nick":
-            call .dodge("roll") 
-        "Jump to protect her!" if robot_focusing == "Catherine":
+            call .dodge("roll")
+        "Keep struggling" if nick_in_air:
+            call .struggle
+        "Jump to protect her!" if robot_focusing == "Catherine" and not nick_in_air:
             "I jump in front of the robots arms!"
+            show cat angry
+            show cat_torso
+            with moveinright
             c "Nick, get out of my way!"
             "Oh right, Cat already had experience in this, didn't she..."
             "And I forgot that the robot's got four arms!"
@@ -728,11 +879,12 @@ label .react_phase:
             $ cat_in_air = True
             $ nick_in_air = True
         "Let her handle it" if robot_focusing == "Catherine":
+            with vpunch
             "Cat deftly dodges the robot's arms, delivering a strong blow with her fighting stick!"
             "The robot is completely focused on fighting Catherine now."
             $ robot_stunned = True
             $ stun_counter = 0
-        "Sneak up on the robot" if robot_focusing == "Catherine":
+        "Sneak up on the robot" if robot_focusing == "Catherine" and not nick_in_air:
             "The red power switch glows on the robot's back. If only I could reach it..."
             "I sneak up towards the robot, but just as I'm about to press the button, it notices me and retreats!"
             "Now it's lunging its arms towards me!"
@@ -752,6 +904,9 @@ label .dodge(method):
         $ robot_stunned = True
         $ stun_counter = 0
     else:
+        hide cat
+        hide cat_torso
+        with slideoutbottom
         "It's no use! The robot catches my leg and lifts me into the air!"
         $ nick_in_air = True
     return
@@ -783,6 +938,9 @@ return
     
 label .victory:
     play music "bgm/Hope(Ver1.00).ogg"
+    show cat fuun
+    show cat_torso green
+    with moveinright
     jack "So you did manage to beat it."
     "He sounds genuinely impressed."
     "Hey, wait a minute, weren't you expecting us to win!?"
@@ -797,15 +955,22 @@ label .victory:
         
 label Catherine_running_together:
 
-    scene city_street
+    scene running_track
 
     "I go to the running track to run a few laps."
     "As I'm running, Catherine arrives, and I slow down to meet her."
     # Catherine introductions
+    show cat normal at left
+    show cat_torso green at left
+    with moveinleft
     c "Hi, how's it going, Nick?"
     "I have to catch my breath for a bit."
     n "Oh, you know, the usual. How are you?"
+    show cat fuun
     c "Great! Especially now that I'm going to beat you at this race!"
+    hide cat
+    hide cat_torso
+    with moveoutleft
     "She darts right ahead of me."
     "Yeesh, this is unfair, I'm already exhausted!"
     if fitness < 45:
@@ -826,20 +991,29 @@ label Catherine_running_together:
         "Even with the advantage, she can only barely keep up with me."
         "It's actually kind of sad to leave her behind like this."
         "But that's life I guess. Sorry Cat! Even you can't always win!"
+        show cat frown at left
+        show cat_torso green at left
+        with moveinleft
         "Cat's still pouting once we've finished racing."
         c "Hmph. Don't get any big ideas. I was just tired from the gym today."
     if fitness < 90:
+        show cat blush2
+        show cat_torso green
+        with moveinright
         "Cat approaches, smiling."
         c "Wow, you're sweating."
         n "Well, yeah. I was running as hard as I could back there."
+        show cat fuun
         c "Want a handkerchief?"
         menu:
             "Thanks.":
                 n "Thanks."
+                show cat eyes_closed_smile
                 c "No problem."
                 $ handkerchief = True
             "No need.":
                 n "Nah, you keep it."
+                show cat eyes_closed_smile
                 c "Okay then."
     "I really gave it my all today. My muscles are really aching."
     $ affection_modify('Catherine', 1)
@@ -877,6 +1051,7 @@ label .atthedoor:
             "I have a copy of the key to her apartment, of course. I'm her boyfriend, right?"
             "It's kind of bad-mannered to just waltz in like this, but I'm sure she won't mind if I explain it to her afterwards."
             "I turn the key in the lock and walk into her apartment."
+            scene dirty_room_1
             play music "bgm/wrong.wav"
             "There's definitely something going on here."
             "Her shoes are still in the cabinet, so she must be inside."
@@ -889,11 +1064,20 @@ label .atthedoor:
                     "The cabinet has some of Catherine's old sports equipment. There's a golf club, two tennis rackets, and... yes, this will do."
                     "I take the baseball bat and ready it for attack."
                     "Eventually, I see someone come out the door, and I swing the bat over my head!"
+                    show cat surprise at flip
+                    show cat_torso green at flip
+                    with moveinright
                     stop music
                     c "Gyaaa! Nick, what the hell are you doing!?"
                     "It's Catherine. In her underwear, no less."
                     c "Just... stay there! And put that bat down!"
                     $ bat_noticed = 1
+                    show cat surprise
+                    show cat_torso green
+                    pause 0.25
+                    hide cat
+                    hide cat_torso
+                    with moveoutright
                     "She goes back to her bedroom and closes the door."
                     jump .gettingclothed
                 "Say something":
@@ -909,8 +1093,7 @@ label .atthedoor:
                     c "Darn, sorry, I forgot."
                     n "Your dog's somewhere?"
                     c "At my parents. It needed some rest."
-                    "She opens the door, dressed in clothes with completely unmatching colors. She must have not had time to look for anything
-                    better."
+                    "She opens the door, dressed in clothes with completely unmatching colors. She must have not had time to look for anything better."
                     "She looks into my eyes for a moment, a bit flustered."
                     c "Hi."
                     "Before I have time to respond, she's already disappeared into the kitchen."
@@ -924,11 +1107,17 @@ label .atthedoor:
                     "Okay, here goes nothing!"
                     "Shouting a battlecry, I storm into the room!"
                     # silence
+                    show cat suprise at closeup, flip
+                    show cat_torso green at closeup, flip
                     stop music
                     "And I see Catherine. Playing a dance game. Wearing a T-shirt and nothing else."
                     "There's an awkward silence as we both stand perfectly still, staring at each other with gaping eyes."
                     c "......"
+                    show cat scream
                     c "Gyaaaa! What the hell, Nick!? Get out get out get out!"
+                    hide cat
+                    hide cat_torso
+                    with moveoutright
                     "She pushes me back to the corridor and closes the door behind her."
                     $ bat_noticed = 2
                     jump .gettingclothed
@@ -958,8 +1147,15 @@ label .gettingclothed:
     "It's not as unlikely as she makes it sound."
     n "Well, you never know."
     "She opens the door again, dressed a bit more amicably. Still, the colors don't match at all."
+    show cat frown at flip
+    show cat_torso green at flip
+    with moveinright
     "She must be irritated, not getting to spend the whole day choosing."
+    show cat question
     c "I didn't know you were that paranoid, Nick. What's gotten into you?"
+    hide cat
+    hide cat_torso
+    with moveoutleft
     "Without giving me time to answer, she slides into the kitchen."
     jump .kitchen
                    
@@ -986,12 +1182,18 @@ label .kitchen:
         "You got any coke?":
             c "S-sure. I'll bring the bottle to the living room."
             $ coke_bottle = True
+    show cat normal_down at closeup
+    show cat_torso green at closeup
+    with dissolve
     "I sit on the mat by the glass table, while she sits on the couch, looking down on me."
     "Literally that is. Hopefully not metaphorically."
     c "Now then, let us commence. The purpose of this meeting is to help you get into a good school by studying properly."
     n "Why are you making this sound so professional? We're a pair, right?"
+    show cat wink_left
     c "Mister Nicholas, if you would please focus."
+    show cat eyes_closed_smile
     "I can see that she's enjoying this."
+    show cat normal_down
     "Cat likes to be in a position where she can tell others what to do."
     "Pretty stereotypical with MBA students, I suppose."
     "Although with her inability to actually make decisions, I'm not sure she'd be such a great boss."
@@ -1000,13 +1202,16 @@ label .kitchen:
         "Game design":
             "I'm not sure if Cat will be on board with this idea, but..."
             n "I've been thinking of game design."
+            show cat frown
             "She presses her mouth into a thin line."
             c "I suppose that is a job. Of sorts."
             n "Shouldn't you do something you're passionate about?"
+            show cat normal_downright
             c "As long as you can actually make a living that way."
             $ cat_mood -= 1
         "Business":
             n "I'm interested in business."
+            show cat question
             "She smiles, incredulous."
             c "Yeah, right. You're just saying that to get on my good side."
             n "No, I really am interested."
@@ -1014,11 +1219,16 @@ label .kitchen:
             $ cat_mood += 1
         "I don't know":
             n "I dunno."
+            show cat tired
             c "Of course not. Not when it's something important."
+    show cat frown
     "She frowns in that cute way of hers again."
     c "Well, regardless of what you're going to apply for, there's some basic subjects that spring up in every entrance exam."
+    show cat eyes_closed
     c "Mathematics, physics and basic chemistry, for instance."
+    show cat normal_down
     c "I guess math is the most common, so we might as well start with that."
+    show cat smile
     c "Okay then, what's your weakest area, probability theory, calculus or geometry?"
     menu:
         "Probability theory.":
@@ -1031,6 +1241,7 @@ label .kitchen:
     
 label .math_question1:
     $ math_genius = False
+    show cat wink_right
     "She closes one eye, beckoning me to answer."
     c "Let's start with a simple one."
     if math_subject == 0:
@@ -1041,39 +1252,48 @@ label .math_question1:
         jump .geometry1
         
 label .right_answer1:
+    show cat smile
     c "Yeah, I guessed that one would be too easy for you."
     $ cat_mood += 1
     return
     
 label .wrong_answer1:
+    show cat fast_blink
     "Cat blinks."
+    show cat question
     c "Uh, no. You see..."
     return
 
 label .right_answer2:
+    show cat surprise_down
     c "Y-yeah, that's correct."
     "She looks a bit flustered."
     "What, you weren't expecting me to get it right?"
     return
     
 label .wrong_answer2:
+    show cat eyes_closed_smile
     c "This one's a bit more difficult, huh?"
     $ cat_mood += 1
     return
 
 label .right_answer3:
+    show cat surprise_down
     c "W-wait a minute, didn't you say this was your weakest area?"
+    show cat question
     c "Are you just really good at math or something?"
     $ math_genius = True
     return
     
 label .wrong_answer3:
+    show cat normal_downright
     c "Yeah, um, I think it goes like this..."
     "You're not certain yourself?"
     $ cat_mood += 1
     return
     
 label .math_question2:
+    show cat normal_down
     "Well then, how about this one?"
     if math_subject == 0:
         jump .probability2
@@ -1083,6 +1303,7 @@ label .math_question2:
         jump .geometry2
     
 label .math_question3:
+    show cat smile
     "Okay, here's a tough one."
     if math_subject == 0:
         jump .probability3
@@ -1111,13 +1332,17 @@ label .probability1_explanation:
     "The table has the numbers 1-6 both as columns and as rows."
     c "So now each cell of the table represents one possibility. Count them."
     n "There's 36. It's a six-by-six table, I can tell without counting."
+    show cat eyes_closed_smile
     c "Right, of course. Now then, the numerator represents the dice combinations which you're interested in."
+    show cat normal_down
     c "So the ones which have a sum of 11. We can fill in the table with the sums in each case."
+    show cat smile
     c "And now you can just count the amount of 11s in the table! Pretty simple, isn't it?"
     n "When you put it that way..."
     "There's two 11s in the table. First die is 5 and second 6 or the other way around."
     "So 2 as the numerator, 36 as the denominator, the answer is..."
     n "So it's 2/36?"
+    show cat eyes_closed_smile
     c "I knew you'd get it!"
     return
     
@@ -1136,31 +1361,45 @@ label .probability2:
     jump .interrupt
     
 label .probability2_explanation:
+    show cat eyes_closed_smile
     c "The probability of one die coming up 6 is 1/6, and if you sum them together, you get 3/6."
+    show cat normal
     c "But that's not the correct answer! Look at this Venn diagram."
     "She draws three overlapping circles on the screen of her table."
     "Tapping them with her finger, she names them 'A: Die 1 comes up 6,' 'B: Die 2 comes up 6,' and 'C: Die 3 comes up 6'."
+    show cat eyes_closed
     c "If you just naively sum the probabilities together, you will end up counting certain combinations twice."
+    show cat normal_down
     c "For instance, the combination 'Dice 1 and 2 come up 6' is contained in both the probability 'A: Die 1 comes up 6' and the probability 'B: Die 2 comes up 6,' so you will end up counting it twice!"
+    show cat wink_left
     c "To correct for this, you have to subtract the probability of them both coming up 6 from the sum."
     c "In mathematical notation, P(A)+P(B)-P(A and B)."
+    show cat normal_downright
     c "You can also see this visually in this portion of the Venn diagram."
+    show cat normal_down
     c "Now when you have three different variables, or circles, you have to subtract each of these intersections: A and B, A and C, B and C."
     c "But then, you will have removed the middle part, or 'A and B and C' entirely! So you have to add that back."
+    show cat eyes_closed_smile
     c "So you're final formula becomes P(A) + P(B) + P(C) - P(A and B) - P(A and C) - P(B and C) + P(A and B and C)."
     n "That's ridiculously complicated! Isn't there a simpler way?"
+    show cat seductive_or_something
     "She raises one corner of her mouth a bit."
     c "Yeah, in this case there is."
+    show cat eyes_closed_smile
     c "If you want to know the probability of getting one or more instances of some specific result with probability p in n repetitions..."
     n "Say that in English, will ya?"
-    c "I'm getting to that! The total probability is 1 - (1-p)^n. So in this case, the probability of getting a six is p = 1/6, you're throwing
-    three identical dice, which is mathematically the same as throwing one die three times..."
+    show cat frown
+    c "I'm getting to that! The total probability is 1 - (1-p)^n."
+    show cat eyes_closed
+    "So in this case, the probability of getting a six is p = 1/6, you're throwing three identical dice, which is mathematically the same as throwing one die three times..."
     c "If p = 1/6 and there's three repetitions, the total probability is... 1 - (5/6)^3, or 91/216."
+    show cat normal
     c "Essentially, you're calculating the probability of none of the dice coming up six, which is (5/6)^3, and taking the complement of that by subtracting from 1."
     n "That still sounds pretty complicated..."
     
 label .probability3:
     c "In the Sherlock Holmes story 'The Adventure of the Six Napoleons,' there are six busts of Napoleon, one of which may conceal a priceless pearl."
+    show cat wink_right
     c "The probability that one of the busts really does contain the pearl is 1/2. Five of the busts have been destroyed. What is the probability that there is a pearl inside the last one?"
     menu:
         "1/2":
@@ -1174,10 +1413,13 @@ label .probability3:
     jump .interrupt
     
 label .probability3_explanation:
+    show cat eyes_closed
     c "So, um, the probability that there's a pearl at all is 1/2, and there are six identical busts."
+    show cat frown
     c "So if the pearl does exist, it's in bust 1 with a probability of 1/6, and the same for all the other busts."
     c "When you multiply by the probability of there being a pearl at all, you get (1/2)*(1/6) = 1/12, which is, hold on, about 0.083."
     "She checked that with the calculator on her wristband."
+    show cat normal_down
     c "However, this is just the probability in the beginning, before any busts have been broken!"
     c "You might be thinking, well, there's a fifty percent chance that it's not in any of the busts, but if it is, then, since all the others have been broken, it must be in the last one."
     c "So there's a 0.5 probability that it is in the last one."
@@ -1186,29 +1428,40 @@ label .probability3_explanation:
     n "How so?"
     c "Whenever you break a bust without finding the pearl, the probability of there being no pearl at all also increases, so in the end it should be way more than fifty percent!"
     n "This is making my head hurt."
+    show cat frown
     "Catherine doesn't answer, but the way she's frowning, she must secretly agree."
     c "So. The correct way to do this is to use the Bayes formula. Do you know that?"
     menu:
         "Sure.":
             n "It was something like... P(H|O) = P(O|H)*P(H)/P(O)?"
+            show cat eyes_closed
             c "Yes."
         "Not really...":
+            show cat smile
             c "The Bayes formula is like the pythagorean theorem of geometry. It's the most important formula in all of probability theory!"
+            show cat eyes_closed_smile
             c "It says: 'The probability of a hypothesis based on observations is the probability of the observations if the hypothesis is true, multiplied by the probability of the hypothesis and divided by the probability of the observations.'"
+            show cat smile
             c "So in mathematical terms, P(H|O) = P(O|H)*P(H)/P(O)"
         "Can we do another question? I'm getting a headache.":
+            show cat normal_downright
             c "Be serious about this, Nick!"
             return
+    show cat normal
     c "Now our observation is that none of the first five busts contained the pearl. And our hypothesis is that the last one contains the pearl."
     c "We want to calculate P(H|O), or 'the probability that the last one contains the pearl when the other ones didn't.'"
-    "I'm starting to zone out a bit, listening to the tea kettle in the background."
+    "I'm starting to zone out a bit, listening to the tea kettle in the background." # OR SOMETHING ELSE
+    show cat frown
     c "So if bust number six contains the pearl, the probability that the first five don't contain it is equal to 1: P(O|H) = 1."
-    c "The starting probability for the pearl being in bust 6 is like we calculated earlier, 1/12. So P(H) = 1/12."
+    c "The initial probability for the pearl being in bust 6 is like we calculated earlier, 1/12. So P(H) = 1/12."
     c "Now the probability of the observation. There's two cases where the first five busts will be empty. Either the last bust contains the pearl, probability 1/12, or none of them do, probability 1/2."
     c "Thus, P(O) = (1/12)+(1/2) = 7/12."
+    show cat eyes_closed
     c "Now we can just plug in the values to the Bayes formula: P(H|O) = P(O|H)*P(H)/P(O) = 1*(1/12)/(7/12) = 1/7."
+    show cat smile
     c "And that's the correct answer!"
     n "How could I ever have figured that out!?"
+    show cat eyes_closed_smile
     c "Well, that's why we're here, after all."
     return
     
@@ -1227,9 +1480,11 @@ label .calculus1:
     jump .interrupt
     
 label .calculus1_explanation:
+    show cat normal_down
     c "This is just basic formulas. In a sum, you can differentiate the terms separately. So the answer is just D(x^2) + D(ln(x))."
     c "The derivative of x^2 is 2x by the formula D(x^n) = n*x^(n-1)."
     c "The derivative of ln(x) is known to be 1/x."
+    show cat smile
     c "So the answer is just 2x + 1/x."
     n "I really don't know this stuff..."
     return
@@ -1249,16 +1504,20 @@ label .calculus2:
     jump .interrupt
     
 label .calculus2_explanation:
-    c "To minimum of a continuous differentiable function like this is either at the ends of the interval being studied, or at the zeroes of the derivative."
+    show cat eyes_closed
+    c "The minimum of a continuous differentiable function like this is either at the ends of the interval being studied, or at the zeroes of the derivative."
+    show cat normal_down
     c "Because there's no interval in this case, the minimum must be at the zeroes!"
     c "The derivative is easily calculated as 2x + 1."
     c "It is only zero when x = -1/2."
+    show cat smile
     c "Before that, the derivative is negative. And after that, it's positive, so there's a local minimum right at that spot!"
     n "Uh-huh."
     c "So just plug in x = -1/2 to the original equation, and you get (-1/2)^2 + (-1/2) + 1 = 3/4. So the minimum point is (-1/2, 3/4)."
     return
     
 label .calculus3:
+    show cat fuun
     "She smiles fiendishly."
     c "What is the 2nd-degree Maclaurin polynomial for the function sin(x)?"
     menu:
@@ -1269,14 +1528,17 @@ label .calculus3:
             call .wrong_answer3 
             call .calculus3_explanation 
         "x - (x^3)/6 + (x^5)/120":
+            show cat suprise
             "Her expression melts into astonishment."
             c "W-what!?"
             call .right_answer3 
     jump .interrupt
     
 label .calculus3_explanation:
+    show cat smile
     c "So as everybody knows, the nth-degree taylor polynomial for sin(x) is the sum of the terms (-1)^k * x^(2k+1) / (2k + 1)! as k goes from 0 to n."
     n "Who would know something like that!?"
+    show cat eyes_closed_smile
     c "*Cough*... *cough*... Right, a very simple question indeed..."
     
 label .geometry1:
@@ -1294,9 +1556,12 @@ label .geometry1:
     jump .interrupt
 
 label .geometry1_explanation:
+    show cat eyes_closed_smile
     c "The pythagorean theorem. Mark the legs with a = 3 and b = ?, hypotenuse with c = 5. Now a^2 + b^2 = c^2"
     c "So b^2 = c^2 - a^2 = 25 - 9 = 16."
+    show cat smile
     c "Taking the square root, we get b = 4."
+    show cat seductive_or_something
     c "Easy, right?"
     n "Maybe for you..."
     return
@@ -1304,11 +1569,16 @@ label .geometry1_explanation:
 label .geometry2:
     c "In soccer, the circumference of the ball has to be between 68 and 70 cm."
     n "You play soccer?"
+    show cat normal_downright
     c "Not really..."
+    show cat normal
     c "Anyway, how many percent is the largest allowable ball larger than the smallest one?"
     n "Never imagined I'd see you talking about balls with a straight face."
+    show cat blush
     "She blushes."
+    show cat disgust_away
     c "Focus, Nick!"
+    show cat frown
     menu:
         "110\%":
             call .wrong_answer2 
@@ -1322,15 +1592,21 @@ label .geometry2:
     jump .interrupt
     
 label .geometry2_explanation:
+    show cat eyes_closed
     c "First think about what you want to calculate."
+    show cat normal_down
     c "If you form a fraction of the volumes like so: V_max / V_min, this will tell you how large the larger ball is procentually compared to the other."
     n "And that's the answer?"
+    show cat eyes_closed_smile
     c "Not quite. You want to know how many percent {i}larger{/i} it is, that is to say, how many percent above 100\%. So you actually want to calculate (V_max / V_min) - 1."
     c "Now if you plug in the ball volume formula V = 4/3 * pi * r and simplify the resulting equation, you get just (r_max)^3 / (r_min)^3 - 1!"
+    show cat normal
     c "The only thing left to do is to calculate the radii for the balls. So 2*pi*r_min = 68cm, r_min ~= 10.82 cm."
     c "And 2*pi*r_max = 70 cm, r_max ~= 11.14 cm."
+    show cat smile
     c "Here's the result: 11.14/10.82 - 1 ~= 0.09 = 9\%."
     n "Man, that was just amazingly simple."
+    show cat fuun
     c "Wasn't it though?"
     n "No. It was sarcasm."
     return
@@ -1338,6 +1614,7 @@ label .geometry2_explanation:
 label .geometry3:
     c "Okay, how about this. What is the volume of the solid of revolution which is formed when the line f(x) = x, x goes from 0 to 2, rotates around the x-axis?"
     n "Does this even count as geometry!?"
+    show cat fuun
     c "Heh, I take it you can't answer?"
     menu:
         "4*pi":
@@ -1351,10 +1628,14 @@ label .geometry3:
     jump .interrupt
     
 label .geometry3_explanation:
+    show cat tired
     c "So, uh, you're essentially integrating..."
     n "Integration? So this is calculus?"
+    show cat frown
     c "Well, you said your calculus is stronger than your geometry!"
+    show cat eyes_closed
     c "Whatever, just... you're integrating, not the function f(x) = x, but the area of the circle formed as f(x) rotates around the x-axis."
+    show cat normal
     c "For each value of x, the area is A(x) = pi*x^2. Integrating gives pi/3 * x^3 plus a constant. Now just evaluate in the interval from 0 to 2 and you'll get 8*pi/3 as the answer."
     n "Yeesh, who is willing to study this sort of stuff?"
     return
@@ -1363,13 +1644,25 @@ label .interrupt:
     if water_heater_on:
         "A red light appears on Cat's device to signal that the water has been boiled."
         c "I'll get the tea!"
+        hide cat
+        hide cat_torso
+        with moveoutleft
         "She comes back to the room carrying too mugs of hot tea."
+        show cat smile at closeup
+        show cat_torso green at closeup
+        with moveinleft
         c "Sorry, I only have Ceylon Black."
         $ drink = 0
     elif coffee_machine_on:
         "A red light on Cat's wristband indicates that the coffee is ready for drinking."
         c "I'll go fetch the coffee!"
+        hide cat
+        hide cat_torso
+        with moveoutleft
         "She comes back to the room carrying two mugs of the blackest coffee I've ever seen."
+        show cat smile at closeup
+        show cat_torso green at closeup
+        with moveinleft
         "Cat, just how much powder did you use?"
         c "Here's some tofu milk in case you don't want to drink it black."
         $ drink = 1
@@ -1377,11 +1670,18 @@ label .interrupt:
         "Deciding that I'm in need of some refreshment, I open the coke bottle."
         "And of course, it bursts all around the room, spilling on the carpet!"
         c "I'll go get some paper!"
+        hide cat
+        hide cat_torso
+        with moveoutleft
         "We clean up the mess. Thankfully, the bottle is still over half-full."
+        show cat smile at closeup
+        show cat_torso green at closeup
+        with moveinleft
         $ drink = 2
     jump .timeskip
     
 label .timeskip:
+    show cat eyes_closed
     python:
         if math_subject == 0:
             subject = "probability theory"
@@ -1393,6 +1693,9 @@ label .timeskip:
         c "Since you're so good with [subject], I guess we should just move onto physics or something..."
     else:
         c "Well, let's continue with the [subject]. Try doing this one..."
+    hide cat
+    hide cat_torso
+    with dissolve
     "We spend the rest of the evening like this, Cat attempting to teach me while I do my best to avoid learning anything."
     if drink == 1:
         "Not even the power of the coffee is enough to keep us alert anymore."
@@ -1401,21 +1704,27 @@ label .timeskip:
     jump .DFO
     
 label .DFO:
+    show cat normal_downright
+    show cat_torso green
+    with dissolve
     "As I'm getting ready to leave, Catherine asks me the question that must have been on her mind for a while now."
     c "Nick, are you still playing that game? DFO?"
     menu:
         "Yes.":
             n "Y-yes. I am."
             # check for promise here
+            show cat teary2
             c "Even though you promised?"
             n "It's a great game, Cat. You should try it sometime."
             $ trust_modify('Catherine', -1)
         "No.":
             n "No."
             n "I mean, I promised, right?"
+            show cat sad
             c "I see..."
         "Not your business.":
             n "What do you care, Cat? Just let me do what I want."
+            show cat sad
             $ cat_mood -= 1
     "Cat looks disheartened."
     c "Nick, why don't you let me help you..."
@@ -1425,15 +1734,24 @@ label .DFO:
             $ cat_mood -= 1
         "I came here, didn't I?":
             n "Hey, you already did. I learned loads of math and stuff today."
+            show cat frown
             c "Yeah, right. After I forced you to listen."
         "Cat, it's not as bad as you think.":
             n "Look, Cat, gaming is just a hobby. It's not magically going to destroy my life."
+    show cat angry with hpunch
     c "Damnit, Nick! You need to think about your future!"
+    show cat anger
     n "The future! It's not like there's going to be any jobs anyway. The robots are going to take them all, right?"
+    show cat angry
     c "That's bullshit!"
+    show cat disgust_away
     c "Whatever, just..."
     "She hands me my hat and pushes me towards the door."
+    show cat eyes_closed
     c "Just go."
+    hide cat
+    hide cat_torso
+    with dissolve
     "As the door closes behind me, I silently go outside, walking through the streets of the night-lit city, letting no-one see the raindrops on my cheeks."
     if cat_mood < 0:
         $ affection_modify('Catherine', -1)
@@ -1467,6 +1785,8 @@ label Catherine_movie_scene:
     $ price_asked = False
     $ seen_before_asked = False
     $ cat_mood = 0
+    $ promises[('movies', day)][('Catherine', 'meet')] = True
+    $ stress -= 2
     scene city_street
     call .date_intro 
     n "Anyway, let's go."
@@ -1496,7 +1816,7 @@ label .cashier:
             cashier "Around 15 000 bits per person. Student discount at half price."
             $ price_asked = True
             jump .cashier
-        "Have I seen you before?" if not seen_before_asked:
+        "Have I seen you before?" if parlor_visited and not seen_before_asked:
             n "Aren't you the same guy from the ice cream parlor?"
             $ i = renpy.random.random()
             if i < 0.33:
@@ -1537,16 +1857,26 @@ label .payment_menu:
                 jump .payment_menu
         "Ask Catherine to pay for you.":
             "This is kind of embarrassing, but..."
+            show cat normal at left
+            show cat_torso yellow at left
+            with moveinleft
             n "Uh, Cat, could you pay for me just this once?"
             n "I'm kind of in a poor financial situation."
+            show cat frown
             c "Wasting it all on games, I'm sure."
+            show cat eyes_closed
             "She sighs and pays for the ticket."
+            hide cat
+            hide cat_torso
+            with moveoutleft
     "After the transaction has been authenticated, we continue into the theatre."
+    # Popcorn!
     jump .findseats
 
 label .findseats:
-    n "Quite dark in here..."
-    c "Seems there's quite many seats free. I wonder where we should sit...?"
+    scene movie_theatre with fade
+    n "Oh, they haven't even started showing ads yet..."
+    c "Seems there's quite many seats free. I wonder where we should sit?"
     menu:
         "In the front":
             n "Well, the front has the best view, I guess."
@@ -1576,6 +1906,7 @@ label .findseats:
     jump .moviestart
     
 label .moviestart:
+    scene movie_theatre dark with Dissolve(10.0)
     "I sit back to relax as the movie begins."
     "Lover's Abandon. As I had heard, it seems to be a chick flick."
     "Catherine can be unexpectedly sensitive at times."
@@ -1596,25 +1927,31 @@ label .moviestart:
             $ cat_mood += 1
             "I softly press my hand on hers."
             "She tears up."
-            "Did I hurt her feelings somehow?"
-            menu:
-                "Take your hand away.":
-                    "As I try to take my hand away, she holds it tight, mot letting me go."
-                "Keep holding her hand.":
-                    "I keep my hand where it is, and she responds by holding my hand as well."
+            "As I try to take my hand away, she holds it tight, mot letting me go."
+            c "So beatiful..."
+            # "Did I hurt her feelings somehow?"
+            # menu:
+                # "Take your hand away.":
+                    # "As I try to take my hand away, she holds it tight, mot letting me go."
+                # "Keep holding her hand.":
+                    # "I keep my hand where it is, and she responds by holding my hand as well."
         "Pretend to yawn.":
             $ cat_mood += 1
             "I pretend to yawn and curl my arm around her shoulder."
             "She begins to tear up."
             "Did I get too close?"
-            menu:
-                "Keep holding her.":
-                    "I keep my arm around her, and she whispers to the air."
-                    c "So beatiful..."
-                    "So it was the scene after all..."
-                "Better stop.":
-                    "She takes hold of my hand before I have the chance to move."
-                    c "It's fine, Nicky..."
+            "I keep my arm around her, and she whispers to the air."
+            c "So beatiful..."
+            "So it was the scene after all..."
+        
+            # menu:
+                # "Keep holding her.":
+                    # "I keep my arm around her, and she whispers to the air."
+                    # c "So beatiful..."
+                    # "So it was the scene after all..."
+                # "Better stop.":
+                    # "She takes hold of my hand before I have the chance to move."
+                    # c "It's fine, Nicky..."
         "Do nothing.":
             "Tears fall on her cheeks."
             "Was she expecting me to do something?"
@@ -1649,9 +1986,10 @@ label .middleschooltalk:
     jump .flashback
     
 label .flashback:
+    scene hallway with pixellate
     "I sift through a current of hazy memories coming back to me, thinking back to the first time we met."
     "It was in middle school, wasn't it?"
-    "We hadn't really talked to each other or anything. It was recess, and my usual group of friends was away from somewhere."
+    "We hadn't really talked to each other or anything. It was recess, and my usual group of friends was away for some reason."
     "That's when I saw Catherine."
     "I'd like to say something cliched, like she was amazingly beautiful and I fell in love with her at first sight."
     "But that's not really the case. She wasn't a very good-looking kid back then." 
@@ -1671,8 +2009,9 @@ label .flashback:
         "So I went to join the bullies":
             $ affection_modify('Catherine', -1)
             "So being the total jerkass I used to be, I went to join in on the fun."
-            "But I felt really sorry after she started crying, and secretly went to her to apologize, begging for her forgiveness."
-            call .friends 
+            "Yeah, we really hated each other after that. I've no idea how we ended up together."
+            # "But I felt really sorry after she started crying, and secretly went to her to apologize, begging for her forgiveness."
+            # call .friends 
     jump .opinion
     
 label .friends:
@@ -1681,8 +2020,9 @@ label .friends:
     return
     
 label .opinion:
+    scene movie_theatre dark with pixellate
     "Cat looks into my eyes."
-    c "Wasn't it great?"
+    c "Wasn't that a great movie?"
     menu:
         "Yes.":
             n "Yeah."
@@ -1721,10 +2061,18 @@ label .kiss:
         "The couple next to us is kissing as well, and I can hear the teenagers variously cheering and booing in the background."
     else:
         "The teens next to us are giggling and whispering to each other, but I do my best to ignore them."
-        
+    
+    scene movie_theatre with Dissolve(4.0)
     "After a long kiss, we move out of the theatre."
+    scene street with dissolve
+    show cat blush
+    show cat_torso orange
+    with moveinleft
     c "Thanks, Nick. Let's do this again some time."
     "We say our farewells and go our separate ways."
+    hide cat
+    hide cat_torso
+    with moveoutright
     if cat_mood > 0:
         $ affection_modify('Catherine', 1)
     elif cat_mood < 0:
@@ -1738,19 +2086,35 @@ label .date_intro:
     return
  
 label Catherine_broken_up_mall:
-    scene city_street
-    "While walking at the mall, I spot Catherine inspecting some clothes."
-    menu:
-        "Should I go talk to her?"
-        "Go talk to her.":
-            "I gather my courage and approach her."
-            "I'm so close that I can smell the floral notes of her shampoo, but her mind seems to be wandering in some other world."
-            "I tap her on the shoulder, and she jolts."
-            c "N-nick? Hi."
-            n "Hi."
-        "Better leave it be.":
-            "I go to a store and wait for her to leave. She probably doesn't want to see me, anyway."
-            return
+    if act == 'mall':
+        scene mall
+        "While walking at the mall, I spot Catherine inspecting some clothes."
+        menu:
+            "Should I go talk to her?"
+            "Go talk to her.":
+                "I gather my courage and approach her."
+                "I'm so close that I can smell the floral notes of her shampoo, but her mind seems to be wandering in some other world."
+                "I tap her on the shoulder, and she jolts."
+                c "N-nick? Hi."
+                n "Hi."
+            "Better leave it be.":
+                "I go to a store and wait for her to leave. She probably doesn't want to see me, anyway."
+                return
+    elif act == 'cathouse':
+        scene city_street
+        "I wait in front of the door to Cat's apartment."
+        "Is she not here?"
+        "Why did I come here anyway...?"
+        "Maybe I should just leave..."
+        menu:
+            "Wait a bit longer":
+                "Eventually she arrives, carrying groceries."
+            "Leave":
+                "My trepidation gets the better of me, and I decide to leave."
+                return
+        "Her expression darkens as she sees me."
+    show cat normal_downright at closeup
+    show cat_torso red at closeup
     c "Could you just... I really don't feel like talking to you right now."
     "She's avoiding eye contact."
     menu:
@@ -1759,10 +2123,13 @@ label Catherine_broken_up_mall:
         "Blame her":
             n "I just want to say one thing to you, Catherine."
             n "It was all your fault. And you're not guilt tripping me on this one."
+            show cat teary
             "Her expression turns blank, her face white, and she turns to leave without saying anything."
+            jump .interrupt
         "Stay silent":
             "I stand behind her, both of us stammering for words."
             "Finally, she breaks the silence."
+            show cat teary2
             c "Do you hate me?"
             menu:
                 "Yes":
@@ -1771,32 +2138,42 @@ label Catherine_broken_up_mall:
                 "No":
                     n "Of course not."
                     c "... That's good to hear."
+            jump .ending
     return
         
 label .sorry:
     n "Catherine, I'm sorry. I didn't mean to hurt you."
     n "Please forgive me."
+    show cat teary
     "She looks hesitant, her eyes glimmering with sorrow."
     c "Nicky......"
+    show cat eyes_closed
     "The silence is interrupted by the sound of her swallowing."
+    show cat normal_downright
     c "Nicholas, I already have someone else."
     n "What? It's only been three days!"
+    show cat frown
     "Cat frowns."
     c "Well, he asked me out."
     menu:
         "T-that's great!":
             n "Well, that's just great."
+            show cat question
             c "It, uh, it is?"
             n "Yeah, I'm so happy for you."
             n "I'm sure you've finally found someone you deserve."
             n "You know, someone who doesn't waste all his time online."
+            show cat angry
             c "Nick, stop acting like a fricking kid!"
+            show cat frown
             n "I'm serious! I'm sure this guy is way better for you. What's he like, anyway?"
             jump .guydescription
         "Come on, who is it?":
             n "Who is it?"
+            show cat normal_right
             "Cat folds her arms in defense."
             c "None of your business."
+            show cat normal_downright
             n "Come on, tell me."
             c "I-it's no one you know..."
             n "Well, what's he like?"
@@ -1806,59 +2183,81 @@ label .sorry:
             
 label .newgirlfriend:
     n "W-well, you know what? I've found a new girlfriend too!"
+    show cat surprise
     "Now it's her turn to be astonished."
+    show cat surprise2
     c "W-WHAT!? Who?"
+    show cat surprise_down
     n "Oh, you haven't met her..."
+    show cat question
     c "... Oh yeah? What's she like?"
     "Uh-oh. She doesn't seem to be buying my story!"
     menu:
         "She plays DFO.":
+            show cat seductive_or_something
             c "Really? What sort of character?"
             n "What do you care? It's not like you'd even understand."
             "My comment doesn't seem to satisfy her."
+            show cat disgust_down
             c "Nevermind that. Just tell me."
             menu:
                 "She's a priestess named Aerith.":
+                    show cat fast_blink
                     "Catherine blinks."
                     c "O-oh? Is that so?"
+                    show cat question
                     n "Yes. She had obviously taken a liking to me, so we hooked up right after you and I broke up."
+                    show cat frown
                     c "Excuse me, 'obviously liked you'? Cut it with the arrogance, Nick."
                 "She's an assassin named Silvia.":
+                    show cat frown
                     "Catherine's expression turns sour."
                     c "Really. Have you even met this person in real life?"
                     menu:
                         "Yes.":
                             n "Sure. Many times."
+                            show cat teary2
                             c "You're such a bad liar, Nick."
                             "The wavering of her voice betrays her uncertainty."
                         "No.":
                             n "Well, not yet..."
+                            show cat pissed_but_hiding_it_under_a_poker_face
                             "Catherine responds to that with a hurt laugh."
                             c "And you think you're together. Get your feet back on the ground."
                         "We have a date coming up.":
                             n "We've already set up a date."
+                            show cat seductive_or_something
                             "Catherine raises her eyebrows in disbelief."
                             c "No way! You're just, you're just saying that to boost your ego..."
                 "She's a demopyre mage named Lucia666.":
+                    show cat fast_blink
                     "Catherine seems confused."
+                    show cat question
                     c "What? A demopyre?"
                     n "Demon vampire, duh."
+                    show cat surprise_down
                     "She shakes her head, frowning in disbelief."
                     c "That doesn't even make sense."
                     n "Hey, I didn't design the game."
+                    show cat normal_left
                     c "That's not what I... whatever."
         "Okay, I made her up.":
             n "You caught me. I made it up."
+            show cat frown
             c "Figured as much."
         "She's hot.":
+            show cat frown
             n "Well, you know, a real blonde bombshell!"
             n "Short, wavy hair, curvy body, ample breasts..."
             n "... always wears white ..."
+            show cat question
             c "Uh, Nick?"
             c "Are you describing Marilyn Monroe?"
             n "What? Nooo. No, she's real. I mean, Marilyn Monroe is real too, and so's this girl!"
+            show cat seductive_or_something
             n "Yeah, and she's really into me. She says I'm the most handsome man she's ever laid her eyes upon!"
             n "And then she said: 'You'd have to be a real idiot to let go of a guy like me!' Yeah!"
+            show cat smile
             "Catherine is giggling now."
             c "Whatever. I never did get your sense of humor, Nick."
     jump .interrupt
@@ -1870,64 +2269,106 @@ label .guydescription:
     $ eyecolor = renpy.random.choice(["baby blue", "cerulean", "gray", "hazel", "amber", "deep blue", "indigo"])
     $ positiveattribute1 = renpy.random.choice(["smart", "intelligent", "hunky", "confident"])
     $ positiveattribute2 = renpy.random.choice(["funny", "humorous", "good-looking", "attractive"])
+    show cat normal_downright
     c "Well, he's [height] cm tall, he has [haircolor] hair and [eyecolor] eyes, he's [positiveattribute1] and [positiveattribute2]..."
     n "... And he lives in Canada."
+    show cat angry
     c "This is serious, Nick!"
     return
     
 label .interrupt:
-    "Catherine puts down the shirt she was inspecting and turns to leave."
+    show cat at left, flip
+    show cat_torso at left, flip
+    with moveinleft
+    if act == 'mall':
+        "Catherine puts down the shirt she was inspecting and turns to leave."
+    else:
+        "Catherine silently puts down the groceries and turns the key in the lock, attempting to vanish into her apartment."
     menu:
         "Stop her.":
             # Silence
+            show cat frown at left
+            show cat_torso red at left
             "I place my hand on her shoulder, and she turns around, looking defiantly into my eyes."
             c "What?"
-            menu:
-                "Kiss her.":
-                    # Response should depend on affection
-                    "Without giving her time to react, I press my mouth upon her rosy lips."
-                    "At first she resists, but then her arms curl around my back, embracing me."
-                    # If she's angry, expect a slap instead
-                    "After a moment's eternity, we let go, still gazing deeply into each other's eyes."
-                    jump .loveyou
-                "Profess your love for her.":
-                    n "Cat, I love you. Please come back to me."
-                    # Response should depend on affection
-                    c "Nick, I..."
-                    c "I can't. It won't work."
-                    "She breaks free from my grasp and walks away as I reach my hand toward her back, receding into the distance."
-                "Slap her.":
-                    "I slap her on her cheek. I try to be gentle, but hey..."
-                    "She holds her cheek with reddened eyes."
-                    "Then, she regains her fervor."
-                    c "What did you do that for!?"
-                    menu:
-                        "Because I love you.":
-                            n "I love you, Cat. And I can't take these games any longer."
-                            jump .loveyou
-                        "Because you deserve it.":
-                            n "You're always playing games with me. I can't stand it anymore!"
-                            c "Games!? I'm the one playing games with {i}you{/i}?"
-                            c "You're a hypocritical bastard, you know that, Nick?"
-                            "She breaks free from my grasp and storms off."
-                        "I just felt like it.":
-                            n "I don't know where it came from. Sorry, I guess."
-                            c "You're always guessing, aren't you?"
-                            n "W-what's that supposed to mean?"
-                            "She sighs, breaks free and leaves me hanging."
-                "Say nothing.":
-                    "We stay silent, still looking at each other."
-                    "Then, she whispers."
-                    c "Nick, please just let it go."
-                    "She turns around, and, breaking free from my grasp, walks away.."
+            jump .ending
         "Let her go.":
-            "With a heavy heart, I watch her back disappear into the crowd."
+            if act == 'mall':
+                $ disappear_into = "the crowd"
+            else:
+                $ disappear_into = "her apartment"
+            "With a heavy heart, I watch her back disappear into [disappear_into]."
+            hide cat
+            hide cat_torso
+            with moveoutleft
+    return
+
+            
+label .ending:
+    menu:
+        "Kiss her.":
+            # Response should depend on affection
+            "Without giving her time to react, I press my mouth upon her rosy lips."
+            show cat blush
+            "At first she resists, but then her arms curl around my back, embracing me."
+            # If she's angry, expect a slap instead
+            show cat eyes_closed_smile
+            "After a moment's eternity, we let go, still gazing deeply into each other's eyes."
+            jump .loveyou
+        "Profess your love for her.":
+            n "Cat, I love you. Please come back to me."
+            # Response should depend on affection
+            show cat blush
+            c "Nick, I..."
+            show cat longing
+            c "I can't. It won't work."
+            hide cat
+            hide cat_torso
+            with moveoutright
+            if act == "mall":
+                "She breaks free from my grasp and walks away as I reach my hand toward her back, receding into the distance."
+            else:
+                "She breaks free from my grasp and disappears into her apartment, closing the door behind her and refusing to answer my knocking."
+        "Slap her.":
+            with hpunch
+            show cat teary2
+            "I slap her on her cheek. I try to be gentle, but hey..."
+            "She holds her cheek with reddened eyes."
+            "Then, she regains her fervor."
+            show cat anger
+            c "What did you do that for!?"
+            menu:
+                "Because I love you.":
+                    n "I love you, Cat. And I can't take these games any longer."
+                    jump .loveyou
+                "Because you deserve it.":
+                    n "You're always playing games with me. I can't stand it anymore!"
+                    c "Games!? I'm the one playing games with {i}you{/i}?"
+                    c "You're a hypocritical bastard, you know that, Nick?"
+                    "She breaks free from my grasp and storms off."
+                "I just felt like it.":
+                    n "I don't know where it came from. Sorry, I guess."
+                    c "You're always guessing, aren't you?"
+                    n "W-what's that supposed to mean?"
+                    "She sighs, breaks free and leaves me hanging."
+        "Say nothing.":
+            "We stay silent, still looking at each other."
+            "Then, she whispers."
+            show cat eyes_closed
+            c "Nick, please just let it go."
+            "She turns around, and, breaking free from my grasp, walks away."
+            hide cat
+            hide cat_torso
+            with moveoutleft
     return
         
 label .loveyou:
     c "Nick, I..."
     # If she really likes you, she'll be willing to try again
     "She closes her eyes, then runs away."
+    hide cat
+    hide cat_torso
+    with moveoutleft
     
 # Code for handling Bioware-style Hub-and-Spokes conversation in an elegant (or "elegant") way
 

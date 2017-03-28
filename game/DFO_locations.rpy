@@ -8,574 +8,504 @@ init:
     $ light_barrier_active = {}
     $ poison_counter = {}
     $ damage = {'Nick': {'blade_sphere_control': 10, 'attack': 20}, 'Silvia': {'sneak_attack': 40, 'attack': 20, 'hail': 20, 'poison_attack': 20}, 'Aerith': {}, 'Rider': {'Spear': 20, 'Fire': 20, 'Charge': 30}, 'poison': 10 }
+    
+    $ heal_amount = {"Curing Light": 20}
 
+    image white = Solid((255,255,255,255))
+    
+init python:
+    def stats_frame(name, level, hp, maxhp, **properties):
+    
+        ui.frame(xfill=False, yminimum=None, **properties)
+    
+        ui.hbox() # (name, "HP", bar) from (level, hp, maxhp)
+        ui.vbox() # name from ("HP", bar)
+    
+        ui.text(name, size=20)
+    
+        ui.hbox() # "HP" from bar
+        ui.text("HP", size=20)
+        ui.bar(maxhp, hp,
+                xmaximum=150,
+                left_bar=Frame("rrslider_full.png", 12, 0),
+                right_bar=Frame("rrslider_empty.png", 12, 0),
+                thumb=None,
+                thumb_shadow=None)
+    
+        ui.close()
+        ui.close()
+    
+        ui.vbox() # Level from (hp/maxhp)
+
+        ui.text("Lv. %d" % level, xalign=0.5, size=20)
+        ui.text("%d/%d" % (hp, maxhp), xalign=0.5, size=20)
+    
+        ui.close()
+        ui.close()
+    
 define comp = Character('Computer')
-define np = DynamicCharacter('np_name')
+define np = DynamicCharacter('np_name', color="#191970")
 
-
-label Ruins_battle1:
-    $ spear_broken = False
-    $ rider_asleep = False
-    $ rider_poisoned = False
-    $ nick_defense = False
-    $ blade_sphere_control = False
-    $ light_barrier_active['Aerith'] = 0
-    $ poison_counter["Rider"] = 0
-    $ victorious = False
-    $ playerparty = ["Nick", "Aerith", "Silvia"]
-    $ playerdeath = False
-    $ current_hp = {'Nick': max_hp['Nick'], 'Aerith': max_hp['Aerith'], 'Silvia': max_hp['Silvia'], 'Rider': 70}
-    $ current_mp = {'Nick': max_mp['Nick'], 'Aerith': max_mp['Aerith'], 'Silvia': max_mp['Silvia']}
-    $ target_list = ["Rider"]
-    $ nick_acted = False
-    "As we approach, trapdoors spring open all around us, sending sand flying in every direction!"
-    show sil star
-    s "It's an ambush! Hihihi!"
+label Ruins_dragon:
+    scene black with dissolve
+    show air 7 at left
+    show sil hmm at right
+    with moveinleft
+    pause 1.0
+    show air 9
+    a "Just how deep underground are we going? Ewww!"
+    "She steps into a puddle of some black substance."
+    show sil lecture
+    s "We must recover the treasure for the Order of the Dragon. It must be hidden here."
+    np "Wait, treasure? What treasure?"
+    show sil evil_laugh
+    s "I've heard many a tale whispered in the night."
+    np "So it was mentioned in the quest log?"
+    show sil angry
+    "She doesn't seem too thrilled by my refusal to play along with her."
+    show sil hm
+    s "Yes."
+    show sil hmm
+    show air 3
+    a "If the quest is done, why is there still a threat marker in the quest log?"
+    np "Might be some secret enemy we missed."
+    show air 10
+    a "We've been playing for too long, I'm starting to feel dizzy."
+    show sil annoyed
+    s "Cease your useless complaints, priestess. We shall not give up now."
+    np "We'll be done soon."
+    hide air
     hide sil
-    show desert_rider
-    "Through the sand I see the vague shapes of ostrich-riding warriors, screeching for battle!"
-    play music "bgm/Battle1.wav"
-    "The fight rages on for a while, and we manage to finish off two of the warriors."
-    "One more to go!"
-    call .act_phase
-    while not victorious and not playerdeath:
-        # Needs to be this way around in order to avoid zombie attacks...
-        call .start_round
-        call .rider_turn
-        call .act_phase
-    if playerdeath:
-        return
+    with moveoutleft
+    "We come to the end of the tunnel, and Aerith leans on a gray stone wall, closing her eyes."
+    show air 11 at right, flip
+    with moveinright
+    show sil hmm at left
+    with moveinleft
+    s "Priestess? You may want to move back."
+    show air blush at right, flip
+    a "Huh?"
+    # Startle anim
+    "Aerith is startled as the wall behind her suddenly sprouts a huge slitted eye!"
+    "I slowly realize that it's not a wall at all, but the head of a giant serpentine dragon!"
+    show sil flmao
+    s "Ah. This must be the N'Gashai we heard mention of."
+    hide sil with moveoutleft
+    "Is this really the time to discuss that!?"
+    show sil hurt at center
+    show air blush2 at right
+    with vpunch
+    with hpunch
+    with vpunch
+    "The chamber shakes as the dragon turns toward us!"
+    "It's preparing to roast us alive! We have to move fast!"
+    hide sil
+    hide air
+    with moveoutright
+    "We hide behind the pillars just as the flames begin to scorch the air around us."
+    "It breaks some of the pillars with its tail!"
+    "Damn! We have to move!"
+    "It burrows into the ground. We eventually learn to anticipate where it'll be, and manage to defeat it with great effort."
     jump .victorious
     
-label .start_round:
-    if nick_acted:
-        $ blade_sphere_control = False
-        $ nick_defense = False
-        $ nick_acted = False
-    python:
-        for person in light_barrier_active.keys():
-            if light_barrier_active[person] > 0:
-                light_barrier_active[person] -= 1
-                if light_barrier_active[person] == 0:
-                    renpy.say(None, "[person]'s light barrier wears off.")
-        for person in poison_counter.keys():
-            if poison_counter[person] > 0:
-                renpy.call("Ruins_battle1.poison", person)
-    return
-    
-label .poison(person):
-    $ poison_counter[person] -= 1
-    call .dealdamage(person, damage['poison'], False)
-    if target_died:
-        if person == "Rider":
-            "The rider can't withstand the poison, and dies."
-        else:
-            "[person] dies from poisoning."
-    else:
-        if person == "Rider":
-            "The rider is hurt by the poison!"
-        else:
-            "[person] suffers due to the poison!"
-    if poison_counter[person] == 0:
-        "The poisoning ceases."
-    return
-    
-label .act_phase:
+label .victorious:
+    "As the dragon dies with a mighty roar, its tail sweeps out the last of the pillars holding the chamber together!"
+    "... And it begins to collapse!"
+    np "Run!"
+    "We make our way back through the tunnel as it collapses behind us!"
+    "Wait, I didn't remember there being a turn to the right here!"
+    show sil evil_laugh at right, flip
+    with moveinright
+    s "It's some kind of secret room!"
+    "We could turn to the right, but we have no idea where it leads."
+    "We might end up dying down here!"
     menu:
-        "Continue Blade Sphere Control" if target_list and blade_sphere_control:
-            "I keep my focus, waiting for the rider to make his move."
-            return
-        "Remain vigilant" if not target_list:
-            jump .act_defend
-        "Attack" if target_list:
-            jump .act_attack
-        "Techniques...":
-            jump .act_techniques
-        "Aerith..." if 'Aerith' in playerparty:
-            jump .act_Aerith
-        "Silvia..." if 'Silvia' in playerparty:
-            jump .act_Silvia
-        "Defend" if target_list:
-            jump .act_defend
-    return        
-    
-label .act_attack:
-    # If len(target_list) > 1, multiple choice menu here.
-    $ nick_acted = True
-    if rider_asleep:
-        "Now's my chance!"
-        "While the rider is fast asleep, I strike at the ostrich with my sword, severing its long neck!"
-        "Time to finish this! I raise my sword and plunge it into the rider's chest!"
-        "His eyes shoot open just as he falls into death's icy grasp."
-        $ victorious = True
-        return
-    "Readying my sword for a side slash, I charge full-speed toward the rider!"
-    $ i = renpy.random.random()
-    if i <= 0.5:
-        "However, using the speed of his mount to his advantage, he manages to evade my attack."
-        return
-    else:
-        $ j = renpy.random.random()
-        if j <= 0.1:
-            "Yes! A critical hit!"
-            call .death("Rider")
-        else:
-            call .dealdamage("Rider", damage['Nick']['attack'])
-            if not target_died:
-                "He manages to evade my weapon, though I do succeed at landing a wound on his side."
-            return
-    $ victorious = True
+        "What should we do?"
+        "Turn right":
+            hide sil with moveoutright
+            "We run to the right just in time as the tunnel collapses entirely."
+            "Everyone is panting heavily, but it seems we're in the clear."
+            show sil phew at center
+            show air 9 at right
+            with moveinleft
+            pause 0.50
+            show air 2
+            a "W-wow!"
+            "I blink as my eyes readjust to the light of the chamber we've entered."
+            "There's gold and treasure everywhere!"
+            show air 6
+            a "It's amazing!"
+            np "Seems we finally found that treasure!"
+            show sil hmm
+            s "Oh, but where might the weapons lie...?"
+            # Crouch transition
+            "Aerith picks up a pendant with some kind of dragon amulet on it."
+            show air 8
+            a "'Pendant of Fire-breathing'? It has 20 charges..."
+            "We also find a new sword for me and a special dagger for Silvia."
+            show sil lol
+            s "It's not as strong as my current one..."
+            show sil normal
+            "Really? It looks a lot better."
+            "Silvia's dagger looks more like the ones they give to newbies..."
+            "A teleporter stone appears, floating in the air."
+            "Touching it, we return to the cathedral."
+            jump .ending
+        "Keep going straight":
+            "We manage to escape back to the temple as the tunnel collapses completely behind us."
+            "A teleporter stone is floating in the air."
+            s "We should be able to use this to return to the cathedral."
+            a "So we completed the quest? But we didn't find the treasure..."
+            np "Damn, maybe it was back there in the tunnels."
+            s "Do not be distraught, liege. We may always return..."
+            s "For more bloodshed! Hihihi!"
+            "R-right... We touch the teleporter stone to return to the cathedral."
+            jump .ending
+            
+label .ending:
+    scene white with dissolve
+    pause 0.5
+    scene bg_fort with pixellate
+    show sil cat2 at right
+    show air 9 at left
+    s "Was that not fun?"
+    show air angry2
+    a "It dragged on for too long. I really need to lie down."
+    "I wonder if she has a bad framerate or just hasn't been playing for that long."
+    "Me and Silvia don't feel any strain at all from something like this."
+    "But she's as high-level as us. She should have gotten used to it by now..."
+    scene black with fade
     return
 
-label .act_techniques:
+label Ruins_innertemple_menu:
     menu:
-        "Furious Strike" if target_list and current_mp["Nick"] > mp_costs["Furious Strike"]:
-            $ nick_acted = True
-            $ current_mp["Nick"] -= mp_costs["Furious Strike"]
-            "This technique requires me to close in on the attacker."
-            "I run toward the rider, readying my blade!"
-            np "Furious... Strike!"
-            if rider_asleep:
-                "Being asleep, he can't avoid my attack."
-                call .death("Rider")
-                return
-            $ i = renpy.random.random()
-            if i <= 0.5:
-                # Test for spear_broken
-                if not spear_broken:
-                    "He raises his spear to parry my attack."
-                    "My sword slams straight through it, shattering it in pieces!"
-                    $ spear_broken = True
-                    return
-                "He raises the remnants of his spear, but my attack goes straight through them, his arm and his head."
-                "The ostrich, now carrying only a corpse severed in half, sees it best to escape."
-                $ victorious = True
-                return
-            else:
-                "Damn! His mount is too fast, and he dodges my incursion."
-                return
-        "Blade Sphere Control" if current_mp["Nick"] > mp_costs["Blade Sphere Control"]:
-            $ current_mp["Nick"] -= mp_costs["Blade Sphere Control"]
-            "I close my eyes to find internal peace."
-            np "Blade Sphere Control!"
-            "Let's see him get through this technique!"
-            $ blade_sphere_control = True
-            $ nick_defense = False
-            return
-        "Return":
-            jump .act_phase
-
-label .act_Aerith:
+        "Go down the secret entrance":
+            jump Ruins_dragon
+        "Aerith...":
+            call Aerith_oob
+        "Silvia...":
+            call Silvia_oob
+        "Go back out":
+            jump Ruins_innerchambers_menu
+    jump Ruins_innertemple_menu
+    
+label Ruins_innertemple:
+    # Hallway straight and stairs to the right
+    
+    if 'Ruins_innertemple' in seen_before.keys() and seen_before['Ruins_innertemple']:
+        "We reach the temple once more."
+        if not battle5_won:                
+            "The ritual is still continuing."
+            jump .attack_menu
+        else:
+            jump Ruins_innertemple_menu
+    $ battle5_won = False
+    $ seen_before['Ruins_innertemple'] = True
+    
+    "We've finally found the source of the ominous chanting."
+    "A group of violet-robed mages is standing in a circle around an altar."
+    "A flash of purple light is reflected from an object their leader is holding above his head."
+    "It's a curved dagger. And on the altar, lies a man."
+    show sil lecture at right
+    show air 10 at left
+    with moveinleft
+    s "It is worse than we suspected."
+    s "We must prevent the completion of this vile ritual, lest they unleash some great darkness from beyond!"
+    show air 3
+    a "Um... I have less mana for some reason."
+    show sil angry
+    s "Can you not feel the malice? This area has been consecrated to deities opposed to your own."
+    show air 11
+    a "Huh?"
+    np "I think she means that there's an 'Unhallow' area effect here."
+    show air 8
+    np "Since you're a priestess of Phopassus, it weakens your effective level."
+    a "Oh. That makes sense."
+    show air 4
+    a "Uh, shouldn't we stop them, by the way?"
+    hide sil
+    hide air
+    with moveoutleft
+    "She's got a point. The cult leader is approaching the altar."
+    jump .attack_menu
+    
+label .attack_menu:
     menu:
-        "Light Barrier":
-            call .act_Aerith_begin_casting("Light Barrier", 'yourself')
-            if spell_successful:
-                call LightBarrier("Aerith")
-        "Curing Light":
-            menu:
-                "Heal me!":
-                    call .act_Aerith_begin_casting("Curing Light", 'me')
-                    if spell_successful:
-                        "The green light fills me with strength."
-                        call CuringLight('Aerith', 'Nick')
-                "Heal yourself!":
-                    call .act_Aerith_begin_casting("Curing Light", 'yourself')
-                    if spell_successful:
-                        "Green light flows over Aerith, closing her wounds."
-                        call CuringLight('Aerith', 'Aerith')
-                "Heal Silvia!":
-                    call .act_Aerith_begin_casting("Curing Light", 'Silvia')
-                    if spell_successful:
-                        call CuringLight('Aerith', 'Silvia')
-                "Return":
-                    jump .act_Aerith
-        "Depths of Slumber" if target_list:
-            call .act_Aerith_begin_casting("Depths of Slumber", 'warrior')
-            if spell_successful:
-                $ current_mp["Aerith"] -= mp_costs["Depths of Slumber"]
-                a "Gift him with a peaceful sleep! Depths of Slumber!"
-                "The rider falls asleep, leaving his ostrich-mount confused."
-                $ rider_asleep = True
-                jump .act_phase
-        "Return":
-            jump .act_phase
-    return
-        
-label .act_Aerith_begin_casting(spell, target):
-    np "Aerith! [spell]!"
-    if mp_costs[spell] > current_mp["Aerith"]:
-        a "Uh, I don't have enough mana..."
-        n "Damn..."
-        jump .act_phase
-    a "G-got it!"
-    if "Rider" in target_list:
-        "Aerith begins casting, but the rider is not going to just stand there and take it!"
-        $ spell_successful = False
-        call .rider_interrupt('Aerith')
-    else:
-        $ spell_successful = True
-    return
+        "Attack!":
+            jump .attack
+        "Wait":
+            jump .wait
+        "Go back":
+            "We silently go back the way we came."
+            jump Ruins_innerchambers_menu
+        # Spells, techniques etc.
     
-label .rider_interrupt(caster):
-    call .rider_attack(caster, None)
-    if not attack_successful:
-        $ spell_successful = True
-    return
+label .attack:
+    "The fanatics turn around to face us, eyes widened by the surprise."
+    "Then, they regain their bearings."
+    "Fanatic" "More sacrifices for the great one!"
+    with vpunch
+    "Unexpectedly, the leader runs to the altar, killing the man in haste."
+    "From where the dagger pierced the man's heart, a black, half-vaporous ooze spews forth, engulfing the leader."
+    "He breathes the vapours in, filling himself with the power of darkness." # Teh cheeze, i luv it
+    "He sprouts wings and claws, his entire body taken over by the ethereal form of a monstrous black dragon!"
+    "His form is connected by a thin cord of darkness to the corpse on the altar. I wonder..."
+    "I run to the altar and cut the cord with my sword, destroying his form."
+    "We make short work of the cultists after that."
+    jump .victorious
 
-label .act_Silvia:
+label .victorious:
+    "The dagger crumbles into dust, which flows beneath the altar."
+    "Hey, wait a minute!"
+    "I push the altar forward, revealing a secret entrance!"
+    $ battle5_won = True
+    jump Ruins_innertemple_menu
+
+label Ruins_innerchambers_menu:
     menu:
-        "Sneak Attack" if silvia_hidden and target_list:
-            np "Silvia!"
-            "She immediately grasps my intent!"
-            "Silvia appears from the shadows, striking at the rider!"
-            "He has no time to dodge."
-            $ silvia_hidden = False
-            call .dealdamage("Rider", damage['Silvia']['sneak_attack'], False)
-            if target_died:
-                "Already wounded, the rider can't survive Silvia's attack."
-                "He falls off the ostrich, and it escapes to the desert."
-                $ victorious = True
-            else:
-                "Silvia's blade strikes a deep wound into the rider's back."
-            return
-        "Attack" if not silvia_hidden and target_list:
-            np "Silvia, attack!"
-            "She has a go at it, lunging toward the rider!"
-            $ i = renpy.random.random()
-            if i <= 0.5:
-                "But the ostrich is too fast even for her!"
-                s "I'm sorry, liege..."
-                return
-            else:
-                "She lands a strike on the rider's back!"
-                call .dealdamage("Rider", damage['Silvia']['attack'], False)
-                if target_died:
-                    "The rider can't take it any longer, and succumbs to his wounds."
-                    "The ostrich, left without master, escapes into the desert."
-                    $ victorious = True
-                    return
-                else:
-                    "He screams in pain and fury."
-                    return
-        "Hide" if not silvia_hidden:
-            np "Silvia! Hide!"
-            s "Very well."
-            "She melds into the shadows."
-            $ silvia_hidden = True
-            return
-        "Hail of Daggers" if target_list and current_mp['Silvia'] > mp_costs["Hail of Daggers"]:
-            $ current_mp['Silvia'] -= mp_costs["Hail of Daggers"]
-            $ silvia_hidden = False
-            np "Say, Silvia, did you see the forecast?"
-            "She smiles a little."
-            s "It's raining daggers, right?"
-            "She leaps into the air."
-            "The rider realizes something is off and..."
-            $ i = renpy.random.random()
-            if i <= 0.5:
-                "... turns around to run!"
-                s "It seems I have lost sight of him and his ridiculous mount, liege."
-                "Damn!"
-                jump .rider_escape
-            else:
-                "... cowers in place as he sees the blades falling toward him!"
-                "Strike! The ostrich screeches in pain!"
-                call .dealdamage('Rider', damage['Silvia']['hail'], False)
-                if target_died:
-                    "The ostrich goes into a frenzy, dropping the rider to the ground."
-                    "He can't hold on any longer, and dies quickly, the red of his blood mixing with the desert sand."
-                else:
-                    "The ostrich starts to frenzy, but the rider barely manages to calm it down."
-                    "They're not going to hold out for much longer, though." # This is a damage message, need to proceduralize...
-                    return
-        "Poisoned Blade" if target_list and current_mp["Silvia"] > mp_costs["Poisoned Blade"]:
-            $ current_mp['Silvia'] -= mp_costs["Poisoned Blade"]
-            $ silvia_hidden = False
-            np "Poison him!"
-            s "Your wish..."
-            "She leaps and disappears into thin air, appearing right behind the rider!"
-            s "... is my command!"
-            $ i = renpy.random.random()
-            if i <= 0.5:
-                "However, the rider barely manages to dodge her nefarious strike."
-                return
-            else:
-                "There's no way the rider can dodge."
-                call .dealdamage("Rider", damage['Silvia']['poison_attack'], False)
-                if target_died:
-                    "He falls off his mount and speedily succumbs to his wounds."
-                    "The ostrich runs into the horizon."
-                    $ victorious = True
-                else:
-                    "The blade goes straight through his right arm."
-                    "He seems disoriented by the poison, but still has will to fight left in him!"
-                    $ poison_counter["Rider"] = renpy.random.randint(1, 3)
-                return
-        "Return":
-            jump .act_phase
-    return
-
-label .act_defend:
-    "I raise my shield in defense."
-    "Let's see you get through this!"
-    $ nick_defense = True
-    $ blade_sphere_control = False
-    return
+        "Go inside the temple.":
+            jump Ruins_innertemple
+        "Aerith":
+            call Aerith_oob
+        "Silvia":
+            call Silvia_oob
+        "Return to the great hall":
+            "We make our way back to the hall."
+            jump Ruins_training_menu
+    jump Ruins_innerchambers_menu
     
-label .rider_turn:
-    if "Rider" in target_list:
-        $ j = renpy.random.random()
-        if j <= 0.5:
-            call .rider_attack
-        $ i = renpy.random.random()
-        if i <= 0.5:
-            jump .rider_escape
+label Ruins_innerchambers:
+    "As we move past the great hall, we come upon a structure which looks like a small temple."
+    if 'Ruins_innerchambers' in seen_before.keys() and seen_before['Ruins_innerchambers']:
+        if not battle4_won:
+            "There's a brass gate guarded by stone statues on both sides."
+            jump .approach_menu
         else:
-            if j > 0.5:
-                "The rider circles around us, waiting for an opening."
-            return
-        #jump .act_phase
-    else:
-        "Suddenly, the rider ambushes us!"
-        $ target_list.append("Rider")
-        call .rider_attack
-        return
-        
-label .rider_escape:
-    "The rider escapes beyond sight."
-    $ target_list.remove("Rider")
-    if 'Silvia' in playerparty:
-        s "Do not let your guard down. He shall return."
-    return
-    #jump .wait_phase
-        
-label .dealdamage(target, amount, handle_death = True):
-    $ target_died = False
-    $ current_hp[target] -= amount
-    if current_hp[target] < 0:
-        $ current_hp[target] = 0
-        if handle_death:
-            call .death(target)
-        $ target_died = True
-    return
+            "The brass gate is open, and the statues have been reduced to rubble."
+            jump Ruins_innerchambers_menu
+    $ battle4_won = False
+    $ seen_before['Ruins_innerchambers'] = True
+    s "A temple within a temple? How unexpected."
+    "The entrance to the temple is blocked by a brass gate, and guarded on either side by a warrior statue of stone."
+    s "The lock appears easy enough to pick. Shall I?"
+    jump .approach_menu
 
-label .death(target):
-    if target == "Nick":
-        "Blood trickles over my eyes, and I begin a long descent into darkness..."
-        $ playerdeath = True
-    elif target == "Aerith":
-        "Aerith falls to the ground as her body disintegrates into fine purple dust, blown away by an intangible wind."
-        $ playerparty.remove("Aerith")
-    elif target == "Silvia":
-        $ playerparty.remove("Silvia")
-        "Silvia disappears in a cloud of lavender mist."
-    elif target == "Rider":
-        # I'd like to do some cool procedural stuff with Tracery here, but it'll have to wait until after NaNo
-        $ victorious = True
-        $ i = renpy.random.randint(1, 4)
-        if i == 1:
-            "I land a deep wound on his side, and he falls off his mount, which escapes into the desert."
-            "He quietly bleeds to death."
-        elif i == 2:
-            "He screams as my blade cuts his stomach open."
-            "He falls to the ground, a bloody mess."
-            "The ostrich runs off."
-        elif i == 3:
-            "My strike goes right through him, splitting his body in half."
-            "The ostrich runs away."
-        elif i == 4:
-            "I strike at him with full force, causing him to fall off!"
-            "The ostrich runs away, leaving its rider moaning on the ground."
-            "I finish him with a well-aimed strike right through the chest."
-    return
-        
-label .rider_attack(rider_target = None, attack = None):
-    # If rider_target is not supplied, choose randomly. Ditto with attack.
-    if rider_target == None:
-        python:
-            possible_targets = list(playerparty)
-            if silvia_hidden:
-                possible_targets.remove('Silvia')
-            rider_target = renpy.random.choice(possible_targets)
-    if attack == None:
-        python:
-            possible_attacks = ['Fire', 'Charge']
-            if not spear_broken:
-                possible_attacks.append('Spear')
-            attack = renpy.random.choice(possible_attacks)
-    $ attack_successful = False
-    if attack == "Fire":
-        call .rider_fire(rider_target)
-    elif attack == "Charge":
-        call .rider_charge(rider_target)
-    else:
-        call .rider_spear(rider_target)
-    return
-        
-label .rider_fire(rider_target):
-    if rider_target == "Nick":
-        "He comes a bit closer. Suddenly, the ostrich breathes fire on me!"
-    else:
-        "He goes closer to [rider_target]. Then, he commands his ostrich to breathe fire!"
-    if blade_sphere_control:
-        "Damn! Blade Sphere Control can't protect against breath weapons!"
-    if rider_target == "Nick" and nick_defense:
-        "Haha! My shield heats up a bit, but that's no problem at all."
-        return
-    if rider_target == "Aerith" and light_barrier_active['Aerith'] > 0:
-        "The fire reflects off of Aerith's barrier."
-        "Seems the rider got a taste of his own poison. He bursts into flames, jumps off his mount, and rolls in the sand."
-        "I finish him with a single strike."
-        $ victorious = True
-        return
-    if rider_target == "Nick":
-        "The flames sear painfully into my flesh."
-        call .dealdamage('Nick', damage["Rider"]['Fire'])
-    elif rider_target == "Aerith":
-        "Aerith screams as the flames burn her skin."
-        call .dealdamage('Aerith', damage["Rider"]['Fire'])
-    else:
-        "Silvia grits her teeth as the skin on her arms is charred by the flames."
-        call .dealdamage('Silvia', damage["Rider"]['Fire'])
-    $ attack_successful = True
-    return
+label .approach_menu:
+    menu:
+        "The only way is forward.":
+            jump .approach
+        "Go back to the hall":
+            "We move back the way we came."
+            jump Ruins_training_menu
 
-label .rider_charge(rider_target):
-    if rider_target == "Nick":
-        "He lunges right at me!"
-    else:
-        "He charges toward [rider_target]!"
-    if blade_sphere_control:
-        "He can't get through Blade Sphere Control, though!"
-        call .dealdamage("Rider", damage['Nick']['blade_sphere_control'], False)
-        if target_died:
-            "He is hit off his mount, and dies whimpering pitifully on the sands."
-            $ victorious = True
-            return
-        else:
-            "He screams as my blade cuts into his arm!"
-            if not spear_broken:
-                "His spear breaks as well."
-                $ spear_broken = True
-            return
-    if rider_target == "Aerith" and light_barrier_active['Aerith'] > 0:
-        "He slams right into Aerith. She's protected by the sphere, but still falls prone."
-        return
-    if rider_target == "Nick" and nick_defense:
-        "My shield is of no use as he rams right into me, sending me flying to the ground."
-        "Blood splatters everywhere, and my body is full of bruises."
-        call .dealdamage("Nick", damage["Rider"]["Charge"])
-        return
-    if rider_target == "Nick":
-        "His pounce catches me by surprise, and I have no time to leap out of the way!"
-        "The ostrich tramples all over me, leaving painful bruises."
-        call .dealdamage("Nick", damage["Rider"]["Charge"])
-    elif rider_target == "Aerith":
-        "Aerith cries in terror as the ostrich runs her over."
-        "Damn! You'll pay for that!"
-        call .dealdamage("Aerith", damage["Rider"]["Charge"])
-    else:
-        "Silvia's expression turns pained as the ostrich tramples over her!"
-        call .dealdamage("Silvia", damage["Rider"]["Charge"])
-    $ attack_successful = True
-    return
-        
-label .rider_spear(rider_target):
-    if rider_target == "Nick":
-        "He comes close and attempts to impale me with his spear."
-    else:
-        "The rider makes an attempt to impale [rider_target]!"
-        
-    if blade_sphere_control:
-        "Yeah, just try to get past my technique!"
-        call .dealdamage("Rider", damage['Nick']['blade_sphere_control'], False)
-        if target_died:
-            call .death("Rider")
-        else:
-            if not spear_broken:
-                "His spear breaks as my sword splits it in half."
-                "Damn. Almost got his hand too."
-                $ spear_broken = True
-            else:
-                "I cut a deep wound into his arm."
-        return
-    if rider_target == "Aerith" and light_barrier_active['Aerith'] > 0:
-        "It's no use. The attack harmlessly bounces off Aerith's barrier."
-        return
-    if rider_target == "Nick" and nick_defense:
-        "The attack is easily deflected by my shield. Why even bother trying?"
-        return
-    if rider_target == "Nick":
-        "I raise my arm just in time, but the spear still manages to land a blow."
-        call .dealdamage("Nick", damage["Rider"]["Spear"])
-    elif rider_target == "Aerith":
-        "Aerith crosses her arms in front of her, but that offers no protection at all!"
-        "The spear pierces deep into her arms."
-        call .dealdamage("Aerith", damage["Rider"]["Spear"])
-    else:
-        "Silvia attempts to dodge the attack, but can't get out of the way in time."
-        "It's painful to see the spear sink into her back."
-        call .dealdamage("Silvia", damage["Rider"]["Spear"])
-    $ attack_successful = True
-    return
-    
-# label .wait_phase:
-    # menu:
-        # "Remain vigilant":
-            # "I wait, trying to listen to the approaching footsteps."
-            # $ nick_defense = True
-        # "Blade Sphere Control":
-            # "I refocus my attention."
-            # np "Blade Sphere Control!"
-            # $ blade_sphere_control = True
-            # "Wherever you are, I'm ready for you!"
-        # "Aerith Spell: Curing Light" if "Aerith" in playerparty:
-            # menu:
-                # "Heal me.":
-                    # "She casts the spell, and the green light suffuses my body with peace."
-                    # call .curinglight("Nick")
-                # "Heal yourself.":
-                    # "She puts her hands together, and a green light fills every pore of her skin, taking away her wounds."
-                    # call .curinglight("Aerith")
-                # "Heal Silvia." if not silvia_hidden:
-                    # "A green glow emanates from Aerith's hand and spreads over Silvia as she touches her wounds."
-                    # call .curinglight("Silvia")
-                # "Return":
-                    # jump .wait_phase
-        # "Aerith Spell: Light Barrier" if "Aerith" in playerparty:
-            # "Aerith chants the spell, and a white sphere of light encloses her in the protection of her god."
-            # $ light_barrier_active['Aerith'] = 1
-        # "Tell Silvia to hide." if "Silvia" in playerparty and not silvia_hidden:
-            # np "Silvia, this would be a good time to hide yourself."
-            # s "Your rhetoric is convincing, liege."
-            # np "I-it is?"
-            # "Silvia disappears into thin air."
-            # $ silvia_hidden = True
-    # "Suddenly, the rider ambushes us!"
-    # call .rider_attack
-    # return
+label .approach:
+    "As Silvia approaches the gates, purple flames light up in the eyes of the statues."
+    np "Look out!"
+    "The statues jolt to life, lifting their scimitars into the air."
+    "They approach Silvia with heavy steps leaving their mark on the sand-covered floor."
+    "Silvia evades them easily, and we go on the offensive."
+    "The statues are too slow to strike us with their blades, but they also seem impervious to all our techniques."
+    "Eventually we manage to get them to strike each other, taking them out."
+    jump .victorious
     
 label .victorious:
-    hide desert_rider
-    np "Whew! That wasn't too easy!"
-    if "Silvia" in playerparty:
-        show sil wot
-        s "Did it not match your expectations, liege?"
-        np "Sure it did. Well, let's move on."
-    play music "bgm/hope(Ver1.00).ogg"
-    return
+    s "We must hope that the defence of our future enemies is not as impenetrable."
+    "Now undisturbed, Silvia picks the lock with ease, and the gate opens with a creak."
+    $ battle4_won = True
+    jump Ruins_innerchambers_menu
+            
+
+label Ruins_training_menu:
+    menu:
+        "Go forward.":
+            jump Ruins_innerchambers
+        "Aerith...":
+            call Aerith_oob
+        "Silvia...":
+            call Silvia_oob
+        "Log out":
+            np "I think we should call it a day now."
+            s "Very well. Our attempt was heroic nonetheless."
+            "We say our farewells and log out."
+            return
+    jump Ruins_training_menu
+          
+label Ruins_training:
+    if 'Ruins_training' in seen_before.keys() and seen_before['Ruins_training']:
+        "We go down the spiraling staircase, and the great hall unfolds before our eyes."
+        jump .goin_menu
+    $ battle3_won = False
+    $ seen_before['Ruins_training'] = True
+    "The woeful chanting grows ever louder, as we move past the living quarters deeper into the dungeon."
+    "With trembling steps we walk down a spiraling stairway small enough to induce claustrophobia."
+    "At the bottom, a doorway opens to a colossal underground hall."
+    a "Wow, it's huge!"
+    s "And offers no place to hide. We ought to be careful."
+    jump .goin_menu
+    
+label .goin_menu:
+    menu:
+        "Go in.":
+            jump .goin
+        "Turn back":
+            "We move back up the stairs into the living quarters."
+            jump Ruins_outer_menu            
+
+label .goin:
+    "Everywhere around us, the walls, ceiling and columns are covered with ancient carvings."
+    "Curiously, none of the carvings depict dragons. They must be relics from an older time."
+    a "Beautiful..."
+    "Aerith puts her hand on one of the columns."
+    s "Do not let down your guard, faithful one!"
+    "Silvia's reservations turn out to be appropriate."
+    "All of a sudden, we hear a huge thump behind us."
+    "A stone slab has fallen over the doorway, blocking the way back!"
+    "I'm deafened by the shrieking ostriches and their shouting riders, emerging from hidden compartments in the walls."
+    "From the other end of the hallway, a huge ostrich with dragon wings approaches, threatening us with the flames it spits out of its throat."
+    "Looks like it's time to..."
+    "Fight!"
+    "I charge right at the dragon-ostrich! Furious Strike!"
+    "Fatality! Superb!"
+    "My sword pierces deep into its head, killing the monstrosity instantly."
+    "Aerith and Silvia have already dealt with the rest of the riders."
+    $ battle3_won = True
+    jump Ruins_training_menu
+    
+label Ruins_outer_menu:
+    menu:
+        "Move forward":
+            jump Ruins_training
+        "Aerith...":
+            call Aerith_oob
+        "Silvia...":
+            call Silvia_oob
+        "Go back outside":
+            "We return outside."
+            jump Ruins_courtyard_menu
+    jump Ruins_outer_menu
+    
+label Ruins_outer:
+    if 'Ruins_outer' in seen_before.keys() and seen_before['Ruins_outer']:
+        "We go down the bronze door, arriving at the living quarters."
+        if not battle2_won:
+            "The novice and the priest are still here, talking."
+            jump .approach_menu
+        else:
+            jump Ruins_outer_menu
+    $ battle2_won = False
+    $ seen_before['Ruins_outer'] = True
+    np "The only way is forward. Let's go in."
+    "We open the bronze door beneath us, revealing a steep staircase leading only to the depths of darkness."
+    a "W-we aren't going in there, right?"
+    s "Does your heart not yearn for battle?"
+    a "No."
+    "This game is like 50 \% fighting..."
+    s "Lead the way, liege."
+    "We start walking down the stairs into the black dungeons."
+    np "There's light ahead."
+    a "Why is it purple...?"
+    s "The dark magic of the Harvester, without doubt."
+    "We walk past the torches shining purple in the dark hallway."
+    "It must be my imagination, but I can almost feel some malign force emanating from the purple flames and marble floor."
+    "Aerith is shivering, and I doubt it's the cold. I can feel a dread chill flowing down my spine."
+    a "D-do you hear something?"
+    "She tries to whisper, but the echoes annul her attempt."
+    s "They're chanting evil spells to honor their dark deities. This heresy must be stopped!"
+    a "Maybe we could do it later?"
+    s "You are curiously lacking in zeal, priestess."
+    a "Uh, thanks?"
+    s "I did not intend a compliment."
+    "We really need to get into a battle before they're at each other's throats."
+    "It seems my wish will be granted."
+    "The ominous chanting grows louder, and the hallway ahead extends to the left and right."
+    "I can see bedrolls and an assortment of utilities strewn messily on the stone floor."
+    "And people."
+    "A man in simple brown robes is talking to a woman wearing purple robes with elaborate embroidery depicting a crimson dragon on each side."
+    "They both have blank, stoic expressions, but their eyes glimmer with a zealous spirit."
+    "They haven't noticed us just yet."
+
+label .approach_menu:
+    menu:
+        "What should we do?"
+        "Approach":
+            jump .approach
+        "Aerith...":
+            call Aerith_oob
+        "Silvia...":
+            call Silvia_oob
+        "Turn back":
+            jump .turnback
+            
+label .approach:
+    "The man looks shocked and points at us, then calls others to his aid!"
+    "Novice" "My blood for N'Gashai!"
+    "He charges us, wielding a kukri decorated with a dragon's head!"
+    "The woman behind him starts casting a spell, materializing the ephemeral form of a dragon over her body."
+    jump .victorious
+    
+label .turnback:
+    "We head back outside, careful to avoid detection."
+    jump Ruins_courtyard_menu
+    
+label .victorious:
+    "The fight rages on forever, but eventually we are left the victors, bathed in the blood of the novices."
+    a "Ew, ew, ew, ew!"
+    s "Yes, the life of our enemies spills on the ground! Mwahahahaa!"
+    "The worst part is, this isn't even the weirdest group I've played with."
+    $ battle2_won = True
+    jump Ruins_outer_menu
+    
+    
+# label Ruins_cultists:
+    # s "Cultists..."
+    # "Most of them seem to be novices, wearing brown woolen robes."
+    # "In the front, there are two wearing more extravagant robes with embroidery portraying a crimson dragon, one on each side."
+    # "One of the novices is bowing down, and they're anointing her head with a strange oil."
+    # s "This is worse even than we suspected. We must bring this rite to an end, lest they unleash some great darkness from beyond!"
+    # np "You don't have to roleplay all the time, you know."
+    # s "I know not what you mean."
+    # "I sigh."
+    # "For a while at least, they're so focused on the ritual that they haven't even noticed us."
+    # menu:
+        # "What should we do?"
+        # "Silvia, sneak up on them.":
+            # jump .sneak
+        # "Aerith, try casting...":
+            # jump .aerith_cast
+        # "Go back outside.":
+            # jump .go_back
+        # "Wait and see what happens.":
+            # jump .wait
+    # return
+
+
+
+
         
 label RuinsStart:
     $ silvia_hidden = False
-    $ light_barrier_nick = False
-    $ light_barrier_silvia = False
-    $ light_barrier_aerith = False
     call DFO_login
     call DFO_init
     call Ruins_entrance
     call Ruins_courtyard
     jump events_skip_period
     return
+    
+label Ruins_courtyard_menu:
+    menu:
+        "Let's go in.":
+            jump Ruins_outer
+        "Aerith...":
+            call Aerith_oob
+        "Silvia...":
+            call Silvia_oob
+        "I guess we can call it a day.":
+            np "I guess that's enough for today."
+            s "Aren't we going all the way to the end?"
+            np "Nah, let's come back and try again some other time."
+            s "All right, I suppose."
+            return
+    jump Ruins_courtyard_menu
     
 label Ruins_courtyard:
     "Broken pillars loom ominously around us, and I feel as if someone is gazing at us, hidden somewhere beyond sight..."
@@ -593,6 +523,7 @@ label .courtyard_menu:
         "Should we approach?"
         "Let's go!":
             "We approach the entrance as it glitters in the sunlight."
+            $ seen_before = {}
             jump Ruins_battle1
         "[np_name]...":
             call Nicholas_oob
@@ -623,10 +554,9 @@ label Nicholas_oob:
                     
 label Aerith_oob:
     menu:
-        "Cast Light Barrier":
-            call LightBarrier("Aerith")
-            #call .light_barrier_target
-        "Cast Cure on...":
+        "Cast Light Barrier on...":
+            call .light_barrier_target
+        "Cast Curing Light on...":
             call .cure_target
         #"Cast Mass Cure"
         #    call .mass_cure
@@ -634,8 +564,8 @@ label Aerith_oob:
         #    call .heal_target
         #"Cast Mass Heal"
         #    call .mass_heal
-        #"Return":
-        #    return
+        "Return":
+            return
     return
 
 label .light_barrier_target:
@@ -650,7 +580,7 @@ label .light_barrier_target:
             $ target = "Silvia"
             $ target_desc = "Silvia"
         "Return":
-            jump Aerith_oob
+            return
     call ask_Aerith_to_cast("Light Barrier", target_desc, target)
     return
 
@@ -666,8 +596,8 @@ label .cure_target:
             $ target = "Silvia"
             $ target_desc = "Silvia"
         "Return":
-            jump Aerith_oob
-    call ask_Aerith_to_cast("Cure", target_desc, target)
+            return
+    call ask_Aerith_to_cast("Curing Light", target_desc, target)
     return
 
 #label .mass_cure:
@@ -680,7 +610,12 @@ label ask_Aerith_to_cast(technique_name, target_desc, target):
     np "Aerith, could you cast [technique_name] on [target_desc]?"
     if mp_costs[technique_name] <= current_mp['Aerith']:
         a "S-sure."
-        call usetechnique('Aerith', technique_name, target)
+        #call usetechnique('Aerith', technique_name, target)
+        if technique_name == "Curing Light":
+            call CuringLight("Aerith", target)
+            $ stats_frame(target, 90, current_hp[target], max_hp[target])
+        elif technique_name == "Light Barrier":
+            call LightBarrier("Aerith", target)
         # "She chants the spell, and I'm momentarily blinded by the white light enveloping my body."
     else:
         a "I'm afraid I don't have enough mana."

@@ -174,4 +174,7 @@ label soaked:
         c "Did you slip?"
     return
 
-    
+label Catherine_ask_about_sauna:
+    c "By the way, what the hell were you doing back there at the sauna?"
+    n "Oh, that..."
+    return

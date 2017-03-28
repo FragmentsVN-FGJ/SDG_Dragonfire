@@ -18,12 +18,12 @@ define config.name = _("Simulacrum Duorum Graduis ~ Dragonfire")
 ## Determines if the title given above is shown on the main menu screen. Set
 ## this to False to hide the title.
 
-define gui.show_name = True
+define gui.show_name = False
 
 
 ## The version of the game.
 
-define config.version = "0.5"
+define config.version = "0.75"
 
 
 ## Text that is placed on the game's about screen. To insert a blank line

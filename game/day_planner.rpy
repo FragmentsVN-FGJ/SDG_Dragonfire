@@ -72,7 +72,13 @@ screen image_planner(period):
             if show_this:
                 if enable:
                     #imagebutton auto "gui/main_start_%s.png" xpos 773 ypos y focus_mask True action Start() hovered [ Play ("test_one", "sfx/click.wav"), Show("gui_tooltip", my_picture="images/tooltip"+var+".png", my_tt_xpos=46, my_tt_ypos=518) ] unhovered [Hide("gui_tooltip")]
-                    textbutton name xpos x ypos y action [Hide("gui_tooltip"), SetField(store, this_period.var, curr_val), Return(curr_val)] hovered [ Show("gui_tooltip", my_tt_text=tooltip, my_tt_xpos=46, my_tt_ypos=518) ] unhovered [Hide("gui_tooltip")]
+                    if (curr_val, day) in promises.keys():
+                        $ txtcolor = Color("#DC143C")
+                        if promises[(curr_val, day)] == {('Catherine', 'meet'): False}:
+                            $ tooltip = "I promised to meet Catherine here now."
+                    else:
+                        $ txtcolor = gui.text_color
+                    textbutton name xpos x ypos y text_color txtcolor action [Hide("gui_tooltip"), SetField(store, this_period.var, curr_val), Return(curr_val)] hovered [ Show("gui_tooltip", my_tt_text=tooltip, my_tt_xpos=46, my_tt_ypos=518) ] unhovered [Hide("gui_tooltip")]
                     #textbutton name action SetField(store, this_period.var, curr_val)
                 else:
                     textbutton name
