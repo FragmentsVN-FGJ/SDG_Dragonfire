@@ -18,7 +18,7 @@ label CuringLight(caster, target):
     
 label LightBarrier(caster, target = "Aerith"):
     $ current_mp[caster] -= mp_costs["Light Barrier"]
-    a "Phopassus, protect thy faithful in a time of need. Light Barrier!"
+    a "Luxphoros, protect thy faithful in a time of need. Light Barrier!"
     $ duration = renpy.random.randint(2, 4)
     $ light_barrier_active[target] = duration
 

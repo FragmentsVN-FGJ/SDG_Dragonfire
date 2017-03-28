@@ -12,7 +12,7 @@ init:
     
     $ event("Catherine_study_together", "act == 'cathouse' and not broken_up", event.only(), event.depends('Catherine_parlor'), priority=200)
     $ event("Catherine_gym_together", "act == 'gym' and not broken_up and day%4==1 and cash >= prices['gym']", event.only(), event.once(), event.depends('Catherine_parlor'), priority=50)
-    $ event("sauna_accident", "act == 'swimming' and day%4==3", event.only(), event.depends("swimminghallintro"), event.depends('Catherine_parlor'), event.once(), event.random(0.14), priority=50)
+    $ event("sauna_accident", "act == 'swimming' and day%4==3", event.only(), event.depends("swimminghallintro"), event.depends('Catherine_parlor'), event.once(), event.random(0.42), priority=50)
     $ event("Catherine_running_together", "broken_up == False and act == 'track' and day%4==2", event.only(), event.depends('Catherine_parlor'), priority=50)
     
     $ event("Catherine_parlor", "act == 'parlor' and (act, day) in promises.keys()", event.only(), event.once(), priority=5)
@@ -456,7 +456,8 @@ label sauna_accident:
     "I yawn while navigating the labyrinthine hallways of the swimming hall."
     "I didn't sleep that well, and I'm feeling really tired today."
     "I'm hoping the cold water will refresh me. Wouldn't want to feel tired for the whole day."
-    "In a slight daze, I finally arrive at the lockers. Some nagging voice in the back of my voice is saying that something is different today, but I'm too tired to take note of it."
+    "In a slight daze, I finally arrive at the lockers."
+    "Some nagging voice in the back of my voice is saying that something is different today, but I'm too tired to take note of it."
     "I undress and go to the showers."
     "I woke up so early that no-one else is around yet."
     "While standing under the warm pouring water, I'm struck by something strange."
@@ -468,7 +469,7 @@ label sauna_accident:
     "Someone comes in and sits beside me, a bit further away."
     "Then, the person seems to recognize me, and I'm jolted awake."
     show cat question at closeup with dissolve
-    show cat_torso naked at closeup with dissolve
+    show cat_torso naked at closeup behind cat with dissolve
     c "Nick...?"
     "W-wait, what's Catherine doing on the men's side?"
     "Suddenly, I realize why something felt off before."
@@ -491,8 +492,10 @@ label sauna_accident:
             show cat angry
             c "Nick, what the hell are you doing!?"
             "I almost slip on the wet floor, but manage to get away, with no time to close the door behind me."
-            hide cat with moveoutleft
-            hide cat_torso with moveoutleft
+            hide cat
+            hide cat_torso
+            with moveoutleft
+            scene hallway with dissolve
             "Damn! I can hear Catherine following right behind me. Thankfully, she's walking rather than sprinting."
             "Quick, I need to hide somewhere!"
             $ locker = False
@@ -523,8 +526,9 @@ label sauna_accident:
     return
 
 label .Catherine_investigation(visibility, place):
-    show cat frown at right with moveinright
-    show cat_torso naked at right with moveinright
+    show cat frown at right
+    show cat_torso naked at right behind cat
+    with moveinright
     "Catherine walks in, and [visibility] I can see her investigating the perimeter."
     c "Nick, I know you're in here somewhere!"
     show cat lookaround
@@ -532,8 +536,9 @@ label .Catherine_investigation(visibility, place):
     "Finally, she appears to lose interest."
     show cat anger
     c "Whatever. We'll talk when you're ready to act like an adult."
-    hide cat with moveoutright
-    hide cat_torso with moveoutright
+    hide cat
+    hide cat_torso
+    with moveoutright
     "I hold back a sigh of relief until she is no longer visible."
     return
             
@@ -569,21 +574,21 @@ label Catherine_gym_broken_up:
     $ cash -= prices['gym']
     scene gym
     show cat normal_right at right
-    show cat_torso orange at right
+    show cat_torso orange at right behind cat
     "As I arrive at the gym, I see that Catherine is already here."
     "I don't really want to face her like this, but I did come here to exercise."
     menu:
         "Stay and exercise":
             "I go as far away from Catherine as possible, deciding to lift some weights."
-            show cat
-            show cat_torso
+            hide cat
+            hide cat_torso
             with moveoutright
         "Leave":
             "I leave Catherine to her own gym devices."
             return
     "Eventually, Catherine comes over as well."
     show cat normal_downright at right
-    show cat_torso orange at right
+    show cat_torso orange at right behind cat
     with moveinright
     "She doesn't even look at me, and starts lifting some weights."
     "Does she think she rules the place or something?"
@@ -593,7 +598,7 @@ label Catherine_gym_broken_up:
     "Pretty soon, we're in a heated competition, trying to see who can lift the most!"
     "Other guys at the gym come around us, cheering for Catherine."
     "Yeesh, is she some sort of celebrity around these parts?"
-    show cat_torso green with Dissolve(10.0)
+    show cat_torso green behind cat with dissolve
     if fitness < 45:
         "I'm in pretty poor shape."
         "I grit my teeth as I see her still going fast while my own arms scream with pain!"
@@ -643,7 +648,7 @@ label Catherine_gym_together:
     menu:
         "Talk to her":
             show cat normal
-            show cat_torso orange
+            show cat_torso orange behind cat
             with moveinright
             "I walk up to her to say hi."
             n "Already hard at work, I see."
@@ -652,7 +657,7 @@ label Catherine_gym_together:
             "I go a bit further off, doing some acrobatic exercises."
             "She eventually comes over."
             show cat normal
-            show cat_torso orange
+            show cat_torso orange behind cat
             with moveinright
             # Hi scene
             c "Hi!"
@@ -708,7 +713,7 @@ label Catherine_gym_together:
     $ victorious = False
     if i < 0.5:
         "Catherine!"
-        show catherine shock
+        show cat shock
         "The robot lunges its elongated arms forward, attempting to grapple her!"
         $ robot_focusing = "Catherine"
         jump .react_phase
@@ -757,8 +762,8 @@ label .struggle:
     else:
         "Suddenly, it loosens its grasp, and I fall gracefully to the ground!"
         show cat
-        show cat_torso
-        with slideinbottom
+        show cat_torso behind cat
+        with moveinbottom
         with vpunch
         $ nick_in_air = False
         "It shifts its visor towards me, preparing to attack."
@@ -822,7 +827,7 @@ label .Catherine_press:
 label .press:
     "While the machine is concentrating on Catherine, I sneak up on it, attempting to press the power down button on its back."
     show cat
-    show cat_torso
+    show cat_torso behind cat
     with moveoutleft
     if not robot_stunned:
         "At the last moment, its head rotates 180 degrees to face me, and it lashes out at me!"
@@ -836,7 +841,7 @@ label .press:
 label .Catherine_distract:
     n "Catherine! Try to draw its attention!"
     show cat something2
-    show cat_torso
+    show cat_torso behind cat
     with moveinright
     c "U-uh, hey you stupid robot, don't forget about me!"
     with vpunch
@@ -869,7 +874,7 @@ label .react_phase:
         "Jump to protect her!" if robot_focusing == "Catherine" and not nick_in_air:
             "I jump in front of the robots arms!"
             show cat angry
-            show cat_torso
+            show cat_torso behind cat
             with moveinright
             c "Nick, get out of my way!"
             "Oh right, Cat already had experience in this, didn't she..."
@@ -906,7 +911,7 @@ label .dodge(method):
     else:
         hide cat
         hide cat_torso
-        with slideoutbottom
+        with moveoutbottom
         "It's no use! The robot catches my leg and lifts me into the air!"
         $ nick_in_air = True
     return
@@ -939,7 +944,7 @@ return
 label .victory:
     play music "bgm/Hope(Ver1.00).ogg"
     show cat fuun
-    show cat_torso green
+    show cat_torso green behind cat
     with moveinright
     jack "So you did manage to beat it."
     "He sounds genuinely impressed."
@@ -961,7 +966,7 @@ label Catherine_running_together:
     "As I'm running, Catherine arrives, and I slow down to meet her."
     # Catherine introductions
     show cat normal at left
-    show cat_torso green at left
+    show cat_torso green at left behind cat
     with moveinleft
     c "Hi, how's it going, Nick?"
     "I have to catch my breath for a bit."
@@ -992,13 +997,13 @@ label Catherine_running_together:
         "It's actually kind of sad to leave her behind like this."
         "But that's life I guess. Sorry Cat! Even you can't always win!"
         show cat frown at left
-        show cat_torso green at left
+        show cat_torso green at left behind cat
         with moveinleft
         "Cat's still pouting once we've finished racing."
         c "Hmph. Don't get any big ideas. I was just tired from the gym today."
     if fitness < 90:
-        show cat blush2
-        show cat_torso green
+        show cat blush_smile
+        show cat_torso green behind cat
         with moveinright
         "Cat approaches, smiling."
         c "Wow, you're sweating."
@@ -1065,7 +1070,7 @@ label .atthedoor:
                     "I take the baseball bat and ready it for attack."
                     "Eventually, I see someone come out the door, and I swing the bat over my head!"
                     show cat surprise at flip
-                    show cat_torso green at flip
+                    show cat_torso green at flip behind cat
                     with moveinright
                     stop music
                     c "Gyaaa! Nick, what the hell are you doing!?"
@@ -1073,7 +1078,7 @@ label .atthedoor:
                     c "Just... stay there! And put that bat down!"
                     $ bat_noticed = 1
                     show cat surprise
-                    show cat_torso green
+                    show cat_torso green behind cat
                     pause 0.25
                     hide cat
                     hide cat_torso
@@ -1107,8 +1112,8 @@ label .atthedoor:
                     "Okay, here goes nothing!"
                     "Shouting a battlecry, I storm into the room!"
                     # silence
-                    show cat suprise at closeup, flip
-                    show cat_torso green at closeup, flip
+                    show cat surprise at closeup, flip
+                    show cat_torso green at closeup, flip behind cat
                     stop music
                     "And I see Catherine. Playing a dance game. Wearing a T-shirt and nothing else."
                     "There's an awkward silence as we both stand perfectly still, staring at each other with gaping eyes."
@@ -1148,7 +1153,7 @@ label .gettingclothed:
     n "Well, you never know."
     "She opens the door again, dressed a bit more amicably. Still, the colors don't match at all."
     show cat frown at flip
-    show cat_torso green at flip
+    show cat_torso green at flip behind cat
     with moveinright
     "She must be irritated, not getting to spend the whole day choosing."
     show cat question
@@ -1183,7 +1188,7 @@ label .kitchen:
             c "S-sure. I'll bring the bottle to the living room."
             $ coke_bottle = True
     show cat normal_down at closeup
-    show cat_torso green at closeup
+    show cat_torso green at closeup behind cat
     with dissolve
     "I sit on the mat by the glass table, while she sits on the couch, looking down on me."
     "Literally that is. Hopefully not metaphorically."
@@ -1528,7 +1533,7 @@ label .calculus3:
             call .wrong_answer3 
             call .calculus3_explanation 
         "x - (x^3)/6 + (x^5)/120":
-            show cat suprise
+            show cat surprise
             "Her expression melts into astonishment."
             c "W-what!?"
             call .right_answer3 
@@ -1649,7 +1654,7 @@ label .interrupt:
         with moveoutleft
         "She comes back to the room carrying too mugs of hot tea."
         show cat smile at closeup
-        show cat_torso green at closeup
+        show cat_torso green at closeup behind cat
         with moveinleft
         c "Sorry, I only have Ceylon Black."
         $ drink = 0
@@ -1661,7 +1666,7 @@ label .interrupt:
         with moveoutleft
         "She comes back to the room carrying two mugs of the blackest coffee I've ever seen."
         show cat smile at closeup
-        show cat_torso green at closeup
+        show cat_torso green at closeup behind cat
         with moveinleft
         "Cat, just how much powder did you use?"
         c "Here's some tofu milk in case you don't want to drink it black."
@@ -1675,7 +1680,7 @@ label .interrupt:
         with moveoutleft
         "We clean up the mess. Thankfully, the bottle is still over half-full."
         show cat smile at closeup
-        show cat_torso green at closeup
+        show cat_torso green at closeup behind cat
         with moveinleft
         $ drink = 2
     jump .timeskip
@@ -1705,7 +1710,7 @@ label .timeskip:
     
 label .DFO:
     show cat normal_downright
-    show cat_torso green
+    show cat_torso green behind cat
     with dissolve
     "As I'm getting ready to leave, Catherine asks me the question that must have been on her mind for a while now."
     c "Nick, are you still playing that game? DFO?"
@@ -1858,7 +1863,7 @@ label .payment_menu:
         "Ask Catherine to pay for you.":
             "This is kind of embarrassing, but..."
             show cat normal at left
-            show cat_torso yellow at left
+            show cat_torso yellow at left behind cat
             with moveinleft
             n "Uh, Cat, could you pay for me just this once?"
             n "I'm kind of in a poor financial situation."
@@ -2064,9 +2069,9 @@ label .kiss:
     
     scene movie_theatre with Dissolve(4.0)
     "After a long kiss, we move out of the theatre."
-    scene street with dissolve
+    scene city_street with dissolve
     show cat blush
-    show cat_torso orange
+    show cat_torso orange behind cat
     with moveinleft
     c "Thanks, Nick. Let's do this again some time."
     "We say our farewells and go our separate ways."
@@ -2081,6 +2086,9 @@ label .kiss:
     
 label .date_intro:
     "As I arrive at the movie theatre, I see that Catherine is already here."
+    show cat_torso orange
+    show cat normal
+    with moveinright
     n "Sorry, have you been waiting for long?"
     c "N-no, just a short while."
     return
@@ -2114,7 +2122,7 @@ label Catherine_broken_up_mall:
                 return
         "Her expression darkens as she sees me."
     show cat normal_downright at closeup
-    show cat_torso red at closeup
+    show cat_torso red at closeup behind cat
     c "Could you just... I really don't feel like talking to you right now."
     "She's avoiding eye contact."
     menu:
@@ -2278,7 +2286,7 @@ label .guydescription:
     
 label .interrupt:
     show cat at left, flip
-    show cat_torso at left, flip
+    show cat_torso at left, flip behind cat
     with moveinleft
     if act == 'mall':
         "Catherine puts down the shirt she was inspecting and turns to leave."
@@ -2288,7 +2296,7 @@ label .interrupt:
         "Stop her.":
             # Silence
             show cat frown at left
-            show cat_torso red at left
+            show cat_torso red at left behind cat
             "I place my hand on her shoulder, and she turns around, looking defiantly into my eyes."
             c "What?"
             jump .ending

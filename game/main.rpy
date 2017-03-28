@@ -41,15 +41,24 @@ init:
         linear 1.0 yalign 0.5
         pause 0.5
         linear 1.0 xalign -10.0
-                
+                    
 init python:
-    parlor_visited = False
+    credits = ('Script', 'MagusDei'), ('Sprites and hand-drawn backgrounds', 'Qazhax'), ('Background images', 'Snehadri'), ('Programming', 'MagusDei'), ('Programming', 'Qazhax'), ('Logo', 'John Smith'), ('Future music and SFX', 'xZidene'), ('Dungeon and MMO design', 'Bahafyr')
+    credits_s = "{size=80}Credits\n\n"
+    e1 = ''
+    for e in credits:
+        if not e1==e[0]:
+            credits_s += "\n{size=40}" + e[0] + "\n"
+        credits_s += "{size=60}" + e[1] + "\n"
+        e1=e[0]
+    credits_s += "\n{size=40}Engine\n{size=60}Ren'py\n6.99.12.4"
+
     crt = ImageDissolve("images/crt.png", 0.5, 0)
     #register_stat("Strength", "strength", 10, 100)
     #register_stat("Intelligence", "intelligence", 10, 100)
     register_stat("Fitness", "fitness", 50, 100)
     register_stat("Stress", "stress", 3, 10)
-    register_stat("μBC", "cash", 27126, 999999)
+    register_stat("μBC (bits)", "cash", 27126, 999999)
 
     #dp_period("Morning", "morning_act")
     #dp_choice("Attend Class", "class")
@@ -76,7 +85,7 @@ init python:
     dp_choice("Library", "library", x=550, y=200, tooltip="Books, computers and a makerspace. Free, of course.")
     dp_choice("Work", "work", x=150, y=550, tooltip="The pay is 9000 bits per day. Not bad.")
     dp_choice("Business school", "business", x=200, y=100, tooltip="I've got no business there, probably.")
-    dp_choice("Ruins of Kvaagwyr", "ruins", tooltip="A high-level dungeon released as a part of the new expansion for DFO.")
+    dp_choice("Ruins of Kvaagwyr", "ruins", x=755, y=450, tooltip="A high-level dungeon released as a part of the new expansion for DFO. It will take the whole day to play it.")
 
 
     dp_period("Evening", "evening_act")
@@ -89,6 +98,15 @@ init python:
     dp_choice("Catherine's apartment", "cathouse", x=200, y=150, tooltip="I wonder if she's home...?")
     
     # HELPER FUNCTIONS
+    
+    # CASH SYSTEM
+    def paycash(amount):
+        global cash
+        if amount > cash:
+            return False
+        cash -= amount
+        return True
+    
     
     def say_days(days):
         if days == 1:
@@ -113,36 +131,6 @@ init python:
             return "at the VR arcade"
         else:
             return "somewhere"
-    
-    # PROMISE SYSTEM
-    
-    promises = {}
-    forgotten_promises = set()
-    unhandled_forgotten_promises = {}
-    unkept_promises_personal_counter = {}
-    # Promises are stored in a dictionary mapping (act, day) -tuples to [person, activity, boolean]-lists indicating 
-    # the person the promise was made to, the promise itself, and whether the promise is
-    # fulfilled (True), or not (False). The label night checks whether the promises for that day have been fulfilled and
-    # gives a warning if they haven't. There're special date events linked to promises.
-    
-    # CASH SYSTEM
-    def paycash(amount):
-        global cash
-        if amount > cash:
-            return False
-        cash -= amount
-        return True
-        
-    # WORK SYSTEM
-    work_counter = 6
-    work_payment = 9000
-    # At the start of each week, you get work_payment bits for each day you've worked during the last week
-    
-    # AFFECTION AND TRUST
-    max_affection = 10
-    max_trust = 10
-    affection = {'Catherine': 5, 'Silvia': 5}
-    trust = {'Catherine': 5, 'Silvia': 5}
     
     def affection_modify(person, amount):
         global affection
@@ -181,6 +169,10 @@ image cat fast_blink:
     "cat eyes_closed.png"
     pause 0.25
     "cat normal.png"
+    
+image cred = Text(credits_s, text_align=0.5)
+image theend = Text("{size=40}Conglaturation ! ! !\n \n This story is not so happy end. \n \n You have completed a great demo. \n \n And prooved the justice of our culture. \n \n Being the wise and courageous Nick you are, you feel strongth welling in your body. \n \n Now go and challenge again, for ever lasting peace!", text_align=0.5)
+    
 
 label pay(amount):
     $ pay_successful = paycash(amount)
@@ -205,7 +197,32 @@ label start:
     
     # Tooltips for menus
     $ tooltips = {}
-
+    
+    # PROMISE SYSTEM
+    
+    $ promises = {}
+    $ forgotten_promises = set()
+    $ unhandled_forgotten_promises = {}
+    $ unkept_promises_personal_counter = {}
+    # Promises are stored in a dictionary mapping (act, day) -tuples to [person, activity, boolean]-lists indicating 
+    # the person the promise was made to, the promise itself, and whether the promise is
+    # fulfilled (True), or not (False). The label night checks whether the promises for that day have been fulfilled and
+    # gives a warning if they haven't. There're special date events linked to promises.
+    
+    # WORK SYSTEM
+    $ work_counter = 6
+    $ work_payment = 9000
+    # At the start of each week, you get work_payment bits for each day you've worked during the last week
+    
+    # AFFECTION AND TRUST
+    $ max_affection = 10
+    $ max_trust = 10
+    $ affection = {'Catherine': 5, 'Silvia': 5}
+    $ trust = {'Catherine': 5, 'Silvia': 5}
+    
+    # Variables
+    $ parlor_visited = False
+    $ first_login = True
 
     $ blade_sphere_control = False
     $ Aerith_angry = False
@@ -355,7 +372,7 @@ label WeaselAerithBarrier:
     show air 2
     "Aerith's eyes flit from foe to foe in terror, but then she begins casting."
     show air chant
-    a "Phopassus, protect thy faithful in a time of need. Light Barrier!"
+    a "Luxphoros, protect thy faithful in a time of need. Light Barrier!"
     show air chant2
     pause 0.5
     show air 8
@@ -505,7 +522,7 @@ label WeaselAerithCuringLight:
     show air chant
     a "Thou art the sun which giveth life and light to the creatures of the earth..."
     show air 13
-    a "Lord Phopassus, lend us your power. Curing light!"
+    a "Lord Luxphoros, lend us your power. Curing light!"
     show air 2
     "I feel the warm, green glow closing the wounds on my arms."
 
@@ -732,7 +749,7 @@ label RoomDescription:
     play music "bgm/hope(Ver1.00).ogg"
     scene bg_vr with dissolve
     nvlNarrator "After the natural disorientation and nausea of entering the bleaker tonalities of reality has passed away, I place the HMD on the floor."
-    nvlNarrator "The headset's brand new, with fresnel lens and dual 8k-screens providing a 210-degree field of view at 120 frames per second."
+    nvlNarrator "The headset is brand new, with fresnel lens and dual 8k-screens providing a 210-degree field of view at 120 frames per second."
     nvlNarrator "In other words, virtually indistinguishable from reality. Though just try to run photorealistic graphics at those speeds!"
     nvlNarrator "Only the new line of GPUs Nvidia released last year is anywhere near capable of outputting those resolutions. I need eight of them just to run Dragonfire Online."
     nvl clear
@@ -1374,6 +1391,9 @@ label day:
 
     # Increment the day it is.
     $ day += 1
+    
+    if day >= 11:
+        jump Ending_Credits
 
     window hide
     # "It's day %(day)d."
@@ -1527,4 +1547,18 @@ label dp_callback:
     # everybody's mind.
     #$ narrator("What should I do today?", interact=False)
 
+    return
+
+label Ending_Credits:
+    window hide
+    $ credits_speed = 20 #scrolling speed in seconds
+    scene black with dissolve #replace this with a fancy background
+    show theend:
+        yanchor 0.5 ypos 0.5
+        xanchor 0.5 xpos 0.5
+    with dissolve
+    with Pause(15)
+    hide theend
+    show cred at Move((0.5, 4.0), (0.5, 0.0), credits_speed, repeat=False, bounce=False, xanchor="center", yanchor="bottom")
+    with Pause(credits_speed)
     return

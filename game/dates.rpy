@@ -90,7 +90,7 @@ label VRArcadeDate:
     call .payment
     scene arcade with dissolve
     show cat normal at left
-    show cat_torso orange at left
+    show cat_torso orange at left behind cat
     call .what_to_do 
     jump date_end
     
@@ -99,7 +99,7 @@ label .payment:
         "Like most arcades of the modern era, TechnoLazers has an entrance fee. The games themselves are completely free."
     "I wonder if I should pay for Catherine as well?"
     show cat normal at left
-    show cat_torso orange at left
+    show cat_torso orange at left behind cat
     with moveinleft
     call check_wallet 
     $ entrance_fee = prices['arcade']
@@ -433,7 +433,7 @@ label date_arrival:
         else:
             $ nicklate = True
             show cat frown at right, flip
-            show cat_torso orange at right, flip
+            show cat_torso orange at right, flip behind cat
             with moveinright
             "date_arrival] the [location],[nickcondition] I [see] that Catherine is already here[catdescription]."
     elif i <= 0.9:
@@ -445,7 +445,7 @@ label date_arrival:
     else:
         # Nick and Cat arrive at the same time
         show cat smile
-        show cat_torso orange
+        show cat_torso orange behind cat
         with moveinright
         "Coincidentally, it seems both Cat and I arrive at the [location] at precisely the same time."
     jump .conversation_start
@@ -462,7 +462,7 @@ label .wait:
     call .setupcatdescription 
     $ j = renpy.random.random()
     show cat tired
-    show cat_torso orange
+    show cat_torso orange behind cat
     with moveinright
     if j < 0.5:
         "[waitingdescription], Catherine appears from behind a corner[catdescription]."

@@ -175,6 +175,7 @@ label .ending:
     "Me and Silvia don't feel any strain at all from something like this."
     "But she's as high-level as us. She should have gotten used to it by now..."
     scene black with fade
+    play music "bgm/hope(Ver1.00).ogg"
     return
 
 label Ruins_innertemple_menu:
@@ -219,7 +220,7 @@ label Ruins_innertemple:
     a "Huh?"
     np "I think she means that there's an 'Unhallow' area effect here."
     show air 8
-    np "Since you're a priestess of Phopassus, it weakens your effective level."
+    np "Since you're a priestess of Luxphoros, it weakens your effective level."
     a "Oh. That makes sense."
     show air 4
     a "Uh, shouldn't we stop them, by the way?"
@@ -246,6 +247,16 @@ label .attack:
     "Fanatic" "More sacrifices for the great one!"
     with vpunch
     "Unexpectedly, the leader runs to the altar, killing the man in haste."
+    jump .battle
+    
+label .wait:
+    "The high priest approaches the man lying helpless on the altar."
+    "Then, he raises the ceremonial dagger high above his head..."
+    with vpunch
+    "And strikes!"
+    jump .battle
+    
+label .battle:
     "From where the dagger pierced the man's heart, a black, half-vaporous ooze spews forth, engulfing the leader."
     "He breathes the vapours in, filling himself with the power of darkness." # Teh cheeze, i luv it
     "He sprouts wings and claws, his entire body taken over by the ethereal form of a monstrous black dragon!"
@@ -327,6 +338,8 @@ label Ruins_training_menu:
             np "I think we should call it a day now."
             s "Very well. Our attempt was heroic nonetheless."
             "We say our farewells and log out."
+            scene black with dissolve
+            play music "bgm/hope(Ver1.00).ogg"
             return
     jump Ruins_training_menu
           
@@ -544,6 +557,7 @@ label .courtyard_menu:
                     s "I would not have expected such behavior from you."
                     "She looks disappointed. Well, it can't be helped."
                     $ affection_modify('Silvia', -1)
+                    play music "bgm/hope(Ver1.00).ogg"
                     return
 
 label Nicholas_oob:
@@ -672,6 +686,10 @@ label DFO_init:
     scene white with dissolve
     scene bg_fort with pixellate
     show sil normal at right
+    if not broken_up:
+        show air 8 at left
+    else:
+        show air 7 at left
     "I blink as my eyes adjust to the vibrant hyper-reality surrounding me."
     "Silvia and Aerith are already here."
     s "Hi there."
@@ -680,52 +698,73 @@ label DFO_init:
         "Aerith looks a bit dismayed. Did I anger her somehow?"
     else:
         "Aerith puts her hands together."
+        show air blush7
         a "Great to see you!"
     show sil cat2
     s "Well then, liege, riddle me this. Where are we heading next?"
     "Silvia has a rather, how should I say it, peculiar way with words."
+    show air 8
     np "I was thinking we could hit the Ruins of Kvaagwyr today."
     show sil proud
     s "Oh, is that not from the new expansion? Finally, we shall face a proper challenge!"
+    show air 9
     a "A challenge? It's not too difficult, is it?"
     show sil hmm
     s "Does your cowardice know no bounds, priestess?"
+    show air 7
     np "We can level up way more effectively if we try something a bit harder for a change."
+    show air 10
     a "I-if you say so..."
     return
     
+label DFO_login2:
+    scene bg_vr
+    "I pop a pill, put on the equipment, and start up the game."
+    jump DFO_init
+    
 label DFO_login:
-    scene player_room_gradient_map
+    if not first_login:
+        jump DFO_login2
+    $ first_login = False
+    scene player_room
     play music "bgm/EnterNewLife.mp3"
-    "Oh yeah, it's time to play some DFO!"
-    "I've assembled the equipment and I'm raring to go!"
-    "It took some soldering, but the mod is ready now too."
-    "With this mod, I'll be skirting the limits of possibility in terms of the level of realism that modern technology can offer."
-    "It's kind of sad, actually."
-    "I've been improving my immersion with new gadgets for almost half of my life until now."
-    "Every time, it just felt so much more real."
-    "Getting better headsets, a treadmill, my first haptic suit, every time the increase in realism left me gasping in awe."
-    "And now it's over."
-    "Until we get neural interfaces, I doubt it will be possible to increase immersion any further."
-    "Damn! I can't let the nostalgia get to me. This is it."
-    "For a moment, I look wistully at the white pill I'm holding in my hands."
-    "I place it on my tongue, downing it with a gulp of tap water."
-    "It will take around 10 minutes for the effects to start."
-    "Meanwhile, I'll just boot up the system."
-    "I've been using these pills for a while now."
-    "They're supposed to increase the realism of the VR experience further by messing with neuro-transmitters in your temporal lobe."
-    "Maybe it's just placebo, but I feel like it's working, and strongly."
-    "Whenever I use these, I completely lose my sense of reality, and can fully immerse myself in the world of games."
-    "They're not supposed to be addictive. I wouldn't have started using them otherwise."
-    "But once you've tried them, there's no going back. Ordinary VR begins to feel too bland, too colorless."
-    "Maybe you could say I'm addicted in that sense."
-    "They're psychotropic, so they're not exactly legal, of course."
-    "I bought them off the Dark Web. If the cyber surveillance unit has figured it out, they haven't come knocking yet."
-    "They probably have better things to do. I'm not a seller, after all."
-    "The guy who {i}is{/i} selling them is really shady, though."
-    "He has been raising his prices recently. Says his stash is running out."
-    "Not sure I buy that. But I have to get these from somewhere, right?"
-    "Buying ware from the black market has its disadvantages. I can't exactly report him to the police..."
+    nvl clear
+    nvlNarrator "Oh yeah, it's time to play some DFO!"
+    nvlNarrator "I've assembled the equipment and I'm raring to go!"
+    nvlNarrator "It took some soldering, but the mod is ready now too."
+    nvlNarrator "With this mod, I'll be skirting the limits of possibility in terms of the level of realism that modern technology can offer."
+    nvl clear
+    nvlNarrator "It's kind of sad, actually."
+    nvlNarrator "I've been improving my immersion with new gadgets for almost half of my life until now."
+    nvlNarrator "Every time, it just felt so much more real."
+    nvlNarrator "Getting better headsets, a treadmill, my first haptic suit, every time the increase in realism left me gasping in awe."
+    nvl clear
+    nvlNarrator "And now it's over."
+    nvlNarrator "Until we get neural interfaces, I doubt it will be possible to increase immersion any further."
+    nvlNarrator "Damn! I can't let the nostalgia get to me. This is it."
+    nvlNarrator "For a moment, I look wistully at the white pill I'm holding in my hands."
+    nvlNarrator "I place it on my tongue, downing it with a gulp of tap water."
+    scene player_room_gradient_map with dissolve
+    nvl clear
+    nvlNarrator "It will take around 10 minutes for the effects to start."
+    nvlNarrator "Meanwhile, I'll just boot up the system."
+    nvlNarrator "I've been using these pills for a while now."
+    nvlNarrator "They're supposed to increase the realism of the VR experience further by messing with neuro-transmitters in your temporal lobe."
+    nvlNarrator "Maybe it's just placebo, but I feel like it's working, and strongly."
+    nvl clear
+    nvlNarrator "Whenever I use these, I completely lose my sense of reality, and can fully immerse myself in the world of games."
+    nvlNarrator "They're not supposed to be addictive. I wouldn't have started using them otherwise."
+    nvlNarrator "But once you've tried them, there's no going back. Ordinary VR begins to feel too bland, too colorless."
+    nvlNarrator "Maybe you could say I'm addicted in that sense."
+    nvl clear
+    nvlNarrator "They're psychotropic, so they're not exactly legal, of course."
+    nvlNarrator "I bought them off the Dark Web. If the cyber surveillance unit has figured it out, they haven't come knocking yet."
+    nvlNarrator "They probably have better things to do. I'm not a seller, after all."
+    nvl clear
+    nvlNarrator "The guy who {i}is{/i} selling them is really shady, though."
+    nvlNarrator "He has been raising his prices recently. Says his stash is running out."
+    nvlNarrator "Not sure I buy that. But I have to get these from somewhere, right?"
+    nvlNarrator "Buying ware from the black market has its disadvantages. I can't exactly report him to the police..."
     "The login screen boots up in front of me."
     comp "Initializing..."
     comp "Welcome back. Please state username and write password."
