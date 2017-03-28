@@ -81,6 +81,26 @@ style frame:
 ## In-game screens
 ################################################################################
 
+screen hp_window(playerparty, current_hp, current_mp):
+    vbox:
+        id "hpboxes"
+        xmaximum 300
+        for name in playerparty:
+            frame:
+                xpadding 15
+                xmargin 5
+                ymargin 5
+                vbox:
+                    label name
+                    hbox:
+                        label "HP":
+                            xpadding 2
+                        bar value current_hp[name] range max_hp[name]
+                    #if name in ['Nick', 'Aerith', 'Silvia']:
+                    hbox:
+                        label "MP"
+                        bar value current_mp[name] range max_mp[name]
+
 
 ## Say screen ##################################################################
 ##
@@ -201,15 +221,15 @@ style input:
 screen choice(items):
     style_prefix "choice"
     default tt = Tooltip("")
-    
+
     vbox:
         for i in items:
-            
+
             if i.caption in tooltips:
                 textbutton i.caption action i.action hovered tt.Action(tooltips[i.caption])
             else:
                 textbutton i.caption action i.action
-    
+
     if tt.value != "":
         use say(None, tt.value)
 
@@ -1462,7 +1482,3 @@ style slider_pref_vbox:
 style slider_pref_slider:
     variant "small"
     xsize 600
-
-
-
-

@@ -16,32 +16,61 @@
 init:
     transform flip:
         xzoom -1.0
-        
+
     transform distant:
         zoom 0.75
-        
+
     transform gettingcloser:
         zoom 0.75
         linear 1.0 zoom 1.0
-        
+
+    transform wigglemiddle:
+        block:
+            linear 0.5 xalign 0.5 yanchor 1.0 ypos 1.1
+            linear 0.5 xalign 0.40 yalign 1.0
+            linear 0.5 xalign 0.5 yanchor 1.0 ypos 1.1
+            linear 0.5 xalign 0.60 yalign 1.0
+            repeat
+    transform rolling:
+        linear 0.5 xalign 0.5 yanchor 1.0 ypos 1.4
+        linear 0.5 xalign 0.40 yanchor 1.0 ypos 1.5
+        linear 0.5 xalign 0.5 yanchor 1.0 ypos 1.4
+        linear 0.5 xalign 0.60 yanchor 1.0 ypos 1.5
+        repeat
+
+    transform ramming:
+        zoom 1.0
+        linear 0.5 zoom 1.75 yalign 0.5
+
+    transform backwardsramming:
+        zoom 1.75
+        linear 1.0 zoom 1.0 yalign 1.0
+
+    transform flash:
+        pause 0.1
+        ypos 3.0
+        pause 0.1
+        yalign 0.5
+        repeat
+
     transform closeup:
         zoom 1.75
         yalign 0.0
 
     transform ghost:
         alpha 0.5
-        
+
     transform getup:
         yalign 0.0
         linear 1.0 yalign 0.5
-        
+
     transform getup_and_leave:
         yalign 0.0
         xalign 0.5
         linear 1.0 yalign 0.5
         pause 0.5
         linear 1.0 xalign -10.0
-                    
+
 init python:
     credits = ('Script', 'MagusDei'), ('Sprites and hand-drawn backgrounds', 'Qazhax'), ('Background images', 'Snehadri'), ('Programming', 'MagusDei'), ('Programming', 'Qazhax'), ('Logo', 'John Smith'), ('Future music and SFX', 'xZidene'), ('Dungeon and MMO design', 'Bahafyr')
     credits_s = "{size=80}Credits\n\n"
@@ -74,7 +103,7 @@ init python:
     dp_choice("Call Catherine", "callcat", x=1100,y=675, show="not broken_up and day > 1", tooltip="I could try setting up a date...")
     dp_choice("Clean room", "clean", x=350, y=550, tooltip="My room is as unkempt as my hair. Very.")
 
-    
+
     dp_period("Afternoon", "afternoon_act")
     #dp_choice("Study", "study")
     #dp_choice("Hang Out", "hang")
@@ -91,14 +120,14 @@ init python:
     dp_period("Evening", "evening_act")
     #dp_choice("Exercise", "exercise")
     #dp_choice("Play Games", "play")
-    
+
     dp_choice("Bar", "bar", x=650, y=400, tooltip="Techno bar. Should I get a drink? It's 3000 bits.")
     dp_choice("Movie theatre", "movies", x=350, y=500, tooltip="I could go watch some movies. By myself. For 15 000 bits.")
     dp_choice("VR Arcade", "arcade", x=150, y=400, tooltip="VR Arcade, though I'll probably end up playing retro games. 7000 bits.")
     dp_choice("Catherine's apartment", "cathouse", x=200, y=150, tooltip="I wonder if she's home...?")
-    
+
     # HELPER FUNCTIONS
-    
+
     # CASH SYSTEM
     def paycash(amount):
         global cash
@@ -106,8 +135,7 @@ init python:
             return False
         cash -= amount
         return True
-    
-    
+
     def say_days(days):
         if days == 1:
             return "yesterday"
@@ -121,7 +149,7 @@ init python:
             return "over three weeks ago"
         else:
             return "over a month ago"
-            
+
     def say_at_location(location):
         if location == "parlor":
             return "at the ice cream parlor"
@@ -131,7 +159,7 @@ init python:
             return "at the VR arcade"
         else:
             return "somewhere"
-    
+
     def affection_modify(person, amount):
         global affection
         affection[person] = affection[person] + amount
@@ -140,7 +168,7 @@ init python:
         if affection[person] < 0:
             affection[person] = 0
         return
-            
+
     def trust_modify(person, amount):
         global trust
         trust[person] = trust[person] + amount
@@ -169,10 +197,21 @@ image cat fast_blink:
     "cat eyes_closed.png"
     pause 0.25
     "cat normal.png"
-    
+
 image cred = Text(credits_s, text_align=0.5)
 image theend = Text("{size=40}Conglaturation ! ! !\n \n This story is not so happy end. \n \n You have completed a great demo. \n \n And prooved the justice of our culture. \n \n Being the wise and courageous Nick you are, you feel strongth welling in your body. \n \n Now go and challenge again, for ever lasting peace!", text_align=0.5)
-    
+
+
+image fx_daggers:
+    "fx_daggers_0.png"
+    pause 0.05
+    "fx_daggers_1.png"
+    pause 0.05
+    "fx_daggers_2.png"
+    pause 0.05
+    "fx_daggers_3.png"
+    pause 0.05
+    repeat
 
 label pay(amount):
     $ pay_successful = paycash(amount)
@@ -181,7 +220,7 @@ label pay(amount):
     else:
         "As I'm about to pay, my wristband flashes a red light with the message: 'Transaction rejected. Bitcoin wallet balance exceeded.'"
     return
-    
+
 label check_wallet:
     "I covertly check my bitcoin wallet."
     "It seems I've got [cash] bits."
@@ -194,32 +233,32 @@ label start:
     # the game.
     $ day = 0
     $ calDate = calDate.replace(second=00, hour=8, minute=00, day=3, month=2, year=2024)
-    
+
     # Tooltips for menus
     $ tooltips = {}
-    
+
     # PROMISE SYSTEM
-    
+
     $ promises = {}
     $ forgotten_promises = set()
     $ unhandled_forgotten_promises = {}
     $ unkept_promises_personal_counter = {}
-    # Promises are stored in a dictionary mapping (act, day) -tuples to [person, activity, boolean]-lists indicating 
+    # Promises are stored in a dictionary mapping (act, day) -tuples to [person, activity, boolean]-lists indicating
     # the person the promise was made to, the promise itself, and whether the promise is
     # fulfilled (True), or not (False). The label night checks whether the promises for that day have been fulfilled and
     # gives a warning if they haven't. There're special date events linked to promises.
-    
+
     # WORK SYSTEM
     $ work_counter = 6
     $ work_payment = 9000
     # At the start of each week, you get work_payment bits for each day you've worked during the last week
-    
+
     # AFFECTION AND TRUST
     $ max_affection = 10
     $ max_trust = 10
     $ affection = {'Catherine': 5, 'Silvia': 5}
     $ trust = {'Catherine': 5, 'Silvia': 5}
-    
+
     # Variables
     $ parlor_visited = False
     $ first_login = True
@@ -229,7 +268,7 @@ label start:
     $ Aerith_hurt = False
     $ Aerith_barrier = False
     $ curing_light = False
-    
+
     # Show a default background.
     scene bg_field
 
@@ -239,7 +278,7 @@ label start:
     play music "bgm/Battle1.wav"
 
     n "Damnit!"
-    
+
     with hpunch
 
     # Sound effect
@@ -251,13 +290,13 @@ label start:
     "I can feel the warm liquid trickling down my skin... Damnit!"
 
     with hpunch
-    
+
     "With a huge throwing motion, I manage to shed the weasel, but others are already circling around me."
-    
+
     "They're huge. But I'm not actually worried. Not yet, anyway."
 
     show air 10 at distant, left with moveinleft
-    
+
     "I see Aerith in the corner of my vision."
 
     "She's surrounded by the creatures as well, trying to keep them away
@@ -266,7 +305,7 @@ label start:
     "Um, shouldn't she just cast a spell or something?"
 
     hide air with moveoutleft
-    
+
     "Silvia is nowhere to be seen. Hiding somewhere in plain sight, no doubt."
 
     "The weasels are circling me, staring at my wound with blood-hungry eyes."
@@ -296,7 +335,7 @@ label WeaselFight:
     "I slash at the pack with my sword!"
 
     with vpunch
-    
+
     "The weasels screech in pain, flying off in a torrent of blood!"
 
     "But there's too many of them! No matter how many times I attack, more are lashing right at me!"
@@ -309,7 +348,7 @@ label WeaselFight:
 
     with vpunch
     with vpunch
-    
+
     "The monsters lie dead on the grass, painted crimson with blood."
 
     "I turn around to thank Silvia, but then I hear Aerith scream from behind."
@@ -322,7 +361,7 @@ label WeaselAerithScream:
     # You can run to Aerith, tell her to use the barrier spell, or tell Silvia to use her hail of daggers again
 
     show air 10 at distant, right with moveinright
-    
+
     "She's still surrounded by a pack of weasels, desperately pushing them off!"
 
     "Their gnawing at her health. She won't last at this rate!"
@@ -330,7 +369,7 @@ label WeaselAerithScream:
     $ tooltips = {}
     $ tooltips["Tell her to cast her barrier spell"] = "A barrier of light temporarily protects the caster from all attacks."
     $ tooltips["Tell Silvia to use the hail of daggers"] = "Raining death from above. Just make sure your allies are not caught in the range!"
-    
+
     menu:
         "Run to save her!":
             "I run through the pack to her side, seeking to protect her from harm!"
@@ -398,14 +437,14 @@ label WeaselProtectAerith:
         "Her light barrier is still protecting her, but who knows how long it'll last."
 
     "Well, I'm a guardian, so I should be able to do this, right?"
-    
+
     $ tooltips = {}
     $ tooltips["Offensive technique: Furious strike!"] = "Bash a foe with utmost fury. If they attempt to parry, their weapons will surely be broken, and their allies shall flee in terror!"
     $ tooltips["Protective technique: Blade Sphere Control!"] = "Ultimate protective technique. Blocks all physical attacks around you regardless of direction."
     $ tooltips["Aerith Spell: Depths of Slumber!"] = "Sleeping powder causes weak enemies to fall asleep."
     $ tooltips["Silvia Technique: Hail of Daggers!"] = "Raining death from above. Just make sure your allies are not caught in the range!"
     $ current_tooltip = "What should I do?"
-    
+
     menu:
         "Offensive technique: Furious strike!":
             jump WeaselFuriousStrike
@@ -434,7 +473,7 @@ label WeaselBladeSphereControl:
     "The weasels are still scuttling around us, but they don't dare to approach."
 
     "It seems we have reached a standstill."
-    
+
     $ tooltips = {}
     $ tooltips["Special Technique: Taunt"] = "A taunt so scathing as to send all enemies into blind fury."
     $ tooltips["Aerith Spell: Curing Light"] = "Green light cures one person's wounds."
@@ -457,7 +496,7 @@ label WeaselSilviaHailOfDaggers:
     n "Silvia! Use your hail of daggers, now!"
 
     "Silvia doesn't need to be told twice."
-    
+
     if blade_sphere_control:
         "As the flurry of thrown knifes falls upon us, I block each and every one coming towards me and Aerith!"
         with vpunch
@@ -500,13 +539,13 @@ label WeaselTaunt:
     "I'm almost laughing as I see the weasels seething with rage."
 
     "Suddenly, the entire pack pounces on us, claws flashing in the air!"
-    
+
     "But they can't get through my perfect defense!"
 
     with vpunch
     with hpunch
     with vpunch
-    
+
     "My sword strikes each and every one of them, cutting of their heads and piercing their beating hearts!"
 
     jump WeaselVictory
@@ -535,7 +574,7 @@ label WeaselAerithCuringLight:
     $ tooltips = {}
     $ tooltips["Offensive Technique: Furious Strike!"] = "Bash a foe with utmost fury. If they attempt to parry, their weapons will surely be broken, and their allies shall flee in terror!"
     $ tooltips["Silvia Technique: Hail of Daggers!"] = "Raining death from above. Just make sure your allies are not caught in the range!"
-    
+
     menu:
         "Offensive Technique: Furious Strike!":
             jump WeaselFuriousStrike
@@ -553,7 +592,7 @@ label WeaselFuriousStrike:
     "But I am interrupted as one of the animals jumps right at me!"
 
     with hpunch
-    
+
     "Its fangs and claws tear into my arm!"
 
     if curing_light:
@@ -562,13 +601,13 @@ label WeaselFuriousStrike:
         "Aah, I'm not gonna survive for much longer at this rate!"
 
     with hpunch
-        
+
     "I shake it off my gauntlet, and prepare the technique again."
 
     n "Furious Strike!"
 
     "I slam the critter with my sword!"
-    
+
     with vpunch
     with vpunch
 
@@ -582,7 +621,7 @@ label WeaselFuriousStrike:
 
 label AerithDepthsOfSlumber:
     n "Aerith! Cast Depths of Slumber!"
-    
+
     show air blush9
     pause 0.25
     show air blush8
@@ -665,21 +704,21 @@ label WeaselVictory:
     play music "bgm/fanfare.mp3"
 
     hide air
-    
+
     show sil normal at left with moveinleft
-    
+
     "Silvia emerges from her hiding place, and I walk to her."
 
     show sil phew
-    
+
     s "Whew! An enjoyable workout, was it not?"
-    
+
     show sil cat2
 
     "She flashes a wide grin."
 
     s "Seeing all that blood really makes my stomach tickle!"
-    
+
     if Aerith_hurt:
         show air angry2 at flip, center with moveinright
         "Aerith comes towards us, visibly hurt."
@@ -815,9 +854,9 @@ label RoomDescription:
     nvlNarrator "She hates me. Hates me."
     nvlNarrator "There’s a knife in her hands now."
     nvlNarrator "I don’t love her enough."
-    
+
     # nvl clear
-    
+
     nvlNarrator "That’s Silvia’s dagger! Why do you have that?"
     nvlNarrator "Silvia appears from the shadows. She’s enraged."
     nvlNarrator "Cat stole her knife."
@@ -844,15 +883,15 @@ label RoomDescription:
     nvl clear
     nvlNarrator "My stomach growls as I stretch my arms far towards the ceiling, careful not to hit the lamp."
     nvlNarrator "Time to make some breakfast, I guess. And then, a plan for the day."
-    
+
     # Quest Log
     #call createlog
-    
+
     # $ log.keyon()
     # $ log.assign("Meet Catherine at the Ice Cream Parlor")
-    
+
     # show screen tracker
-    
+
     jump day
 
 label parlorStart:
@@ -874,7 +913,7 @@ label parlorStart:
     show cat normal_down at right, flip
     show cat_torso red flip at right behind cat
     with moveinright
-    
+
     "Today she's not as elated as usual. Something's on her mind."
     "Well, I guess it's obvious what."
     c "Which one should I choose...?"
@@ -989,13 +1028,13 @@ label parlorMakeUp:
     c "Nick, you don't have to take me anywhere. Just - please - don't ignore me."
     menu:
         "Promise to spend more time with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump promiseTime
         "Promise to go to the movies with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump promiseMovies
         "Offer to play DFO with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump offerDFO
 
 label promiseTime:
@@ -1011,11 +1050,11 @@ label promiseTime:
         show cat longing
         "She seems a bit sad."
         c "I guess I just have to believe you. Again."
-    
+
     window hide
     scene black with Dissolve(5.00)
-    pause 3.0    
-     
+    pause 3.0
+
     return
 
 label promiseMovies:
@@ -1040,7 +1079,7 @@ label promiseMovies:
     window hide
     scene black with Dissolve(5.00)
     pause 3.0
-    
+
     return
 
 label offerDFO:
@@ -1056,19 +1095,19 @@ label offerDFO:
         show cat longing
         "She looks away from me. I guess that's a no."
         c "I'm willing to accept that you like the game. But..."
-        
+
     show cat normal
 
     c "You really need to return to reality, Nicholas. You get too easily obsessed with these things."
     n "Come on, just try it out. I never expected to actually like your dance lessons when you dragged me there!"
     show cat normal_downright
     c "... You just don't get it."
-    
+
     window hide
     scene black with Dissolve(5.00)
     pause 3.0
 
-    
+
     return
 
 label parlorIdle:
@@ -1114,13 +1153,13 @@ label parlorAngry:
     c "You're 23 and working as some cleaner because you can't be bothered to study and actually get yourself somewhere in life!"
     menu:
         "Threaten to break up with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump parlorBreakUp
         "Argue with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump parlorArgue
         "Call her out on her hypocrisy":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump parlorHypocrisy
 
 label parlorBreakUp:
@@ -1147,10 +1186,10 @@ label parlorBreakUp:
     window hide
     scene black with Dissolve(5.00)
     pause 3.0
-        
+
     $ broken_up = True
     $ affection_modify('Catherine', -2)
-        
+
     return
 
 label parlorArgue:
@@ -1173,11 +1212,11 @@ label parlorArgue:
         show cat normal_down
         "She looks down at her ice cream."
         c "It wouldn't be any better."
-        
+
     window hide
     scene black with Dissolve(5.00)
     pause 3.0
-        
+
     return
 
 label parlorHypocrisy:
@@ -1201,7 +1240,7 @@ label parlorHypocrisy:
         "She tries to look endearingly into my eyes, but I avoid her gaze."
         window hide
         $ affection_modify('Catherine', 1)
-        
+
     window hide
     scene black with Dissolve(5.00)
     pause 3.0
@@ -1236,13 +1275,13 @@ label parlorBeg:
     "I want to just go under the table and cry."
     menu:
         "Promise to quit DFO":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump quitDFO
         "Accept the situation":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump parlorAccept
         "Plead with her":
-            call parlorInterrupt 
+            call parlorInterrupt
             jump parlorPlead
 
 label quitDFO:
@@ -1269,7 +1308,7 @@ label quitDFO:
     scene black with Dissolve(5.00)
     pause 3.0
 
-        
+
     return
 
 label parlorAccept:
@@ -1317,11 +1356,11 @@ label parlorPlead:
         n "You don't realize how happy that makes me."
         show cat frown
         "Contrary to my intentions, my comment just makes her sulk."
-    
+
     window hide
     scene black with Dissolve(5.00)
     pause 3.0
-    
+
     return
 
 label parlorInterrupt:
@@ -1391,14 +1430,14 @@ label day:
 
     # Increment the day it is.
     $ day += 1
-    
+
     if day >= 11:
         jump Ending_Credits
 
     window hide
     # "It's day %(day)d."
     call calendar(1)
-    
+
     if (day-1)%7 == 1:
         $ payment = work_counter*work_payment
         window show
@@ -1444,8 +1483,8 @@ label morning:
     $ act = morning_act
 
     # Execute the events for the morning.
-    call events_run_period 
-    
+    call events_run_period
+
     # That's it for the morning, so we fall through to the
     # afternoon.
 
@@ -1469,7 +1508,7 @@ label afternoon:
     $ period = "afternoon"
     $ act = afternoon_act
 
-    call events_run_period 
+    call events_run_period
 
 
 label evening:
@@ -1488,7 +1527,7 @@ label evening:
     $ period = "evening"
     $ act = evening_act
 
-    call events_run_period 
+    call events_run_period
 
 
 label night:
@@ -1502,9 +1541,9 @@ label night:
     centered "{size=+10}{color=#fff}Night{/color}{/size}{w=1.0}{nw}"
 
     "It's getting late, so I decide to go to sleep."
-    
+
     $ fitness -= 2
-    
+
     python:
         forgotten_promises = set()
         for promise_event in promises.keys():
@@ -1519,7 +1558,7 @@ label night:
                                 unkept_promises_personal_counter[promise[0]] += 1
                             else:
                                 unkept_promises_personal_counter[promise[0]] = 1
-                    
+
     if len(forgotten_promises) != 0:
         python:
             if len(forgotten_promises) == 1:
@@ -1533,7 +1572,7 @@ label night:
         "Just as I'm going to sleep, I realize I forgot my [promise_pluralized] to [forgotten_people]."
 
     # We call events_end_day to let it know that the day is done.
-    call events_end_day 
+    call events_end_day
 
     # And we jump back to day to start the next day. This goes
     # on forever, until an event ends the game.

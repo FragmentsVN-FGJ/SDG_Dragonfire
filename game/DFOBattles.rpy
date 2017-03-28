@@ -1,3 +1,6 @@
+init:
+    image fx slash = "images/fx_slash.png"
+
 label Ruins_battle1:
     $ spear_broken = False
     $ rider_asleep = False
@@ -14,13 +17,41 @@ label Ruins_battle1:
     $ current_mp = {'Nick': max_mp['Nick'], 'Aerith': max_mp['Aerith'], 'Silvia': max_mp['Silvia']}
     $ target_list = ["Rider"]
     $ nick_acted = False
+    show screen hp_window(playerparty, current_hp, current_mp)
     "As we approach, trapdoors spring open all around us, sending sand flying in every direction!"
     show sil star
     s "It's an ambush! Hihihi!"
     hide sil
-    show desert_rider
+    show enemy_chicken normal as enemy_chicken2 at left, gettingcloser with moveinbottom:
+        yalign 1.0
+    show enemy_chicken normal as enemy_chicken3 at right, gettingcloser with moveinbottom:
+        yalign 1.0
+    hide enemy_chicken2 with moveoutleft
+    show enemy_chicken normal as enemy_chicken4 at left, gettingcloser with moveinbottom:
+        yalign 1.0
+    hide enemy_chicken3 with moveoutright
+    show enemy_chicken normal at gettingcloser with moveinbottom:
+        yalign 1.0
+        xalign 0.9
+
     "Through the sand I see the vague shapes of ostrich-riding warriors, screeching for battle!"
+    show fx slash at flash
+    show enemy_chicken hurt
+    pause 0.1
+    show enemy_chicken normal
+    pause 0.1
+    show enemy_chicken hurt as enemy_chicken4
+    pause 0.1
+    show enemy_chicken normal as enemy_chicken4
+    hide fx slash
+    hide enemy_chicken with moveoutbottom
+    hide enemy_chicken4 with moveoutbottom
+    show enemy_chicken normal at gettingcloser with moveinbottom:
+        yalign 1.0
+        xalign 0.9
+        linear 1.0 xalign 0.6
     play music "bgm/Battle1.wav"
+    show enemy_chicken normal at wigglemiddle
     "The fight rages on for a while, and we manage to finish off two of the warriors."
     "One more to go!"
     call .act_phase
@@ -33,7 +64,7 @@ label Ruins_battle1:
     if playerdeath:
         return
     jump .victorious
-    
+
 label .start_round:
     if nick_acted:
         $ blade_sphere_control = False
@@ -48,26 +79,33 @@ label .start_round:
         for person in poison_counter.keys():
             if poison_counter[person] > 0:
                 renpy.call("Ruins_battle1.poison", person)
-    
+
     return
-    
+
 label .poison(person):
     $ poison_counter[person] -= 1
     call .dealdamage(person, damage['poison'], False)
     if target_died:
         if person == "Rider":
+            show enemy_chicken hurt
+            pause 0.1
+            show enemy_chicken
+            hide enemy_chicken with moveoutbottom
             "The rider can't withstand the poison, and dies."
         else:
             "[person] dies from poisoning."
     else:
         if person == "Rider":
+            show enemy_chicken hurt
+            pause 0.1
+            show enemy_chicken
             "The rider is hurt by the poison!"
         else:
             "[person] suffers due to the poison!"
     if poison_counter[person] == 0:
         "The poisoning ceases."
     return
-    
+
 label .act_phase:
     menu:
         "Continue Blade Sphere Control" if target_list and blade_sphere_control:
@@ -85,19 +123,38 @@ label .act_phase:
             jump .act_Silvia
         "Defend" if target_list:
             jump .act_defend
-    return        
-    
+        "KMS":
+            call .death("Nick")
+            jump .rider_turn
+        "Kill Aerith":
+            call .death("Aerith")
+            jump .rider_turn
+        "Wait":
+            jump .rider_turn
+
+    return
+
 label .act_attack:
     # If len(target_list) > 1, multiple choice menu here.
     $ nick_acted = True
     if rider_asleep:
         "Now's my chance!"
+        show fx slash at flash
+        pause 0.1
+        hide fx slash
         "While the rider is fast asleep, I strike at the ostrich with my sword, severing its long neck!"
-        "Time to finish this! I raise my sword and plunge it into the rider's chest!"
+        show fx slash at flash
+        pause 0.1
+        hide fx slash
+        "Time to finish this! I raise my sword and plunge it into the rider's chest!" #TODO make the slash happen at the middle of the line instead of before
+        hide enemy_chicken with moveoutbottom
         "His eyes shoot open just as he falls into death's icy grasp."
         $ victorious = True
         return
     "Readying my sword for a side slash, I charge full-speed toward the rider!"
+    show fx slash at flash
+    pause 0.1
+    hide fx slash
     $ i = renpy.random.random()
     if i <= 0.3:
         "However, using the speed of his mount to his advantage, he manages to evade my attack."
@@ -123,7 +180,13 @@ label .act_techniques:
             "This technique requires me to close in on the attacker."
             "I run toward the rider, readying my blade!"
             np "Furious... Strike!"
+            show fx slash at flash
+            pause 0.1
+            hide fx slash
             if rider_asleep:
+                show enemy_chicken hurt
+                pause 0.1
+                show enemy_chicken normal
                 "Being asleep, he can't avoid my attack."
                 call .death("Rider")
                 return
@@ -136,6 +199,7 @@ label .act_techniques:
                     $ spear_broken = True
                     return
                 "He raises the remnants of his spear, but my attack goes straight through them, his arm and his head."
+                hide enemy_chicken with moveoutright
                 "The ostrich, now carrying only a corpse severed in half, sees it best to escape."
                 $ victorious = True
                 return
@@ -146,7 +210,9 @@ label .act_techniques:
             $ current_mp["Nick"] -= mp_costs["Blade Sphere Control"]
             "I close my eyes to find internal peace."
             np "Blade Sphere Control!"
+            show overlay lightblue
             "Let's see him get through this technique!"
+            hide overlay lightblue #TODO move this to the part in code where blade sphere is deactivated
             $ blade_sphere_control = True
             $ nick_defense = False
             return
@@ -164,7 +230,9 @@ label .act_Aerith:
                 "Heal me!":
                     call .act_Aerith_begin_casting("Curing Light", 'me')
                     if spell_successful:
+                        show overlay green
                         "The green light fills me with strength."
+                        hide overlay
                         call CuringLight('Aerith', 'Nick')
                 "Heal yourself!":
                     call .act_Aerith_begin_casting("Curing Light", 'yourself')
@@ -188,7 +256,7 @@ label .act_Aerith:
         "Return":
             jump .act_phase
     return
-        
+
 label .act_Aerith_begin_casting(spell, target):
     np "Aerith! [spell]!"
     if mp_costs[spell] > current_mp["Aerith"]:
@@ -203,7 +271,7 @@ label .act_Aerith_begin_casting(spell, target):
     else:
         $ spell_successful = True
     return
-    
+
 label .rider_interrupt(caster):
     call .rider_attack(caster, None)
     if not attack_successful:
@@ -221,6 +289,7 @@ label .act_Silvia:
             call .dealdamage("Rider", damage['Silvia']['sneak_attack'], False)
             if target_died:
                 "Already wounded, the rider can't survive Silvia's attack."
+                hide enemy_chicken with moveoutbottom
                 "He falls off the ostrich, and it escapes to the desert."
                 $ victorious = True
             else:
@@ -235,9 +304,13 @@ label .act_Silvia:
                 s "I'm sorry, liege..."
                 return
             else:
+                show enemy_chicken hurt
+                pause 0.1
+                show enemy_chicken normal
                 "She lands a strike on the rider's back!"
                 call .dealdamage("Rider", damage['Silvia']['attack'], False)
                 if target_died:
+                    hide enemy_chicken with moveoutbottom
                     "The rider can't take it any longer, and succumbs to his wounds."
                     "The ostrich, left without master, escapes into the desert."
                     $ victorious = True
@@ -259,17 +332,33 @@ label .act_Silvia:
             s "It's raining daggers, right?"
             "She leaps into the air."
             "The rider realizes something is off and..."
+            show fx_daggers
+            pause 0.6
+            hide fx_daggers
             $ i = renpy.random.random()
             if i <= 0.3:
+                hide enemy_chicken with moveoutright
                 "... turns around to run!"
                 s "It seems I have lost sight of him and his ridiculous mount, liege."
                 "Damn!"
                 jump .rider_escape
             else:
+                show enemy_chicken hurt
+                pause 0.1
+                show enemy_chicken normal
+                pause 0.05
+                show enemy_chicken hurt
+                pause 0.1
+                show enemy_chicken normal
+                pause 0.05
+                show enemy_chicken hurt
+                pause 0.1
+                show enemy_chicken normal
                 "... cowers in place as he sees the blades falling toward him!"
                 "Strike! The ostrich screeches in pain!"
                 call .dealdamage('Rider', damage['Silvia']['hail'], False)
                 if target_died:
+                    hide enemy_chicken with moveoutbottom
                     "The ostrich goes into a frenzy, dropping the rider to the ground."
                     "He can't hold on any longer, and dies quickly, the red of his blood mixing with the desert sand."
                 else:
@@ -283,14 +372,21 @@ label .act_Silvia:
             s "Your wish..."
             "She leaps and disappears into thin air, appearing right behind the rider!"
             s "... is my command!"
+            show fx_daggers at flip
+            pause 0.15
+            hide fx_daggers at flip
             $ i = renpy.random.random()
             if i <= 0.3:
                 "However, the rider barely manages to dodge her nefarious strike."
                 return
             else:
+                show enemy_chicken hurt
+                pause 0.1
+                show enemy_chicken normal
                 "There's no way the rider can dodge."
                 call .dealdamage("Rider", damage['Silvia']['poison_attack'], False)
                 if target_died:
+                    hide enemy_chicken with moveoutbottom
                     "He falls off his mount and speedily succumbs to his wounds."
                     "The ostrich runs into the horizon."
                     $ victorious = True
@@ -309,7 +405,7 @@ label .act_defend:
     $ nick_defense = True
     $ blade_sphere_control = False
     return
-    
+
 label .rider_turn:
     if "Rider" in target_list:
         $ j = renpy.random.random()
@@ -319,6 +415,8 @@ label .rider_turn:
             return
         $ i = renpy.random.random()
         if i <= 0.5:
+            hide enemy_chicken with moveoutleft
+            pause 0.5
             jump .rider_escape
         else:
             if j > 0.5:
@@ -326,11 +424,12 @@ label .rider_turn:
             return
         #jump .act_phase
     else:
+        show enemy_chicken normal at wigglemiddle
         "Suddenly, the rider ambushes us!"
         $ target_list.append("Rider")
         call .rider_attack
         return
-        
+
 label .rider_escape:
     "The rider escapes beyond sight."
     $ target_list.remove("Rider")
@@ -338,7 +437,7 @@ label .rider_escape:
         s "Do not let your guard down. He shall return."
     return
     #jump .wait_phase
-        
+
 label .dealdamage(target, amount, handle_death = True):
     with vpunch
     $ target_died = False
@@ -356,6 +455,8 @@ label .dealdamage(target, amount, handle_death = True):
 label .death(target):
     with hpunch
     if target == "Nick":
+        screen black
+        with dissolve
         "Blood trickles over my eyes, and I begin a long descent into darkness..."
         $ playerdeath = True
     elif target == "Aerith":
@@ -369,21 +470,37 @@ label .death(target):
         $ victorious = True
         $ i = renpy.random.randint(1, 4)
         if i == 1:
+            show enemy_chicken hurt
+            pause 0.1
+            show enemy_chicken normal
+            hide enemy_chicken with moveoutleft
             "I land a deep wound on his side, and he falls off his mount, which escapes into the desert."
             "He quietly bleeds to death."
         elif i == 2:
+            show enemy_chicken hurt
+            pause 0.1
+            show enemy_chicken normal
             "He screams as my blade cuts his stomach open."
             "He falls to the ground, a bloody mess."
+            hide enemy_chicken with moveoutright
             "The ostrich runs off."
         elif i == 3:
+            show enemy_chicken hurt
+            pause 0.1
+            show enemy_chicken normal
             "My strike goes right through him, splitting his body in half."
+            hide enemy_chicken with moveoutleft
             "The ostrich runs away."
         elif i == 4:
+            show enemy_chicken hurt
+            pause 0.1
+            show enemy_chicken normal
             "I strike at him with full force, causing him to fall off!"
+            hide enemy_chicken with moveoutright
             "The ostrich runs away, leaving its rider moaning on the ground."
             "I finish him with a well-aimed strike right through the chest."
     return
-        
+
 label .rider_attack(rider_target = None, attack = None):
     # If rider_target is not supplied, choose randomly. Ditto with attack.
     if rider_target == None:
@@ -406,7 +523,7 @@ label .rider_attack(rider_target = None, attack = None):
     else:
         call .rider_spear(rider_target)
     return
-        
+
 label .rider_fire(rider_target):
     if rider_target == "Nick":
         "He comes a bit closer. Suddenly, the ostrich breathes fire on me!"
@@ -419,12 +536,20 @@ label .rider_fire(rider_target):
         return
     if rider_target == "Aerith" and light_barrier_active['Aerith'] > 0:
         "The fire reflects off of Aerith's barrier."
+        show enemy_chicken hurt
+        pause 0.1
+        show enemy_chicken at rolling
         "Seems the rider got a taste of his own poison. He bursts into flames, jumps off his mount, and rolls in the sand."
+        hide enemy_chicken with moveoutbottom
         "I finish him with a single strike."
         $ victorious = True
         return
     if rider_target == "Nick":
+        show overlay red
+        pause 0.25
+        show overlay red at ghost
         "The flames sear painfully into my flesh."
+        hide overlay
         call .dealdamage('Nick', damage["Rider"]['Fire'])
     elif rider_target == "Aerith":
         "Aerith screams as the flames burn her skin."
@@ -444,6 +569,7 @@ label .rider_charge(rider_target):
         "He can't get through Blade Sphere Control, though!"
         call .dealdamage("Rider", damage['Nick']['blade_sphere_control'], False)
         if target_died:
+            hide enemy_chicken with moveoutbottom
             "He is hit off his mount, and dies whimpering pitifully on the sands."
             $ victorious = True
             return
@@ -458,11 +584,30 @@ label .rider_charge(rider_target):
         return
     if rider_target == "Nick" and nick_defense:
         "My shield is of no use as he rams right into me, sending me flying to the ground."
+        show overlay red
+        pause 0.15
+        hide overlay
+        pause 0.1
+        show overlay red
+        pause 0.15
+        hide overlay
         "Blood splatters everywhere, and my body is full of bruises."
         call .dealdamage("Nick", damage["Rider"]["Charge"])
         return
     if rider_target == "Nick":
         "His pounce catches me by surprise, and I have no time to leap out of the way!"
+        show enemy_chicken normal at ramming
+        show overlay red
+        pause 0.15
+        hide overlay
+        pause 0.1
+        show overlay red
+        pause 0.15
+        hide overlay
+        pause 0.2
+        show enemy_chicken normal at backwardsramming
+        pause 1.0
+        show enemy_chicken normal at wigglemiddle
         "The ostrich tramples all over me, leaving painful bruises."
         call .dealdamage("Nick", damage["Rider"]["Charge"])
     elif rider_target == "Aerith":
@@ -474,15 +619,19 @@ label .rider_charge(rider_target):
         call .dealdamage("Silvia", damage["Rider"]["Charge"])
     $ attack_successful = True
     return
-        
+
 label .rider_spear(rider_target):
     if rider_target == "Nick":
+        #show enemy_chicken normal at ramming
         "He comes close and attempts to impale me with his spear."
     else:
         "The rider makes an attempt to impale [rider_target]!"
-        
+
     if blade_sphere_control:
         "Yeah, just try to get past my technique!"
+        show enemy_chicken hurt
+        pause 0.1
+        show enemy_chicken normal
         call .dealdamage("Rider", damage['Nick']['blade_sphere_control'], False)
         if target_died:
             call .death("Rider")
@@ -501,6 +650,9 @@ label .rider_spear(rider_target):
         "The attack is easily deflected by my shield. Why even bother trying?"
         return
     if rider_target == "Nick":
+        show overlay red
+        pause 0.1
+        hide overlay
         "I raise my arm just in time, but the spear still manages to land a blow."
         call .dealdamage("Nick", damage["Rider"]["Spear"])
     elif rider_target == "Aerith":
@@ -513,7 +665,7 @@ label .rider_spear(rider_target):
         call .dealdamage("Silvia", damage["Rider"]["Spear"])
     $ attack_successful = True
     return
-    
+
 # label .wait_phase:
     # menu:
         # "Remain vigilant":
@@ -549,7 +701,7 @@ label .rider_spear(rider_target):
     # "Suddenly, the rider ambushes us!"
     # call .rider_attack
     # return
-    
+
 label .victorious:
     hide desert_rider
     np "Whew! That wasn't too easy!"
@@ -558,6 +710,7 @@ label .victorious:
         s "Did it not match your expectations, liege?"
         np "Sure it did. Well, let's move on."
         show sil normal
+    hide screen hp_window
     play music "bgm/LanayruDesert.mp3"
     jump Ruins_courtyard_menu
     return

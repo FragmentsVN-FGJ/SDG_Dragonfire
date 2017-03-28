@@ -3,7 +3,7 @@ label CuringLight(caster, target):
     $ current_hp[target] += heal_amount['Curing Light']
     if current_hp[target] > max_hp[target]:
         $ current_hp[target] = max_hp[target]
-    
+
     if target == "Nick":
         "The green light fills me with strength."
     else:
@@ -15,7 +15,7 @@ label CuringLight(caster, target):
         else:
             "In a flash of green light, [target]'s wounds are healed."
     return
-    
+
 label LightBarrier(caster, target = "Aerith"):
     $ current_mp[caster] -= mp_costs["Light Barrier"]
     a "Luxphoros, protect thy faithful in a time of need. Light Barrier!"
@@ -27,10 +27,12 @@ label LightBarrier(caster, target = "Aerith"):
     $ envelops = renpy.random.choice(["envelops", "closes around"])
     if target == "Nick":
         $ target = "me"
+    show white with dissolve
+    hide white with dissolve
     "[description1] a sphere of [light_descriptor]white light [envelops] [target]!"
     # Aerith is enveloped by bright white light as she finishes her spell.
     return
-    
+
 label usetechnique(caster, technique_name, target = "Nick"):
     $ tech_fail = False
     if mp_costs[technique_name] > current_mp[caster]:
