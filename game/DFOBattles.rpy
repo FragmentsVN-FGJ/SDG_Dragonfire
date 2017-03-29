@@ -62,6 +62,7 @@ label Ruins_battle1:
         if not playerdeath and not victorious:
             call .act_phase
     if playerdeath:
+        hide screen hp_window
         return
     jump .victorious
 
@@ -703,7 +704,7 @@ label .rider_spear(rider_target):
     # return
 
 label .victorious:
-    hide desert_rider
+    hide enemy_chicken
     np "Whew! That wasn't too easy!"
     if "Silvia" in playerparty:
         show sil wot
