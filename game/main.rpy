@@ -198,8 +198,10 @@ image cat fast_blink:
     pause 0.25
     "cat normal.png"
 
+image baudrillard = Text("{size=36}\"We will live in this world, which for us has all the disquieting strangeness of the desert and the simulacrum.\" \n \n      - Jean Baudrillard", text_align=0.5)
+image thankyou = Text("{size=40} Thank you for playing!", text_align=0.5)
 image cred = Text(credits_s, text_align=0.5)
-image theend = Text("{size=40}Conglaturation ! ! !\n \n This story is not so happy end. \n \n You have completed a great demo. \n \n And prooved the justice of our culture. \n \n Being the wise and courageous Nick you are, you feel strongth welling in your body. \n \n Now go and challenge again, for ever lasting peace!", text_align=0.5)
+image theend = Text("{size=40}Conglaturation ! ! !\n \n This story is not so happy end. \n \n You have completed a great demo. \n \n And prooved the justice of our culture. \n \n Being the wise and courageour Nick you are, you feel strongth welling in your body. \n \n Now go and wait to challenge again, for ever lasting peace!", text_align=0.5)
 
 
 image fx_daggers:
@@ -233,6 +235,12 @@ label start:
     # the game.
     $ day = 0
     $ calDate = calDate.replace(second=00, hour=8, minute=00, day=3, month=2, year=2024)
+    
+    $ broken_up = False
+    $ call_ignored = False
+    
+    $ truck_handled = True
+
 
     # Tooltips for menus
     $ tooltips = {}
@@ -269,8 +277,14 @@ label start:
     $ Aerith_barrier = False
     $ curing_light = False
 
+    scene black
+    
+    show baudrillard at truecenter with dissolve
+    pause 5.0
+    
+    scene black with dissolve
     # Show a default background.
-    scene bg_field
+    scene bg_field with dissolve
 
     # The script here is run before any event.
 
@@ -1431,8 +1445,6 @@ label day:
     # Increment the day it is.
     $ day += 1
 
-    if day >= 11:
-        jump Ending_Credits
 
     window hide
     # "It's day %(day)d."
@@ -1465,6 +1477,10 @@ label day:
     # Tell the user what period it will be.
     centered "{size=+10}{color=#fff}Morning{/color}{/size}{w=1.0}{nw}"
 
+    if day >= 11:
+        call ending_for_now
+        jump Ending_Credits
+    
     # Now, we jump the day planner, which may set the act variables
     # to new values. We jump it with a list of periods that we want
     # to compute the values for.
@@ -1539,8 +1555,13 @@ label night:
     # in here.
 
     centered "{size=+10}{color=#fff}Night{/color}{/size}{w=1.0}{nw}"
-
-    "It's getting late, so I decide to go to sleep."
+    
+    
+    if not truck_handled:
+        call truck_after
+        $ truck_handled = True
+    else:
+        "It's getting late, so I decide to go to sleep."
 
     $ fitness -= 2
 
@@ -1600,4 +1621,8 @@ label Ending_Credits:
     hide theend
     show cred at Move((0.5, 4.0), (0.5, 0.0), credits_speed, repeat=False, bounce=False, xanchor="center", yanchor="bottom")
     with Pause(credits_speed)
+    hide cred with dissolve
+    show thankyou at truecenter
+    with Pause(10)
+    hide thankyou with dissolve
     return

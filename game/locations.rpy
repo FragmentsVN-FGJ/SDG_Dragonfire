@@ -2,8 +2,8 @@ init:
 # Simple events for the actions
     $ event("icecreamparlor", "act == 'parlor'", priority=200)
     $ event("restaurant", "act == 'restaurant'", priority=200)
-    $ event("movietheatre", "act == 'movies'", priority=200)
-    $ event("vrarcade", "act == 'arcade'", priority=200)
+    $ event("movietheatre", "act == 'movies'", event.solo(), priority=200)
+    $ event("vrarcade", "act == 'arcade'", event.solo(), priority=200)
     $ event("bowling", "act == 'bowling'", priority=200)
     $ event("bar", "act == 'bar'", priority=200)
     $ event("swimminghall", "act == 'swimming'", priority=200)
@@ -17,12 +17,12 @@ init:
     $ event("cathouse", "act == 'cathouse'", event.choose_one('catapartment'), priority=200)
     $ event("Catherine_house", "act == 'cathouse' and 'Catherine' not in unhandled_forgotten_promises.keys() and not ('parlor', day) in promises.keys()", event.choose_one('catapartment'), priority=200)
     
-    $ event("DFOServers", "act == 'work'", event.once(), event.only(), event.random(0.2), priority=50)
+    $ event("DFOServers", "act == 'work'", event.once(), event.only(), event.depends("workintro"), event.random(0.1), priority=50)
     
     $ event("icecreamparlorintro", "act == 'parlor'", event.once())
     $ event("restaurantintro", "act == 'restaurant'", event.once())
-    $ event("movietheatreintro", "act == 'movies'", event.once())
-    $ event("vrarcadeintro", "act == 'arcade'", event.once())
+    $ event("movietheatreintro", "act == 'movies'", event.once(), event.solo())
+    $ event("vrarcadeintro", "act == 'arcade'", event.once(), event.solo())
     $ event("bowlingintro", "act == 'bowling'", event.once())
     $ event("barintro", "act == 'bar'", event.once())
     $ event("swimminghallintro", "act == 'swimming'", event.once())
@@ -379,7 +379,7 @@ label movietheatreintro:
     "But it still doesn't beat VR."
     "At least it's something you can do together with your friends."
     "Going alone like this doesn't make much sense, but what the heck."
-    return
+    jump movietheatre
     
 label vrarcadeintro:
     # Arcade, choose a game to play
@@ -389,8 +389,7 @@ label vrarcadeintro:
     "But now that you can get relatively high-quality virtual reality in the consumer price range, these renewed VR arcades are falling in popularity."
     "It's a shame. The place has a cool techno aesthetic."
     "There's also an arena for laser tag and robot wars."
-    
-    return
+    jump vrarcade
    
 label bowlingintro:
     # Bowling, pay for it

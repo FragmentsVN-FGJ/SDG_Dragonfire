@@ -291,7 +291,10 @@ label .payment:
     $ pay_both_tried = False
     cashier "That was one student, one adult, right?"
     n "Yes."
-    cashier "That'll be [prices['movies_student']] and [prices['movies']] bits, please."
+    $ price_student = prices['movies_student']
+    $ price_movies = prices['movies']
+    $ price_both = price_student+price_movies
+    cashier "That'll be [price_student] and [price_movies] bits, please."
     call check_wallet 
     jump .payment_menu
     
@@ -303,8 +306,8 @@ label .payment_menu:
             show cat smile
             c "Nick..."
             "She starts to say something, but holds her tongue."
-            cashier "[prices['movies_both']] bits."
-            call pay(prices['movies_both']) 
+            cashier "[price_both] bits."
+            call pay(price_both) 
             if not pay_successful:
                 n "Oh. Not enough bits."
                 $ pay_both_tried = True
@@ -419,7 +422,7 @@ label date_arrival:
         call .setupcatdescription 
         
         if j < 0.5:
-            "date_arrival] the [location],[nickcondition] I [see] that Catherine is not here yet."
+            "[date_arrival] the [location],[nickcondition] I [see] that Catherine is not here yet."
             $ k = renpy.random.random()
             if k < 0.25:
                 "Did she already go inside?"
@@ -435,7 +438,7 @@ label date_arrival:
             show cat frown at right, flip
             show cat_torso orange at right, flip behind cat
             with moveinright
-            "date_arrival] the [location],[nickcondition] I [see] that Catherine is already here[catdescription]."
+            "[date_arrival] the [location],[nickcondition] I [see] that Catherine is already here[catdescription]."
     elif i <= 0.9:
         # Nick is well on time
         $ ontime = renpy.random.choice(["right on time", "on time", "well on time", "just in time"])

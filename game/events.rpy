@@ -1,9 +1,6 @@
 # Events for the day planner
 
 init:
-    $ broken_up = False
-    $ call_ignored = False
-    
     $ event("callCatherine", "act == 'callcat' and not broken_up", event.only(), priority=5)
     
     # $ event("Catherine_movie_scene", "act == 'movies'", event.only(), event.once(), priority=5)
@@ -16,9 +13,9 @@ init:
     $ event("Catherine_running_together", "broken_up == False and act == 'track' and day%4==2", event.only(), event.depends('Catherine_parlor'), priority=50)
     
     $ event("Catherine_parlor", "act == 'parlor' and (act, day) in promises.keys()", event.only(), event.once(), priority=5)
-    $ event("Catherine_movie_scene", "act == 'movies' and (act, day) in promises.keys()", event.only(), event.once(), priority=5)
+    $ event("Catherine_movie_scene", "act == 'movies' and (act, day) in promises.keys()", event.choose_one("dates"), event.once(), priority=5)
     
-    $ event("generic_promise_event", "(act, day) in promises.keys()", event.only(), priority=10)
+    $ event("generic_promise_event", "(act, day) in promises.keys()", event.choose_one("dates"), priority=10)
     
     $ event("Catherine_house_calls_ignored1", "act == 'cathouse' and call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1", event.only(), priority=100)
     $ event("Catherine_house_calls_ignored2", "act == 'cathouse' and call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] >= 2")
@@ -1961,7 +1958,7 @@ label .moviestart:
             "Tears fall on her cheeks."
             "Was she expecting me to do something?"
             c "How beatiful..."
-            "I siqh silently out of relief. So it was only the scene she was crying at."
+            "I sigh silently out of relief. So it was only the scene she was crying at."
     if handkerchief:
         "As I place my other hand in my pocket, I feel the handkerchief that Cat gave me earlier, tucked in there."
         menu:
