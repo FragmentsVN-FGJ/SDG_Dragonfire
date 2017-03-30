@@ -864,7 +864,7 @@ label DFO_login:
     nvlNarrator "Maybe you could say I'm addicted in that sense."
     nvl clear
     nvlNarrator "They're psychotropic, so they're not exactly legal, of course."
-    nvlNarrator "I bought them off the Dark Web. If the cyber surveillance unit has figured it out, they haven't come knocking yet."
+    nvlNarrator "I bought them off the dark web. If cybersec has figured it out, they haven't come knocking yet."
     nvlNarrator "They probably have better things to do. I'm not a seller, after all."
     nvl clear
     nvlNarrator "The guy who {i}is{/i} selling them is really shady, though."
@@ -876,7 +876,7 @@ label DFO_login:
     comp "Welcome back. Please state username and write password."
     "The accounts are voice-locked, so you'd think you wouldn't need a password."
     "But it's actually a good idea to use two or more authentication methods at once."
-    "It's called double-factor authentication. It's a lot more secure."
+    "Double-factor authentication. It's way more secure."
     "You might be able to fake my voice with a recording, but you'd still need to get the password on top of that."
     "Time to log in! My username is..."
     call nameNP
