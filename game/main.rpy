@@ -187,16 +187,16 @@ define nvlNarrator = Character(None, kind=nvl, what_xsize = 950, what_size=28, w
 
 define falldown = CropMove(0.2, "wipedown")
 
-image cat_torso red flip = im.Flip("cat_torso red.png", horizontal = True)
-image cat normal_down flip = im.Flip("cat normal_down.png", horizontal = True)
-#image cat_torso red close = im.Scale("cat_torso red.png", width=1660, height=1540)
-#image cat normal close = im.Scale("cat normal.png", width=1660, height=1540)
+image cat_torso red flip = im.Flip("images/cat/cat_torso red.png", horizontal = True)
+image cat normal_down flip = im.Flip("images/cat/cat normal_down.png", horizontal = True)
+#image cat_torso red close = im.Scale("images/cat/cat_torso red.png", width=1660, height=1540)
+#image cat normal close = im.Scale("images/cat/cat normal.png", width=1660, height=1540)
 image cat fast_blink:
-    "cat normal.png"
+    "images/cat/cat normal.png"
     pause 0.25
-    "cat eyes_closed.png"
+    "images/cat/cat eyes_closed.png"
     pause 0.25
-    "cat normal.png"
+    "images/cat/cat normal.png"
 
 image baudrillard = Text("{size=36}\"We will live in this world, which for us has all the disquieting strangeness of the desert and the simulacrum.\" \n \n      - Jean Baudrillard", text_align=0.5)
 image thankyou = Text("{size=40} Thank you for playing!", text_align=0.5)
@@ -204,14 +204,14 @@ image cred = Text(credits_s, text_align=0.5)
 image theend = Text("{size=40}Conglaturation ! ! !\n \n This story is not so happy end. \n \n You have completed a great demo. \n \n And prooved the justice of our culture. \n \n Being the wise and courageour Nick you are, you feel strongth welling in your body. \n \n Now go and wait to challenge again, for ever lasting peace!", text_align=0.5)
 
 
-image fx_daggers:
-    "fx_daggers_0.png"
+image fx daggers:
+    "images/fx/fx daggers_0.png"
     pause 0.05
-    "fx_daggers_1.png"
+    "images/fx/fx daggers_1.png"
     pause 0.05
-    "fx_daggers_2.png"
+    "images/fx/fx daggers_2.png"
     pause 0.05
-    "fx_daggers_3.png"
+    "images/fx/fx daggers_3.png"
     pause 0.05
     repeat
 
