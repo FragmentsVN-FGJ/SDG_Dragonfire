@@ -336,7 +336,7 @@ label truck:
     $ evening_act = None
     
     window hide
-
+    scene black with dissolve
     centered "{size=+10}{color=#fff}Morning{/color}{/size}{w=1.0}{nw}"
 
     call screen image_planner("Morning")

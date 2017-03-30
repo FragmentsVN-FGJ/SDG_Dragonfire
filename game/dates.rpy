@@ -340,7 +340,8 @@ label .catpays:
     show cat eyes_closed
     c "Whatever, let's just go in."
     hide cat
-    hide cat_torso with moveoutright
+    hide cat_torso
+    with moveoutright
     "She pays for both our tickets with her wristband."
     $ cat_mood -= 2
     return

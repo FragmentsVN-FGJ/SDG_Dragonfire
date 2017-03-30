@@ -7,15 +7,15 @@ init:
     $ event("Catherine_broken_up_mall", "(act == 'mall' or act == 'cathouse') and broken_up", event.only(), event.random(0.2), priority=50)
     $ event("Catherine_gym_broken_up", "act == 'gym' and broken_up and day%4==1 and cash >= prices['gym']", event.only(), priority=50)
     
-    $ event("Catherine_study_together", "act == 'cathouse' and not broken_up", event.only(), event.depends('Catherine_parlor'), priority=200)
+    $ event("Catherine_study_together", "act == 'cathouse' and not broken_up", event.only(), event.once(), event.depends('Catherine_parlor'), priority=190)
     $ event("Catherine_gym_together", "act == 'gym' and not broken_up and day%4==1 and cash >= prices['gym']", event.only(), event.once(), event.depends('Catherine_parlor'), priority=50)
     $ event("sauna_accident", "act == 'swimming' and day%4==3", event.only(), event.depends("swimminghallintro"), event.depends('Catherine_parlor'), event.once(), event.random(0.42), priority=50)
     $ event("Catherine_running_together", "broken_up == False and act == 'track' and day%4==2", event.only(), event.depends('Catherine_parlor'), priority=50)
     
     $ event("Catherine_parlor", "act == 'parlor' and (act, day) in promises.keys()", event.only(), event.once(), priority=5)
-    $ event("Catherine_movie_scene", "act == 'movies' and (act, day) in promises.keys()", event.choose_one("dates"), event.once(), priority=5)
+    $ event("Catherine_movie_scene", "act == 'movies' and (act, day) in promises.keys()", event.once(), priority=5)
     
-    $ event("generic_promise_event", "(act, day) in promises.keys()", event.choose_one("dates"), priority=10)
+    $ event("generic_promise_event", "(act, day) in promises.keys()", priority=10)
     
     $ event("Catherine_house_calls_ignored1", "act == 'cathouse' and call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1", event.only(), priority=100)
     $ event("Catherine_house_calls_ignored2", "act == 'cathouse' and call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] >= 2")
@@ -1452,7 +1452,10 @@ label .probability3_explanation:
     show cat normal
     c "Now our observation is that none of the first five busts contained the pearl. And our hypothesis is that the last one contains the pearl."
     c "We want to calculate P(H|O), or 'the probability that the last one contains the pearl when the other ones didn't.'"
-    "I'm starting to zone out a bit, listening to the tea kettle in the background." # OR SOMETHING ELSE
+    if water_heater_on:
+        "I'm starting to zone out a bit, listening to the tea kettle in the background." # OR SOMETHING ELSE
+    else:
+        "My mouth starts to feel a bit dry as I zone out."
     show cat frown
     c "So if bust number six contains the pearl, the probability that the first five don't contain it is equal to 1: P(O|H) = 1."
     c "The initial probability for the pearl being in bust 6 is like we calculated earlier, 1/12. So P(H) = 1/12."
@@ -1542,6 +1545,7 @@ label .calculus3_explanation:
     n "Who would know something like that!?"
     show cat eyes_closed_smile
     c "*Cough*... *cough*... Right, a very simple question indeed..."
+    return
     
 label .geometry1:
     c "You have a right-angled triangle with the hypotenuse of length 5 and one leg of length 3. What is the length of the remaining leg?"
