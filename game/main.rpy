@@ -235,10 +235,10 @@ label start:
     # the game.
     $ day = 0
     $ calDate = calDate.replace(second=00, hour=8, minute=00, day=3, month=2, year=2024)
-    
+
     $ broken_up = False
     $ call_ignored = False
-    
+
     $ truck_handled = True
 
 
@@ -278,10 +278,10 @@ label start:
     $ curing_light = False
 
     scene black
-    
+
     show baudrillard at truecenter with dissolve
     pause 5.0
-    
+
     scene black with dissolve
     # Show a default background.
     scene bg_field with dissolve
@@ -1480,11 +1480,11 @@ label day:
     if day >= 11:
         call ending_for_now
         jump Ending_Credits
-    
+
     # Now, we jump the day planner, which may set the act variables
     # to new values. We jump it with a list of periods that we want
     # to compute the values for.
-
+    $ renpy.choice_for_skipping()
     call screen image_planner("Morning")
     #(["Morning", "Afternoon", "Evening"])
 
@@ -1516,7 +1516,7 @@ label afternoon:
     window hide
     scene black
     centered "{size=+10}{color=#fff}Afternoon{/color}{/size}{w=1.0}{nw}"
-
+    $ renpy.choice_for_skipping()
     call screen image_planner("Afternoon")
 
     window show
@@ -1535,7 +1535,7 @@ label evening:
     window hide
     scene black
     centered "{size=+10}{color=#fff}Evening{/color}{/size}{w=1.0}{nw}"
-
+    $ renpy.choice_for_skipping()
     call screen image_planner("Evening")
 
     window show
@@ -1555,8 +1555,8 @@ label night:
     # in here.
 
     centered "{size=+10}{color=#fff}Night{/color}{/size}{w=1.0}{nw}"
-    
-    
+
+
     if not truck_handled:
         call truck_after
         $ truck_handled = True

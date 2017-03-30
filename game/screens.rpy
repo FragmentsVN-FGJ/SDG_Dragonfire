@@ -94,12 +94,15 @@ screen hp_window(playerparty, current_hp, current_mp):
                     label name
                     hbox:
                         label "HP":
-                            xpadding 2
-                        bar value current_hp[name] range max_hp[name]
+                            right_padding 10
+                            text_size 18
+                        bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red.png"
                     #if name in ['Nick', 'Aerith', 'Silvia']:
                     hbox:
-                        label "MP"
-                        bar value current_mp[name] range max_mp[name]
+                        label "MP":
+                            right_padding 8
+                            text_size 18
+                        bar value current_mp[name] range max_mp[name] left_bar "gui/bar/left_blue.png"
 
 
 ## Say screen ##################################################################

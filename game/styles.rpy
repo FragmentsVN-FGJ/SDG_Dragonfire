@@ -48,3 +48,7 @@ style dp_choice_text:
 # Center the done button.
 style dp_done_button:
     xalign 0.5
+
+style calendar_text is text:
+    size 40
+    color '#fcd'

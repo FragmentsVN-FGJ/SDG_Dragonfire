@@ -57,11 +57,11 @@ init -100 python:
 
 screen image_planner(period):
     $ this_period = __periods[period]
-    $ renpy.choice_for_skipping()
+    #$ renpy.choice_for_skipping()
     window:
         style "dayplanner_window"
         #background "images/fullmap.png"
-        use display_stats(True, True, True, True)
+        use display_stats(True, True, True, False)
         style_group "dp_choice"
         for name, curr_val, tooltip, x, y, enable, should_show in this_period.acts:
             $ show_this = eval(should_show)
@@ -81,7 +81,7 @@ screen image_planner(period):
                     textbutton name xpos x ypos y text_color txtcolor action [Hide("gui_tooltip"), SetField(store, this_period.var, curr_val), Return(curr_val)] hovered [ Show("gui_tooltip", my_tt_text=tooltip, my_tt_xpos=46, my_tt_ypos=518) ] unhovered [Hide("gui_tooltip")]
                     #textbutton name action SetField(store, this_period.var, curr_val)
                 else:
-                    textbutton name
+                    textbutton name xpos x ypos y
 
 screen gui_tooltip:
     frame:
@@ -115,7 +115,7 @@ screen display_planner(periods):
                         $ valid_choice = False
                         vbox:
                             style_group "dp_choice"
-                            for name, curr_val, enable, should_show in this_period.acts:
+                            for name, curr_val, tooltip, x, y, enable, should_show in this_period.acts:
                                 $ show_this = eval(should_show)
                                 $ enable = eval(enable)
 

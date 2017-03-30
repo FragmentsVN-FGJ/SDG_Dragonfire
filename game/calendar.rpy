@@ -161,7 +161,7 @@ label calendar(direction):
         show screen CBtn6((getRWDay(mini+4), getRDay(mini+4)), mvDir, imgWidth, posX+imgWidth*(mini+5), posY, startDelay, speed)
         show screen CBtn7((getRWDay(mini+5), getRDay(mini+5)), mvDir, imgWidth, posX+imgWidth*(mini+6), posY, startDelay, speed)
         show screen CBtn8((getRWDay(mini+6), getRDay(mini+6)), mvDir, imgWidth, posX+imgWidth*(mini+7), posY, startDelay, speed)
-        
+
         if startDelay != 0:
             $ renpy.pause(startDelay, hard=True)
             $ startDelay = 0
@@ -185,7 +185,7 @@ label calendar(direction):
         show screen CalendarTime(calDate.hour, calDate.minute, calDate.second)
     if displayWeather:
         show screen CalendarWeather(displayWeather)
-    
+
     $renpy.pause(intDelay, hard=True)
     $ print "hiding showCurrentDays"
     hide screen CalendarTime
@@ -254,9 +254,9 @@ screen CalendarButton(day, direction, distance, posX, posY, startDelay, speed):
         else:
             at move_align(direction, distance, posX, speed)
 
-        text day[0] size 24 xcenter 0.375
+        text day[0] size 24 xcenter 0.375 style "calendar_text"
         add "dayButton" ypos 30
-        text day[1] size 28 ypos 90 xcenter 0.375
+        text day[1] size 28 ypos 90 xcenter 0.375 style "calendar_text"
 
 screen CalendarMonth(mon):
     text mon size 72 color "#545454CC" xalign 0.5 at swipe_in(0, 62)
