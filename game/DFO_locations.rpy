@@ -92,7 +92,6 @@ label Ruins_dragon:
     "I slowly realize that it's not a wall at all, but the head of a giant serpentine dragon!"
     show sil flmao
     s "Ah. This must be the N'Gashai we heard mention of."
-    hide sil with moveoutleft
     "Is this really the time to discuss that!?"
     show sil hurt at center
     show air blush2 at right
@@ -210,6 +209,7 @@ label Ruins_innertemple:
     "A flash of purple light is reflected from an object their leader is holding above his head."
     "It's a curved dagger. And on the altar, lies a man."
     show sil lecture at right
+    with moveinright
     show air 10 at left
     with moveinleft
     s "It is worse than we suspected."
@@ -223,6 +223,7 @@ label Ruins_innertemple:
     np "I think she means that there's an 'Unhallow' area effect here."
     show air 8
     np "Since you're a priestess of Luxphoros, it weakens your effective level."
+    show air disappoint
     a "Oh. That makes sense."
     show air 4
     a "Uh, shouldn't we stop them, by the way?"
@@ -298,9 +299,12 @@ label Ruins_innerchambers:
             jump Ruins_innerchambers_menu
     $ battle4_won = False
     $ seen_before['Ruins_innerchambers'] = True
+    show sil this_is_fine at left 
+    with moveinleft
     s "A temple within a temple? How unexpected."
     "The entrance to the temple is blocked by a brass gate, and guarded on either side by a warrior statue of stone."
     s "The lock appears easy enough to pick. Shall I?"
+    hide sil
     jump .approach_menu
 
 label .approach_menu:
@@ -365,11 +369,13 @@ label Ruins_training:
     show air 7 at left
     with moveinleft
     show sil normal at right
-    with moveinleft
+    with moveinright
     "The woeful chanting grows ever louder, as we move past the living quarters deeper into the dungeon."
     "With trembling steps we walk down a spiraling stairway small enough to induce claustrophobia."
     "At the bottom, a doorway opens to a colossal underground hall."
+    show air lip_bite
     a "Wow, it's huge!"
+    show sil hmm
     s "And offers no place to hide. We ought to be careful."
     hide air
     hide sil
@@ -441,7 +447,7 @@ label Ruins_outer:
     show air 7 at left
     with moveinleft
     show sil normal at right
-    with moveinleft
+    with moveinright
     np "The only way is forward. Let's go in."
     "We open the bronze door beneath us, revealing a steep staircase leading only to the depths of darkness."
     show air blush
@@ -512,7 +518,7 @@ label .victorious:
     show air angry_shout at left
     with moveinleft
     show sil rage at right
-    with moveinleft
+    with moveinright
     "The fight rages on forever, but eventually we are left the victors, bathed in the blood of the novices."
     show air blush2
     a "Ew, ew, ew, ew!"
