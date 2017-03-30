@@ -49,16 +49,18 @@ define np = DynamicCharacter('np_name', color="#191970")
 label Ruins_dragon:
     scene black with dissolve
     show air 7 at left
-    show sil hmm at right
     with moveinleft
+    show sil hmm at right
+    with moveinright
     pause 1.0
     show air 9
     a "Just how deep underground are we going? Ewww!"
+    show air blush2
     "She steps into a puddle of some black substance."
     show sil lecture
     s "We must recover the treasure for the Order of the Dragon. It must be hidden here."
     np "Wait, treasure? What treasure?"
-    show sil evil_laugh
+    show sil wot
     s "I've heard many a tale whispered in the night."
     np "So it was mentioned in the quest log?"
     show sil angry
@@ -76,7 +78,7 @@ label Ruins_dragon:
     np "We'll be done soon."
     hide air
     hide sil
-    with moveoutleft
+    with moveoutright
     "We come to the end of the tunnel, and Aerith leans on a gray stone wall, closing her eyes."
     show air 11 at right, flip
     with moveinright
@@ -114,7 +116,7 @@ label .victorious:
     np "Run!"
     "We make our way back through the tunnel as it collapses behind us!"
     "Wait, I didn't remember there being a turn to the right here!"
-    show sil evil_laugh at right, flip
+    show sil normal at right, flip
     with moveinright
     s "It's some kind of secret room!"
     "We could turn to the right, but we have no idea where it leads."
@@ -310,18 +312,26 @@ label .approach_menu:
             jump Ruins_training_menu
 
 label .approach:
+    show sil normal at left
+    with moveinleft
     "As Silvia approaches the gates, purple flames light up in the eyes of the statues."
     np "Look out!"
     "The statues jolt to life, lifting their scimitars into the air."
+    show sil scared
     "They approach Silvia with heavy steps leaving their mark on the sand-covered floor."
+    show sil trick
     "Silvia evades them easily, and we go on the offensive."
     "The statues are too slow to strike us with their blades, but they also seem impervious to all our techniques."
     "Eventually we manage to get them to strike each other, taking them out."
+    hide sil
     jump .victorious
     
 label .victorious:
+    show sil hmm at left
+    with moveinleft
     s "We must hope that the defence of our future enemies is not as impenetrable."
     "Now undisturbed, Silvia picks the lock with ease, and the gate opens with a creak."
+    hide sil
     $ battle4_won = True
     jump Ruins_innerchambers_menu
             
@@ -335,9 +345,12 @@ label Ruins_training_menu:
         "Silvia...":
             call Silvia_oob
         "Log out":
+            show sil proud
+            with moveinleft
             np "I think we should call it a day now."
             s "Very well. Our attempt was heroic nonetheless."
             "We say our farewells and log out."
+            hide sil
             scene black with dissolve
             play music "bgm/hope(Ver1.00).ogg"
             return
@@ -349,11 +362,17 @@ label Ruins_training:
         jump .goin_menu
     $ battle3_won = False
     $ seen_before['Ruins_training'] = True
+    show air 7 at left
+    with moveinleft
+    show sil normal at right
+    with moveinleft
     "The woeful chanting grows ever louder, as we move past the living quarters deeper into the dungeon."
     "With trembling steps we walk down a spiraling stairway small enough to induce claustrophobia."
     "At the bottom, a doorway opens to a colossal underground hall."
     a "Wow, it's huge!"
     s "And offers no place to hide. We ought to be careful."
+    hide air
+    hide sil
     jump .goin_menu
     
 label .goin_menu:
@@ -365,22 +384,34 @@ label .goin_menu:
             jump Ruins_outer_menu            
 
 label .goin:
+    show air 7 at left
+    with moveinleft
+    show sil normal at right
+    with moveinright
     "Everywhere around us, the walls, ceiling and columns are covered with ancient carvings."
     "Curiously, none of the carvings depict dragons. They must be relics from an older time."
+    show air 8
     a "Beautiful..."
     "Aerith puts her hand on one of the columns."
+    show sil lecture
     s "Do not let down your guard, faithful one!"
     "Silvia's reservations turn out to be appropriate."
     "All of a sudden, we hear a huge thump behind us."
     "A stone slab has fallen over the doorway, blocking the way back!"
     "I'm deafened by the shrieking ostriches and their shouting riders, emerging from hidden compartments in the walls."
     "From the other end of the hallway, a huge ostrich with dragon wings approaches, threatening us with the flames it spits out of its throat."
+    show air you_kidding
+    show sil annoyed
     "Looks like it's time to..."
     "Fight!"
     "I charge right at the dragon-ostrich! Furious Strike!"
     "Fatality! Superb!"
     "My sword pierces deep into its head, killing the monstrosity instantly."
+    show air angry_shout
+    show sil rage
     "Aerith and Silvia have already dealt with the rest of the riders."
+    hide air
+    hide sil
     $ battle3_won = True
     jump Ruins_training_menu
     
@@ -407,25 +438,40 @@ label Ruins_outer:
             jump Ruins_outer_menu
     $ battle2_won = False
     $ seen_before['Ruins_outer'] = True
+    show air 7 at left
+    with moveinleft
+    show sil normal at right
+    with moveinleft
     np "The only way is forward. Let's go in."
     "We open the bronze door beneath us, revealing a steep staircase leading only to the depths of darkness."
+    show air blush
     a "W-we aren't going in there, right?"
+    show sil taunt
     s "Does your heart not yearn for battle?"
+    show air 12
     a "No."
     "This game is like 50 \% fighting..."
+    show sil normal
     s "Lead the way, liege."
     "We start walking down the stairs into the black dungeons."
     np "There's light ahead."
+    show air angry2
     a "Why is it purple...?"
+    show sil  uwot
     s "The dark magic of the Harvester, without doubt."
     "We walk past the torches shining purple in the dark hallway."
     "It must be my imagination, but I can almost feel some malign force emanating from the purple flames and marble floor."
     "Aerith is shivering, and I doubt it's the cold. I can feel a dread chill flowing down my spine."
+    show air blush5
     a "D-do you hear something?"
     "She tries to whisper, but the echoes annul her attempt."
+    show sil annoyed
     s "They're chanting evil spells to honor their dark deities. This heresy must be stopped!"
+    show air disgust
     a "Maybe we could do it later?"
+    show sil herp
     s "You are curiously lacking in zeal, priestess."
+    show air suspic
     a "Uh, thanks?"
     s "I did not intend a compliment."
     "We really need to get into a battle before they're at each other's throats."
@@ -436,6 +482,8 @@ label Ruins_outer:
     "A man in simple brown robes is talking to a woman wearing purple robes with elaborate embroidery depicting a crimson dragon on each side."
     "They both have blank, stoic expressions, but their eyes glimmer with a zealous spirit."
     "They haven't noticed us just yet."
+    hide air
+    hide sil
 
 label .approach_menu:
     menu:
@@ -461,10 +509,18 @@ label .turnback:
     jump Ruins_courtyard_menu
     
 label .victorious:
+    show air angry_shout at left
+    with moveinleft
+    show sil rage at right
+    with moveinleft
     "The fight rages on forever, but eventually we are left the victors, bathed in the blood of the novices."
+    show air blush2
     a "Ew, ew, ew, ew!"
+    show sil evil_laugh
     s "Yes, the life of our enemies spills on the ground! Mwahahahaa!"
     "The worst part is, this isn't even the weirdest group I've played with."
+    hide air
+    hide sil
     $ battle2_won = True
     jump Ruins_outer_menu
     
@@ -513,14 +569,21 @@ label Ruins_courtyard_menu:
         "Silvia...":
             call Silvia_oob
         "I guess we can call it a day.":
+            show sil normal at left
+            with moveinleft
             np "I guess that's enough for today."
             s "Aren't we going all the way to the end?"
             np "Nah, let's come back and try again some other time."
             s "All right, I suppose."
+            scene black with dissolve
             return
     jump Ruins_courtyard_menu
     
 label Ruins_courtyard:
+    show air 10 at left
+    with moveinleft
+    show sil normal at right
+    with moveinleft
     "Broken pillars loom ominously around us, and I feel as if someone is gazing at us, hidden somewhere beyond sight..."
     a "This place looks abandoned... Maybe there's no-one here?"
     np "Why would they make a new dungeon without enemies?"
@@ -529,6 +592,8 @@ label Ruins_courtyard:
     "I point at something glimmering in the distance."
     show sil proud
     s "It appears to be an underground entrance. Well done, liege."
+    hide air
+    hide sil
     jump .courtyard_menu
     
 label .courtyard_menu:
@@ -545,7 +610,12 @@ label .courtyard_menu:
         "Silvia...":
             call Silvia_oob
         "Maybe we should just head back to the forest...":
+            show air 7 at left
+            with moveinleft
+            show sil normal at right
+            with moveinleft
             np "Actually, Aerith, you've got a point. Let's head back."
+            show sil uwot3
             s "What? Liege, you can't be earnest!"
             menu:
                 "You're right. I was just kidding.":
@@ -554,8 +624,11 @@ label .courtyard_menu:
                     jump .courtyard_menu
                 "I'm serious.":
                     np "No, I'm serious. This is probably too tough for us right now."
+                    show sil shock
                     s "I would not have expected such behavior from you."
                     "She looks disappointed. Well, it can't be helped."
+                    hide air
+                    hide sil
                     $ affection_modify('Silvia', -1)
                     play music "bgm/hope(Ver1.00).ogg"
                     return
@@ -621,8 +694,11 @@ label .cure_target:
 #label .mass_heal:    
 
 label ask_Aerith_to_cast(technique_name, target_desc, target):
+    show air 7 at left
+    with moveinleft
     np "Aerith, could you cast [technique_name] on [target_desc]?"
     if mp_costs[technique_name] <= current_mp['Aerith']:
+        show air blush5
         a "S-sure."
         #call usetechnique('Aerith', technique_name, target)
         if technique_name == "Curing Light":
@@ -630,21 +706,30 @@ label ask_Aerith_to_cast(technique_name, target_desc, target):
             $ stats_frame(target, 90, current_hp[target], max_hp[target])
         elif technique_name == "Light Barrier":
             call LightBarrier("Aerith", target)
+        hide air
         # "She chants the spell, and I'm momentarily blinded by the white light enveloping my body."
     else:
+        show air blush6
         a "I'm afraid I don't have enough mana."
+        hide air
     return    
 
 label Silvia_oob:
     menu:
         "Hide" if not silvia_hidden:
+            show sil normal at left 
+            with moveinleft
             np "Silvia, could you hide yourself?"
+            hide sil with dissolve
             "Wordlessly, she conceals herself in the shadows."
             $ silvia_hidden = True
             return
         "Come back from hiding" if silvia_hidden:
             np "Uh, Silvia? You can come out now."
+            show sil normal at left with dissolve
+            with moveinleft
             "Silvia returns from the shadows."
+            hide sil
             $ silvia_hidden = False
             return
         "Return":
@@ -653,7 +738,10 @@ label Silvia_oob:
 label Ruins_entrance:
     scene bg_temple with fade
     play music "bgm/LanayruDesert.mp3"
-    show sil cat
+    show air eyes_wide at left
+    with moveinleft
+    show sil cat at right
+    with moveinleft
     "The cathedral's teleporter sends us to the entrance of the dungeon."
     np "This is just a test run, so I didn't want to get spoiled."
     np "Have you researched this place, Silvia?"
@@ -669,10 +757,11 @@ label Ruins_entrance:
     s "None whatsoever, liege."
     show sil normal
     np "W-well, let's go in."
+    show air 10
     a "Uh, can't we just go to the forest like normal...?"
     show sil annoyed
     s "Silence! We shan't run away."
-    a "I think you mean can't..."
+    a "I think you mean 'can't...'"
     show sil chu
     s "I do not."
     show sil normal
@@ -691,9 +780,14 @@ label DFO_init:
     else:
         show air 7 at left
     "I blink as my eyes adjust to the vibrant hyper-reality surrounding me."
+    show air 7 at left with dissolve
+    with moveinleft
+    show sil normal at right with dissolve
+    with moveinleft
     "Silvia and Aerith are already here."
     s "Hi there."
     if broken_up:
+        show air 13
         a "Hi..."
         "Aerith looks a bit dismayed. Did I anger her somehow?"
     else:
@@ -715,6 +809,8 @@ label DFO_init:
     np "We can level up way more effectively if we try something a bit harder for a change."
     show air 10
     a "I-if you say so..."
+    hide air
+    hide sil
     return
     
 label DFO_login2:
