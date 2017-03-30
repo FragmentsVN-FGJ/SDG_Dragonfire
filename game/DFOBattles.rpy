@@ -15,7 +15,7 @@ label Ruins_battle1:
     $ current_mp = {'Nick': max_mp['Nick'], 'Aerith': max_mp['Aerith'], 'Silvia': max_mp['Silvia']}
     $ target_list = ["Rider"]
     $ nick_acted = False
-    show screen hp_window(playerparty, current_hp, current_mp)
+    show screen hp_window(playerparty, target_list, current_hp, current_mp)
     "As we approach, trapdoors spring open all around us, sending sand flying in every direction!"
     show sil star
     s "It's an ambush! Hihihi!"
@@ -589,6 +589,7 @@ label .rider_charge(rider_target):
         "He slams right into Aerith. She's protected by the sphere, but still falls prone."
         return
     if rider_target == "Nick" and nick_defense:
+        with hpunch
         "My shield is of no use as he rams right into me, sending me flying to the ground."
         show overlay red
         pause 0.15
@@ -605,6 +606,7 @@ label .rider_charge(rider_target):
         call .dealdamage("Nick", damage["Rider"]["Charge"])
         return
     if rider_target == "Nick":
+        with hpunch
         "His pounce catches me by surprise, and I have no time to leap out of the way!"
         show overlay red
         pause 0.15
@@ -632,10 +634,10 @@ label .rider_charge(rider_target):
 label .rider_spear(rider_target):
     if rider_target == "Nick":
         #show enemy_chicken normal at ramming
+        "He comes close and attempts to impale me with his spear."
         show fx slash_spear
         pause 0.1
         hide fx
-        "He comes close and attempts to impale me with his spear."
     else:
         "The rider makes an attempt to impale [rider_target]!"
 
