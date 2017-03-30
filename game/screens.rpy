@@ -81,7 +81,7 @@ style frame:
 ## In-game screens
 ################################################################################
 
-screen hp_window(playerparty, current_hp, current_mp):
+screen hp_window(playerparty, enemyparty, current_hp, current_mp):
     vbox:
         id "hpboxes"
         xmaximum 300
@@ -103,7 +103,21 @@ screen hp_window(playerparty, current_hp, current_mp):
                             right_padding 8
                             text_size 18
                         bar value current_mp[name] range max_mp[name] left_bar "gui/bar/left_blue.png"
-
+    vbox:
+        xmaximum 300
+        xalign 1.0
+        for name in enemyparty:
+            frame:
+                xpadding 15
+                xmargin 5
+                ymargin 5
+                vbox:
+                    label name
+                    hbox:
+                        label "HP":
+                            right_padding 10
+                            text_size 18
+                        bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red.png"
 
 ## Say screen ##################################################################
 ##
