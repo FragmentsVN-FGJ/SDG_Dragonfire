@@ -174,7 +174,7 @@ label .ending:
     show air angry2
     a "It dragged on for too long. I really need to lie down."
     "I wonder if she has a bad framerate or just hasn't been playing for that long."
-    "Me and Silvia don't feel any strain at all from something like this."
+    "Silvia and I don't feel any strain at all from something like this."
     "But she's as high-level as us. She should have gotten used to it by now..."
     scene black with fade
     play music "bgm/hope(Ver1.00).ogg"
@@ -632,6 +632,7 @@ label .courtyard_menu:
                     $ affection_modify('Silvia', -1)
                     play music "bgm/hope(Ver1.00).ogg"
                     return
+    jump .courtyard_menu
 
 label Nicholas_oob:
     menu:
@@ -875,7 +876,7 @@ label DFO_login:
 label nameNP:
     $ np_name = ""
     while not np_name:
-        $ np_name = renpy.input("Your name was?", allow=" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length = 15)
+        $ np_name = renpy.input("Your name was?", allow=" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length = 32)
         $ np_name = np_name.strip()
         if len(np_name) <= 2:
             comp "Username length inadequate."
