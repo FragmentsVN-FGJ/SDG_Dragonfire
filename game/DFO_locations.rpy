@@ -909,6 +909,9 @@ label nameNP:
         if already_in_use:
             comp "Username and voice do not match."
             jump nameNP
+        if np_name.strip('0123456789_').lower() in atleasttryNames:
+            comp "That would be a rather boring name."
+            jump nameNP
     comp "Input password."
     comp "Thank you, [np_name]. Logging in..."
     return
@@ -918,3 +921,4 @@ label nameNP:
 init python:
     profanity = ['anal', 'anus', 'arse', 'ass', 'ballsack', 'balls', 'bastard', 'bitch', 'biatch', 'bloody', 'blowjob', 'blow job', 'bollock', 'bollok', 'boner', 'boob', 'bugger', 'bum', 'butt', 'clitoris', 'cock', 'coon', 'crap', 'cunt', 'damn', 'dick', 'dildo', 'dyke', 'fag', 'feck', 'fellate', 'fellatio', 'felching', 'fuck', 'f u c k', 'fudgepacker', 'fudge packer', 'flange', 'hell', 'homo', 'jerk', 'jizz', 'knobend', 'knob end', 'labia', 'lmao', 'lmfao', 'muff', 'nigger', 'nigga', 'omg', 'penis', 'piss', 'poop', 'prick', 'pube', 'pussy', 'queer', 'scrotum', 'sex', 'shit', 's hit', 'sh1t', 'slut', 'smegma', 'spunk', 'tit', 'tosser', 'turd', 'twat', 'vagina', 'wank', 'whore', 'wtf']
     takenNames = ['aerith', 'silvia', 'lucia', 'grayknight', 'nekochan']
+    atleasttryNames = ['q', 'qw', 'qwe', 'qwer', 'qwert', 'qwerty', 'a', 'as', 'asd', 'asdf', 'asdfg', 'z', 'zx', 'zxc', 'zxcv', 'zxcvb']
