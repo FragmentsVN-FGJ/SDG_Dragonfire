@@ -10,6 +10,8 @@ init:
     $ damage = {'Nick': {'blade_sphere_control': 10, 'attack': 20}, 'Silvia': {'sneak_attack': 40, 'attack': 20, 'hail': 20, 'poison_attack': 20}, 'Aerith': {}, 'Rider': {'Spear': 20, 'Fire': 20, 'Charge': 30}, 'poison': 10 }
     
     $ heal_amount = {"Curing Light": 20}
+    
+    $ default_tooltips = {'Light Barrier': "A barrier of light protects the caster from all harm. MP: 10", 'Curing Light': "The light of Luxphoros heals target for 20 damage. MP: 10", 'Furious Strike': "Bash a foe for great justice! Your attack causes a shockwave and breaks the target's weapons if they parry. MP: 20", 'Blade Sphere Control': "The ultimate protective technique prevents physical attacks against you and other party members nearby, retaliating for 10 damage. Upholding the technique requires constant focus. MP 30", 'Hail of Daggers': "Raining death from above hits all foes for 20 damage. Just make sure your own party members are not in range! MP: 30", "Poisoned Blade": "Poisoned blade deals 20 damage and poisons the enemy for 1-3 rounds. Poison deals 10 damage per round. MP: 20", "Depths of Slumber": "Magical powder sends enemies to sleep. MP: 30"}
 
     image white = Solid((255,255,255,255))
     
@@ -608,6 +610,7 @@ label .courtyard_menu:
         "Let's go!":
             "We approach the entrance as it glitters in the sunlight."
             $ seen_before = {}
+            $ tooltips = default_tooltips
             jump Ruins_battle1
         "[np_name]...":
             call Nicholas_oob
