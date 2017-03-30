@@ -215,6 +215,24 @@ image fx daggers:
     pause 0.05
     repeat
 
+image fx fire:
+    "images/fx/fx fire_0.png"
+    pause 0.1
+    "images/fx/fx fire_1.png"
+    pause 0.1
+    "images/fx/fx fire_2.png"
+    pause 0.1
+    "images/fx/fx fire_3.png"
+    pause 0.1
+    "images/fx/fx fire_4.png"
+    pause 0.1
+    "images/fx/fx fire_5.png"
+    pause 0.1
+    "images/fx/fx fire_6.png"
+    pause 0.1
+    "images/fx/fx fire_7.png"
+    pause 0.1
+
 label pay(amount):
     $ pay_successful = paycash(amount)
     if pay_successful:

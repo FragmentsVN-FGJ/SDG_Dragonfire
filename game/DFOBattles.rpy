@@ -22,7 +22,7 @@ label Ruins_battle1:
     hide sil
     show enemy_chicken normal as enemy_chicken2 at left, gettingcloser with moveinbottom:
         yalign 1.0
-    show enemy_chicken normal as enemy_chicken3 at right, gettingcloser with moveinbottom:
+    show enemy_swordchicken normal as enemy_chicken3 at right, gettingcloser with moveinbottom:
         yalign 1.0
     hide enemy_chicken2 with moveoutleft
     show enemy_chicken normal as enemy_chicken4 at left, gettingcloser with moveinbottom:
@@ -122,14 +122,14 @@ label .act_phase:
             jump .act_Silvia
         "Defend" if target_list:
             jump .act_defend
-        "KMS":
-            call .death("Nick")
-            jump .rider_turn
-        "Kill Aerith":
-            call .death("Aerith")
-            jump .rider_turn
-        "Wait":
-            jump .rider_turn
+        #"KMS":
+        #    call .death("Nick")
+        #    jump .rider_turn
+        #"Kill Aerith":
+        #    call .death("Aerith")
+        #    jump .rider_turn
+        #"Wait":
+        #    jump .rider_turn
 
     return
 
@@ -197,6 +197,9 @@ label .act_techniques:
                     "My sword slams straight through it, shattering it in pieces!"
                     $ spear_broken = True
                     return
+                show enemy_chicken hurt
+                pause 0.1
+                show enemy_chicken normal
                 "He raises the remnants of his spear, but my attack goes straight through them, his arm and his head."
                 hide enemy_chicken with moveoutright
                 "The ostrich, now carrying only a corpse severed in half, sees it best to escape."
@@ -446,9 +449,9 @@ label .dealdamage(target, amount, handle_death = True):
         if handle_death:
             call .death(target)
         $ target_died = True
-    if not target_died:
-        $ stats_frame(target, 90, current_hp[target], max_hp[target], xalign=0.5, yalign=0.0)
-        pause 2
+    #if not target_died:
+        #$ stats_frame(target, 90, current_hp[target], max_hp[target], xalign=0.5, yalign=0.0)
+        #pause 2
     return
 
 label .death(target):
@@ -525,6 +528,9 @@ label .rider_attack(rider_target = None, attack = None):
 
 label .rider_fire(rider_target):
     if rider_target == "Nick":
+        show fx fire
+        pause 0.8
+        hide fx fire
         "He comes a bit closer. Suddenly, the ostrich breathes fire on me!"
     else:
         "He goes closer to [rider_target]. Then, he commands his ostrich to breathe fire!"
@@ -562,6 +568,7 @@ label .rider_fire(rider_target):
 label .rider_charge(rider_target):
     if rider_target == "Nick":
         "He lunges right at me!"
+        show enemy_chicken normal at ramming
     else:
         "He charges toward [rider_target]!"
     if blade_sphere_control:
@@ -590,12 +597,15 @@ label .rider_charge(rider_target):
         show overlay red
         pause 0.15
         hide overlay
+        pause 0.2
+        show enemy_chicken normal at backwardsramming
+        pause 1.0
+        show enemy_chicken normal at wigglemiddle
         "Blood splatters everywhere, and my body is full of bruises."
         call .dealdamage("Nick", damage["Rider"]["Charge"])
         return
     if rider_target == "Nick":
         "His pounce catches me by surprise, and I have no time to leap out of the way!"
-        show enemy_chicken normal at ramming
         show overlay red
         pause 0.15
         hide overlay
@@ -622,6 +632,9 @@ label .rider_charge(rider_target):
 label .rider_spear(rider_target):
     if rider_target == "Nick":
         #show enemy_chicken normal at ramming
+        show fx slash_spear
+        pause 0.1
+        hide fx
         "He comes close and attempts to impale me with his spear."
     else:
         "The rider makes an attempt to impale [rider_target]!"
