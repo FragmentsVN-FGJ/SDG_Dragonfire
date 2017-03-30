@@ -198,7 +198,7 @@ image cat fast_blink:
     pause 0.25
     "images/cat/cat normal.png"
 
-image baudrillard = Text("{size=36}\"We will live in this world, which for us has all the disquieting strangeness of the desert and the simulacrum.\" \n \n      - Jean Baudrillard", text_align=0.5)
+image baudrillard = Text("{size=36}{color=#fff}\"We will live in this world, which for us has all the disquieting strangeness of the desert and the simulacrum.\" \n \n - {i}Jean Baudrillard{/i}", text_align=0.5)
 image thankyou = Text("{size=40} Thank you for playing!", text_align=0.5)
 image cred = Text(credits_s, text_align=0.5)
 image theend = Text("{size=40}Conglaturation ! ! !\n \n This story is not so happy end. \n \n You have completed a great demo. \n \n And prooved the justice of our culture. \n \n Being the wise and courageour Nick you are, you feel strongth welling in your body. \n \n Now go and wait to challenge again, for ever lasting peace!", text_align=0.5)
@@ -1479,6 +1479,7 @@ label day:
 
     if day >= 11:
         call ending_for_now
+        call events_end_day
         jump Ending_Credits
 
     # Now, we jump the day planner, which may set the act variables
@@ -1617,12 +1618,13 @@ label Ending_Credits:
         yanchor 0.5 ypos 0.5
         xanchor 0.5 xpos 0.5
     with dissolve
-    with Pause(15)
+    $ renpy.pause(5, hard=True)
+    pause 10
     hide theend
     show cred at Move((0.5, 4.0), (0.5, 0.0), credits_speed, repeat=False, bounce=False, xanchor="center", yanchor="bottom")
-    with Pause(credits_speed)
+    $ renpy.pause(credits_speed, hard=True)
     hide cred with dissolve
     show thankyou at truecenter
-    with Pause(10)
+    pause 4
     hide thankyou with dissolve
     return
