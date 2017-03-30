@@ -1,0 +1,27 @@
+person falling on carpet sound:
+	CC0
+	SFX_Rock_Collapse.mp3
+	SFX_Rock_Thump.mp3
+	https://www.freesound.org/people/j0rd4nkzf/sounds/244259/
+
+footsteps on artificial grass sound:
+	CC0
+	SFX_Footsteps_grass.mp3
+	https://www.freesound.org/people/Yuval/sounds/206030/
+
+fire sound:
+	CC0
+	SFX_Fire.mp3
+	https://www.freesound.org/people/SGAK/sounds/87564/
+
+Sword sound:
+	CC0
+	SFX_Sword_hit.mp3
+	https://www.freesound.org/people/audione/sounds/52458/
+
+Sword sound:
+	CC0
+	SFX_Sword_hit2.mp3
+	SFX_Sword_hit3.mp3
+	SFX_Sword_hit4.mp3
+	https://www.freesound.org/people/SamsterBirdies/sounds/345308/
