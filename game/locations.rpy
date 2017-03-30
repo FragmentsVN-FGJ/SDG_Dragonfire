@@ -420,7 +420,7 @@ label gymintro:
     "It's mostly for CrossFit people, so I don't come here that often."
     "Frankly, I find these muscular CrossFit guys a bit intimidating. Even though I'm in good shape myself."
     "Aside from the usual barbells and rowing machines, they have a colossal fighting robot to spar with."
-    "I think that's for the Muay Thai practicioners that also come here."
+    "I think that's for the Muay Thai practitioners that also come here."
     return
     
 label runningtrackintro:

@@ -397,7 +397,8 @@ label date_end:
         $ affection_modify('Catherine', -1)
     else:
         c "That was okay, I guess. Call me sometime."
-    n "Okay, see you again!"
+    scene black with dissolve
+    #n "Okay, see you again!"
     return
 
 label date_arrival:

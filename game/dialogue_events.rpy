@@ -98,7 +98,8 @@ init 100:
     
 label default_conversation:
     c "Hi. How are you?"
-    n "Hi, how are you."
+    n "Fine, thanks. You?"
+    c "F-fine."
     return
     
 label sunnyweather:

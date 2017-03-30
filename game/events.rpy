@@ -1031,7 +1031,7 @@ label Catherine_study_together:
     "It's just an ordinary apartment in a small tower block right by the docks."
     "It still manages to be far more fancy than mine, though, with an entrance, two rooms and a kitchen."
     "I guess not spending all your money on VR gaming also has its advantages."
-    "Don't get it wrong. I'm perfectly happy with my life choices! When you've got VR, you're apartment can be the size of a mansion!"
+    "Don't get it wrong. I'm perfectly happy with my life choices! When you've got VR, your apartment can be the size of a mansion!"
     "Virtually, that is."
     "We agreed to meet at 5pm. I don't want to wake her dog up, so I guess I'll just knock."
     "After a time period which feels far longer than a minute, I begin to get worried."
@@ -1382,7 +1382,7 @@ label .probability2_explanation:
     c "Now when you have three different variables, or circles, you have to subtract each of these intersections: A and B, A and C, B and C."
     c "But then, you will have removed the middle part, or 'A and B and C' entirely! So you have to add that back."
     show cat eyes_closed_smile
-    c "So you're final formula becomes P(A) + P(B) + P(C) - P(A and B) - P(A and C) - P(B and C) + P(A and B and C)."
+    c "So your final formula becomes P(A) + P(B) + P(C) - P(A and B) - P(A and C) - P(B and C) + P(A and B and C)."
     n "That's ridiculously complicated! Isn't there a simpler way?"
     show cat seductive_or_something
     "She raises one corner of her mouth a bit."

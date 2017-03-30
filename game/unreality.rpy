@@ -172,7 +172,7 @@ label madman:
     scene city_street
     play music "bgm/EnterNewLife.mp3"
     "It's raining."
-    "We're making our way to the movie theatre with Catherine."
+    "We're making our way back to Catherine's apartment."
     show cat_torso orange at left
     show cat normal_down at left
     with moveinleft
