@@ -2,24 +2,26 @@
 
 init:
     $ event("callCatherine", "act == 'callcat' and not broken_up", event.only(), priority=5)
-    
+
     # $ event("Catherine_movie_scene", "act == 'movies'", event.only(), event.once(), priority=5)
     $ event("Catherine_broken_up_mall", "(act == 'mall' or act == 'cathouse') and broken_up", event.only(), event.random(0.2), priority=50)
     $ event("Catherine_gym_broken_up", "act == 'gym' and broken_up and day%4==1 and cash >= prices['gym']", event.only(), priority=50)
-    
+
     $ event("Catherine_study_together", "act == 'cathouse' and not broken_up", event.only(), event.once(), event.depends('Catherine_parlor'), priority=190)
+
     $ event("Catherine_gym_together", "act == 'gym' and not broken_up and day%4==1 and cash >= prices['gym']", event.only(), event.once(), event.depends('Catherine_parlor'), priority=50)
     $ event("sauna_accident", "act == 'swimming' and day%4==3", event.only(), event.depends("swimminghallintro"), event.depends('Catherine_parlor'), event.once(), event.random(0.42), priority=50)
     $ event("Catherine_running_together", "broken_up == False and act == 'track' and day%4==2", event.only(), event.depends('Catherine_parlor'), priority=50)
-    
+
     $ event("Catherine_parlor", "act == 'parlor' and (act, day) in promises.keys()", event.only(), event.once(), priority=5)
+
     $ event("Catherine_movie_scene", "act == 'movies' and (act, day) in promises.keys()", event.once(), priority=5)
     
     $ event("generic_promise_event", "(act, day) in promises.keys()", priority=10)
     
     $ event("Catherine_house_calls_ignored1", "act == 'cathouse' and call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1", event.only(), priority=100)
     $ event("Catherine_house_calls_ignored2", "act == 'cathouse' and call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] >= 2")
-    
+
     $ event("Catherine_afternoon_call_ignored2", "call_ignored and 'Catherine' not in forgotten_promises and unkept_promises_personal_counter['Catherine'] >= 3 and period == 'afternoon'", priority=5)
     $ event("Catherine_afternoon_call_ignored", "call_ignored and 'Catherine' not in forgotten_promises and unkept_promises_personal_counter['Catherine'] == 1 and period == 'afternoon'", priority=5)
     $ event("Catherine_morning_call3", "'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] > 2 and period == 'morning'", priority=5)
@@ -28,9 +30,9 @@ init:
     $ event("Catherine_morning_call1", "'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1 and period == 'morning' and not call_ignored", priority=5)
     $ event("Catherine_afternoon_call1", "call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1 and period == 'afternoon'", priority=5)
     $ event("Catherine_evening_call1", "call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1 and period == 'evening'", priority=5)
-    
-image movie_theatre dark = im.MatrixColor("movie_theatre.png", im.matrix.brightness(-0.5))
- 
+
+image movie_theatre dark = im.MatrixColor("images/bg/movie_theatre.png", im.matrix.brightness(-0.5))
+
 init python:
        import math
        handkerchief = False
@@ -54,27 +56,27 @@ init python:
                     s += w
                     if r < s: return k
                 retur
-                
+
        def renpyrandomnormal(mean, sd):
             # Produce a renpy random from the given normal distribution using Box-Muller transform
             i = renpy.random.random()
             j = renpy.random.random()
             Z_0 = math.sqrt(-2*math.log(i))*math.cos(2*math.pi*j); # Random variable from the standard normal distribution
             return sd*Z_0 + mean
-            
+
        hub_seen_labels = []
-       
+
 image cat lookaround:
-    "cat normal.png"
+    "images/cat/cat normal.png"
     pause 0.25
-    "cat normal_left.png"
+    "images/cat/cat normal_left.png"
     pause 0.25
-    "cat normal.png"
+    "images/cat/cat normal.png"
     pause 0.25
-    "cat normal_right.png"
+    "images/cat/cat normal_right.png"
     pause 0.25
     repeat
-       
+
 label Catherine_house_calls_ignored1:
     $ unhandled = unhandled_forgotten_promises.pop('Catherine')
     $ time = say_days(day-unhandled[1])
@@ -95,7 +97,7 @@ label Catherine_house_calls_ignored1:
             else:
                 promises[(location, day+1)] = {("Catherine", "meet"): False}
     return
-    
+
 label Catherine_house_calls_ignored2:
     $ unhandled = unhandled_forgotten_promises.pop('Catherine')
     $ call_ignored = False
@@ -117,7 +119,7 @@ label Catherine_house_calls_ignored2:
             c "I... I'd appreciate it if you don't come in right now. It's kind of messy."
             "I wonder if that's actually true..."
     return
-              
+
 label Catherine_parlor:
     python:
         kept_promises = set()
@@ -135,7 +137,7 @@ label Catherine_parlor:
             promise_pluralized = "promises"
         events_executed["icecreamparlorintro"] = True
     jump parlorStart
-       
+
 label callCatherine:
     $ i = renpy.random.random()
     if i < 0.333:
@@ -145,7 +147,7 @@ label callCatherine:
         "I call, and Catherine picks up quickly."
     else:
         "It takes a while for Catherine to answer."
-    
+
     if 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1:
         if not call_ignored:
             jump answer_Catherine_morning_call
@@ -153,7 +155,7 @@ label callCatherine:
             jump answer_Catherine_ignored_call
     elif 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 2:
         jump answer_Catherine_afternoon_call2
-        
+
     c "Hi?"
     n "Hi! I was wondering if you'd like to set up a date?"
     c "When?"
@@ -179,7 +181,7 @@ label callCatherine:
     "I can barely wait."
     $ promises[(date_location, date_day)] = {("Catherine", "meet"): False}
     return
-    
+
 label Catherine_afternoon_call_ignored2:
     "For a few seconds, I can feel my wristband vibrate."
     "Seems Catherine called without giving me an opportunity to answer."
@@ -196,7 +198,7 @@ label Catherine_afternoon_call_ignored2:
             $ affection_modify('Catherine', -1)
             $ broken_up = True
     return
-                
+
 label Catherine_afternoon_call_ignored:
     "I feel someone's call on my wrist again."
     "Yeah, there's no question who it is."
@@ -215,7 +217,7 @@ label Catherine_afternoon_call_ignored:
             $ call_ignored = True
             "I wonder how long we can keep this up?"
     return
-                
+
 label Catherine_morning_call3:
     scene player_room
     $ unhandled = unhandled_forgotten_promises.pop('Catherine')
@@ -243,7 +245,7 @@ label Catherine_morning_call3:
             "I ignore her call, feeling kind of embarrassed."
     $ affection_modify('Catherine', -1)
     return
-    
+
 label Catherine_evening_call3:
     scene player_room
     "Catherine is calling again."
@@ -258,7 +260,7 @@ label Catherine_evening_call3:
             $ call_ignored = True
             "Please, Cat, just don't call me anymore..."
     return
-    
+
 label Catherine_calls_ignored:
     "Before I have time to respond, Cat starts talking."
     "She sounds like she's on the verge of tears."
@@ -271,7 +273,7 @@ label Catherine_calls_ignored:
     "And I'm left contemplating my life in silence."
     $ broken_up = True
     return
-                
+
 label Catherine_afternoon_call2:
     "My wristband signals another call from Catherine."
     "She just won't leave me alone, huh?"
@@ -283,7 +285,7 @@ label Catherine_afternoon_call2:
             $ call_ignored = True
             "I ignore the call, hoping that she will do likewise."
     return
-    
+
 label answer_Catherine_afternoon_call2:
     $ unhandled = unhandled_forgotten_promises.pop('Catherine')
     $ time = say_days(day-unhandled[1])
@@ -316,9 +318,9 @@ label answer_Catherine_afternoon_call2:
             n "I'm really sorry, Cat. It won't happen again."
             c "It better not. Or it's over."
     "I'm left listening to the beeping of the ended call."
-    
+
     return
-                
+
 label Catherine_morning_call1:
     scene player_room
     "I wake up to the vibrations of my wristband."
@@ -340,7 +342,7 @@ label Catherine_afternoon_call1:
     menu:
         "Answer":
             $ call_ignored = False
-            call answer_Catherine_ignored_call 
+            call answer_Catherine_ignored_call
         "Ignore":
             $ call_ignored = True
             "I click the ignore button again."
@@ -353,12 +355,12 @@ label Catherine_evening_call1:
     menu:
         "Answer":
             $ call_ignored = False
-            call answer_Catherine_ignored_call 
+            call answer_Catherine_ignored_call
         "Ignore":
             $ call_ignored = True
             "I click the ignore button and hope she doesn't call again."
     return
-    
+
 label answer_Catherine_morning_call:
     n "Hi there."
     $ call_ignored = False
@@ -384,7 +386,7 @@ label answer_Catherine_morning_call:
             promises[(location, day+1)] = {("Catherine", "meet"): False}
     "With that, she hangs up."
     return
-    
+
 label answer_Catherine_ignored_call:
     $ unhandled = unhandled_forgotten_promises.pop('Catherine')
     $ time = say_days(day-unhandled[1])
@@ -403,7 +405,7 @@ label answer_Catherine_ignored_call:
             promises[(location, day+1)] = {("Catherine", "meet"): False}
     "She hangs up."
     return
-                
+
 label .cat_question:
     menu:
         "Claim you didn't notice her call":
@@ -415,9 +417,9 @@ label .cat_question:
     c "Too busy playing DFO, I venture."
     n "C'mon, that's not fair."
     return
-    
+
 # Promises
-        
+
 label generic_promise_event:
     python:
         kept_promises = set()
@@ -441,10 +443,10 @@ label generic_promise_event:
         "I keep my [promise_pluralized] to [kept_people]."
 
     return
-    
 
-    
-    
+
+
+
 # Special Scenes, Catherine
 
 label sauna_accident:
@@ -477,12 +479,12 @@ label sauna_accident:
             n "I, uh, I am... I..."
             "Damn, I'm so sleepy I can barely put a coherent sentence together!"
             "Catherine seems at a loss for words as well."
-            call .Catherine_conversation 
+            call .Catherine_conversation
         "Take cover!":
             show cat surprise_down
             "I stumble to cover up my private parts!"
             "Catherine's looking at me, eyes agape."
-            call .Catherine_conversation 
+            call .Catherine_conversation
         "Run away!":
             $ affection_modify('Catherine', -1)
             "I run away as fast as I can!"
@@ -500,15 +502,15 @@ label sauna_accident:
                 "Inside the locker!":
                     "The locker looks just barely big enough."
                     "I cram myself in, and close the door just in time!"
-                    call .Catherine_investigation("through the slits in the door", "to check the lockers") 
+                    call .Catherine_investigation("through the slits in the door", "to check the lockers")
                     $ locker = True
                 "Under the benches!":
                     "I crawl under the bench just in time!"
-                    call .Catherine_investigation("up from here,", "and look under the benches") 
+                    call .Catherine_investigation("up from here,", "and look under the benches")
                 "Behind the column!":
                     "It's not much of a hiding place, but I need to be quick!"
                     "I hide behind the column just in time!"
-                    call .Catherine_investigation(", in the corner of my vision,", "near the column") 
+                    call .Catherine_investigation(", in the corner of my vision,", "near the column")
             "After Catherine has left, the absurdity of my sleep-addled reaction hits me."
             if locker:
                 "And as I try to leave the locker, I realize it's locked!"
@@ -538,7 +540,7 @@ label .Catherine_investigation(visibility, place):
     with moveoutright
     "I hold back a sigh of relief until she is no longer visible."
     return
-            
+
 label .Catherine_conversation:
     # Funny music here
     menu:
@@ -565,8 +567,8 @@ label .Catherine_conversation:
     hide cat_torso with moveoutleft
     "I storm out, all red, hoping that I don't meet anyone on the way out."
     return
-    
-    
+
+
 label Catherine_gym_broken_up:
     $ cash -= prices['gym']
     scene gym
@@ -632,15 +634,15 @@ label Catherine_gym_broken_up:
     "Although my arms sure are going to ache tomorrow..."
     $ fitness += 10
     return
-    
+
 label Catherine_gym_together:
     # Fight with the robot
     $ i = renpy.random.random()
-    
+
     $ cash -= prices['gym']
-    
+
     scene gym
-    
+
     "Upon arrival, I see that Catherine is already here, in full exercise mode."
     menu:
         "Talk to her":
@@ -720,7 +722,7 @@ label Catherine_gym_together:
         $ robot_focusing = "Nick"
         jump .react_phase
     return
-                
+
 # States: Nick in air, Cat not; Cat in air, Nick not; Both in air; Neither in air; Robot focusing on Nick, robot focusing on Catherine, robot stunned,
 # robot attacking
 # Act phase and react phase separate, choices controlled by state flags?
@@ -730,25 +732,25 @@ label .act_phase:
     menu:
         #Implement
         "Struggle to break free!" if nick_in_air and struggle_counter == 0:
-            call .struggle 
+            call .struggle
         "Struggle some more!" if nick_in_air and struggle_counter > 0:
-            call .struggle 
+            call .struggle
         "Attack!" if not nick_in_air:
-            call .attack 
+            call .attack
         "Tell Catherine to press the red button!" if robot_focusing == "Nick":
-            call .Catherine_press 
+            call .Catherine_press
         "Press the red button" if not nick_in_air and robot_focusing == "Catherine":
-            call .press 
+            call .press
         "Ask Catherine to distract it!" if robot_focusing == "Nick":
-            call .Catherine_distract 
+            call .Catherine_distract
         "Try to catch its attention!" if robot_focusing == "Catherine":
-            call .distract 
+            call .distract
     if victorious:
         jump .victory
     if cat_in_air:
-        call .Catherine_struggle 
+        call .Catherine_struggle
     jump .robot_act
-    
+
 label .struggle:
     $ struggle_counter += 1
     "I exert all my strength to break free of its grip!"
@@ -767,7 +769,7 @@ label .struggle:
         $ robot_focusing = "Nick"
         $ struggle_counter = 0
     return
-    
+
 label .Catherine_struggle:
     # Catherine attempts to break free
     "Catherine struggles heroically in the robot's grasp!"
@@ -780,7 +782,7 @@ label .Catherine_struggle:
         $ cat_in_air = False
     return
 
-    
+
 label .attack:
     if robot_focusing == "Catherine":
         "I've got to protect Catherine!" # "No way I'm gonna let you hurt Cat!"
@@ -802,7 +804,7 @@ label .attack:
         "Its red visor shifts ominously towards me."
         $ robot_focusing = "Nick"
     return
-        
+
 label .Catherine_press:
     n "Catherine, press the button, quick!"
     c "O-okay!" # Y-yes!
@@ -820,7 +822,7 @@ label .Catherine_press:
         "The robot does not have the time to react, and Cat manages to shut it down!"
         $ victorious = True
     return
-    
+
 label .press:
     "While the machine is concentrating on Catherine, I sneak up on it, attempting to press the power down button on its back."
     show cat
@@ -834,7 +836,7 @@ label .press:
         "Without giving the robot time to react, I shut it down!"
         $ victorious = True
     return
-    
+
 label .Catherine_distract:
     n "Catherine! Try to draw its attention!"
     show cat something2
@@ -845,18 +847,18 @@ label .Catherine_distract:
     "Catherine strikes one of the robot's arms, and it turns its head towards her."
     $ robot_focusing = "Catherine"
     return
-    
+
 label .distract:
     "I get closer to the robot, hoping to capture its attention."
     n "Hey, you pile of screws! Look here!"
     "It's visor turns to face me, and I feel shudders going down my spine."
     $ robot_focusing = "Nick"
     return
-        
+
 label .react_phase:
     menu:
         "Jump out of the way!" if robot_focusing == "Nick":
-            call .dodge("jump") 
+            call .dodge("jump")
         "Strike!" if robot_focusing == "Nick":
             with vpunch
             "I stomp on one of its arms right as it's about to grapple me!"
@@ -895,7 +897,7 @@ label .react_phase:
     jump .act_phase
 
 
-        
+
 label .dodge(method):
     $ attempt = NonUniformRandom( [("attempt", 1), ("try", 1)] ).pick()
     $ i = renpy.random.random()
@@ -912,7 +914,7 @@ label .dodge(method):
         "It's no use! The robot catches my leg and lifts me into the air!"
         $ nick_in_air = True
     return
-    
+
 label .robot_act:
 if not robot_stunned:
     if robot_focusing == "Catherine":
@@ -937,7 +939,7 @@ elif stun_counter < 1:
 else:
     $ stun_counter -= 1
 return
-    
+
 label .victory:
     play music "bgm/Hope(Ver1.00).ogg"
     show cat fuun
@@ -954,7 +956,7 @@ label .victory:
     $ affection_modify('Catherine', 2)
     $ fitness += 8
     return
-        
+
 label Catherine_running_together:
 
     scene running_track
@@ -1021,7 +1023,7 @@ label Catherine_running_together:
     $ affection_modify('Catherine', 1)
     $ fitness += 8
     return
-    
+
 label Catherine_study_together:
     # For now, assuming this happens at Cat's house, though I'd like the player to
     # be able to choose between that, the library and the parlor.
@@ -1037,7 +1039,7 @@ label Catherine_study_together:
     "After a time period which feels far longer than a minute, I begin to get worried."
     "She's not answering. That's very unusual. Normally we'd already be down to business by now."
     jump .atthedoor
-    
+
 label .atthedoor:
     menu:
         "Knock again":
@@ -1123,8 +1125,8 @@ label .atthedoor:
                     "She pushes me back to the corridor and closes the door behind her."
                     $ bat_noticed = 2
                     jump .gettingclothed
-                    
-                    
+
+
 label .gettingclothed:
     "I can hear her frantically search for clothing."
     c "Why didn't you knock? Eh, what am I gonna wear, no way... Weren't we supposed to meet at six?"
@@ -1160,7 +1162,7 @@ label .gettingclothed:
     with moveoutleft
     "Without giving me time to answer, she slides into the kitchen."
     jump .kitchen
-                   
+
 label .kitchen:
     c "Anyway, let's just get this started. Now, what should we drink?"
     "She starts going through the cupboards."
@@ -1240,7 +1242,7 @@ label .kitchen:
         "Geometry.":
             $ math_subject = 2
     jump .math_question1
-    
+
 label .math_question1:
     $ math_genius = False
     show cat wink_right
@@ -1252,13 +1254,13 @@ label .math_question1:
         jump .calculus1
     else:
         jump .geometry1
-        
+
 label .right_answer1:
     show cat smile
     c "Yeah, I guessed that one would be too easy for you."
     $ cat_mood += 1
     return
-    
+
 label .wrong_answer1:
     show cat fast_blink
     "Cat blinks."
@@ -1272,7 +1274,7 @@ label .right_answer2:
     "She looks a bit flustered."
     "What, you weren't expecting me to get it right?"
     return
-    
+
 label .wrong_answer2:
     show cat eyes_closed_smile
     c "This one's a bit more difficult, huh?"
@@ -1286,14 +1288,14 @@ label .right_answer3:
     c "Are you just really good at math or something?"
     $ math_genius = True
     return
-    
+
 label .wrong_answer3:
     show cat normal_downright
     c "Yeah, um, I think it goes like this..."
     "You're not certain yourself?"
     $ cat_mood += 1
     return
-    
+
 label .math_question2:
     show cat normal_down
     "Well then, how about this one?"
@@ -1303,7 +1305,7 @@ label .math_question2:
         jump .calculus2
     else:
         jump .geometry2
-    
+
 label .math_question3:
     show cat smile
     "Okay, here's a tough one."
@@ -1313,21 +1315,21 @@ label .math_question3:
         jump .calculus3
     else:
         jump .geometry3
-    
+
 label .probability1:
     c "You roll two normal, six-sided dice. What is the probability that the sum of their values is 11?"
     menu:
         "2/36":
-            call .right_answer1 
+            call .right_answer1
             jump .math_question2
         "11/36":
-            call .wrong_answer1 
-            call .probability1_explanation 
+            call .wrong_answer1
+            call .probability1_explanation
         "2/11":
-            call .wrong_answer1 
-            call .probability1_explanation 
+            call .wrong_answer1
+            call .probability1_explanation
     jump .interrupt
-        
+
 label .probability1_explanation:
     c "Your denominator is the total amount of possible dice combinations. For example, both first die and second die are ones, or the second one is a two or a three and so on."
     c "You can draw all the possibilities in a table like this."
@@ -1347,21 +1349,21 @@ label .probability1_explanation:
     show cat eyes_closed_smile
     c "I knew you'd get it!"
     return
-    
+
 label .probability2:
     c "You roll three dice. What is the probability that at least one of them is a 6?"
     menu:
         "3/6":
-            call .wrong_answer2 
-            call .probability2_explanation 
+            call .wrong_answer2
+            call .probability2_explanation
         "91/216":
-            call .right_answer2 
+            call .right_answer2
             jump .math_question3
         "215/216":
-            call .wrong_answer2 
-            call .probability2_explanation 
+            call .wrong_answer2
+            call .probability2_explanation
     jump .interrupt
-    
+
 label .probability2_explanation:
     show cat eyes_closed_smile
     c "The probability of one die coming up 6 is 1/6, and if you sum them together, you get 3/6."
@@ -1398,22 +1400,22 @@ label .probability2_explanation:
     show cat normal
     c "Essentially, you're calculating the probability of none of the dice coming up six, which is (5/6)^3, and taking the complement of that by subtracting from 1."
     n "That still sounds pretty complicated..."
-    
+
 label .probability3:
     c "In the Sherlock Holmes story 'The Adventure of the Six Napoleons,' there are six busts of Napoleon, one of which may conceal a priceless pearl."
     show cat wink_right
     c "The probability that one of the busts really does contain the pearl is 1/2. Five of the busts have been destroyed. What is the probability that there is a pearl inside the last one?"
     menu:
         "1/2":
-            call .wrong_answer3 
+            call .wrong_answer3
             call .probability3_explanation
         "1/12":
-            call .wrong_answer3 
-            call .probability3_explanation 
+            call .wrong_answer3
+            call .probability3_explanation
         "1/7":
-            call .right_answer3 
+            call .right_answer3
     jump .interrupt
-    
+
 label .probability3_explanation:
     show cat eyes_closed
     c "So, um, the probability that there's a pearl at all is 1/2, and there are six identical busts."
@@ -1469,21 +1471,21 @@ label .probability3_explanation:
     show cat eyes_closed_smile
     c "Well, that's why we're here, after all."
     return
-    
+
 label .calculus1:
     c "What is the derivative of x^2 + ln(x) relative to x?"
     menu:
         "2x + 1/x":
-            call .right_answer1 
+            call .right_answer1
             jump .math_question2
         "2x + e^x":
-            call .wrong_answer1 
-            call .calculus1_explanation 
+            call .wrong_answer1
+            call .calculus1_explanation
         "x^2*ln(x) + 2":
-            call .wrong_answer1 
-            call .calculus1_explanation 
+            call .wrong_answer1
+            call .calculus1_explanation
     jump .interrupt
-    
+
 label .calculus1_explanation:
     show cat normal_down
     c "This is just basic formulas. In a sum, you can differentiate the terms separately. So the answer is just D(x^2) + D(ln(x))."
@@ -1498,16 +1500,16 @@ label .calculus2:
     c "What is the minimum point of the parabola x^2 + x + 1?"
     menu:
         "(3/4, -1/2)":
-            call .wrong_answer2 
-            call .calculus2_explanation 
+            call .wrong_answer2
+            call .calculus2_explanation
         "(-1/2, 3/4)":
-            call .right_answer2 
+            call .right_answer2
             jump .math_question3
         "(0, 1)":
-            call .wrong_answer2 
-            call .calculus2_explanation 
+            call .wrong_answer2
+            call .calculus2_explanation
     jump .interrupt
-    
+
 label .calculus2_explanation:
     show cat eyes_closed
     c "The minimum of a continuous differentiable function like this is either at the ends of the interval being studied, or at the zeroes of the derivative."
@@ -1520,25 +1522,25 @@ label .calculus2_explanation:
     n "Uh-huh."
     c "So just plug in x = -1/2 to the original equation, and you get (-1/2)^2 + (-1/2) + 1 = 3/4. So the minimum point is (-1/2, 3/4)."
     return
-    
+
 label .calculus3:
     show cat fuun
     "She smiles fiendishly."
     c "What is the 2nd-degree Maclaurin polynomial for the function sin(x)?"
     menu:
         "1 + x + (x^2)/2":
-            call .wrong_answer3 
-            call .calculus3_explanation 
+            call .wrong_answer3
+            call .calculus3_explanation
         "x - (x^2)/2 + (x^4)/24":
-            call .wrong_answer3 
-            call .calculus3_explanation 
+            call .wrong_answer3
+            call .calculus3_explanation
         "x - (x^3)/6 + (x^5)/120":
             show cat surprise
             "Her expression melts into astonishment."
             c "W-what!?"
-            call .right_answer3 
+            call .right_answer3
     jump .interrupt
-    
+
 label .calculus3_explanation:
     show cat smile
     c "So as everybody knows, the nth-degree taylor polynomial for sin(x) is the sum of the terms (-1)^k * x^(2k+1) / (2k + 1)! as k goes from 0 to n."
@@ -1546,19 +1548,19 @@ label .calculus3_explanation:
     show cat eyes_closed_smile
     c "*Cough*... *cough*... Right, a very simple question indeed..."
     return
-    
+
 label .geometry1:
     c "You have a right-angled triangle with the hypotenuse of length 5 and one leg of length 3. What is the length of the remaining leg?"
     menu:
         "4":
-            call .right_answer1 
+            call .right_answer1
             jump .math_question2
         "34":
-            call .wrong_answer1 
-            call .geometry1_explanation 
+            call .wrong_answer1
+            call .geometry1_explanation
         "The square root of 34":
-            call .wrong_answer1 
-            call .geometry1_explanation 
+            call .wrong_answer1
+            call .geometry1_explanation
     jump .interrupt
 
 label .geometry1_explanation:
@@ -1571,7 +1573,7 @@ label .geometry1_explanation:
     c "Easy, right?"
     n "Maybe for you..."
     return
-    
+
 label .geometry2:
     c "In soccer, the circumference of the ball has to be between 68 and 70 cm."
     n "You play soccer?"
@@ -1587,16 +1589,16 @@ label .geometry2:
     show cat frown
     menu:
         "110\%":
-            call .wrong_answer2 
-            call .geometry2_explanation 
+            call .wrong_answer2
+            call .geometry2_explanation
         "9\%":
-            call .right_answer2 
+            call .right_answer2
             jump .math_question3
         "8\%":
-            call .wrong_answer2 
-            call .geometry2_explanation 
+            call .wrong_answer2
+            call .geometry2_explanation
     jump .interrupt
-    
+
 label .geometry2_explanation:
     show cat eyes_closed
     c "First think about what you want to calculate."
@@ -1616,7 +1618,7 @@ label .geometry2_explanation:
     c "Wasn't it though?"
     n "No. It was sarcasm."
     return
-    
+
 label .geometry3:
     c "Okay, how about this. What is the volume of the solid of revolution which is formed when the line f(x) = x, x goes from 0 to 2, rotates around the x-axis?"
     n "Does this even count as geometry!?"
@@ -1624,15 +1626,15 @@ label .geometry3:
     c "Heh, I take it you can't answer?"
     menu:
         "4*pi":
-            call .wrong_answer3 
-            call .geometry3_explanation 
+            call .wrong_answer3
+            call .geometry3_explanation
         "2":
-            call .wrong_answer3 
-            call .geometry3_explanation 
+            call .wrong_answer3
+            call .geometry3_explanation
         "8*pi/3":
-            call .right_answer3 
+            call .right_answer3
     jump .interrupt
-    
+
 label .geometry3_explanation:
     show cat tired
     c "So, uh, you're essentially integrating..."
@@ -1645,7 +1647,7 @@ label .geometry3_explanation:
     c "For each value of x, the area is A(x) = pi*x^2. Integrating gives pi/3 * x^3 plus a constant. Now just evaluate in the interval from 0 to 2 and you'll get 8*pi/3 as the answer."
     n "Yeesh, who is willing to study this sort of stuff?"
     return
-    
+
 label .interrupt:
     if water_heater_on:
         "A red light appears on Cat's device to signal that the water has been boiled."
@@ -1685,7 +1687,7 @@ label .interrupt:
         with moveinleft
         $ drink = 2
     jump .timeskip
-    
+
 label .timeskip:
     show cat eyes_closed
     python:
@@ -1708,7 +1710,7 @@ label .timeskip:
     else:
         "We consume loads of caffeine, but eventually we must acquiesce to the exhaustion."
     jump .DFO
-    
+
 label .DFO:
     show cat normal_downright
     show cat_torso green behind cat
@@ -1764,7 +1766,7 @@ label .DFO:
     elif cat_mood > 0:
         $ affection_modify('Catherine', 1)
     return
-    
+
 
 # Structure for the movie scene:
 # I wasted so much time... Genius (when procedurally generated)!
@@ -1794,11 +1796,11 @@ label Catherine_movie_scene:
     $ promises[('movies', day)][('Catherine', 'meet')] = True
     $ stress -= 2
     scene city_street
-    call .date_intro 
+    call .date_intro
     n "Anyway, let's go."
     "We arrive at the ticket booth."
     cashier "Yes? Which movie would you like to see?"
-    call .cashier 
+    call .cashier
     return
 
 label .cashier:
@@ -1835,20 +1837,20 @@ label .cashier:
                 "Hmm... Strange, I can't remember what he just said."
             $ seen_before_asked = True
             jump .cashier
-            
+
 label .payment:
     cashier "That will be 15 000 and 7 500 bits."
     # Check money status
-    call check_wallet 
+    call check_wallet
     jump .payment_menu
-    
+
 label .payment_menu:
     menu:
         "Pay for both." if not pay_both_tried:
             n "I'll pay for both."
             c "Nick, you don't need to..."
             n "It's fine, Catherine. Let me treat you to something for a change."
-            call pay(22500) 
+            call pay(22500)
             if not pay_successful:
                 n "Drat. I don't have enough money."
                 $ pay_both_tried = True
@@ -1856,7 +1858,7 @@ label .payment_menu:
         "Pay for yourself." if not pay_yourself_tried:
             "We both pay for the tickets ourselves."
             "It would have been more chivalrous to pay for Cat's ticket, but I need to think of my wallet as well."
-            call pay(15000) 
+            call pay(15000)
             if not pay_successful:
                 n "I don't even have enough money for this!?"
                 $ pay_yourself_tried = True
@@ -1894,7 +1896,7 @@ label .findseats:
             n "It's more peaceful in the back, I reckon."
             $ seating = "back"
     "We walk over to the [seating] of the theatre and take our seats."
-    
+
     if seating == "back":
         "You can view the whole theatre pretty easily from here. There's some teenagers to the right..."
         "A couple like us on the middle seats..."
@@ -1908,9 +1910,9 @@ label .findseats:
         "I can faintly hear teenagers talking and a couple of lovebirds whispering behind us."
         "I'm sure their voices will be drowned out by the loudspeakers."
         "There's a parent with some twerps who look too young for this movie, sitting a bit further away to the side."
-    
+
     jump .moviestart
-    
+
 label .moviestart:
     scene movie_theatre dark with Dissolve(10.0)
     "I sit back to relax as the movie begins."
@@ -1949,7 +1951,7 @@ label .moviestart:
             "I keep my arm around her, and she whispers to the air."
             c "So beatiful..."
             "So it was the scene after all..."
-        
+
             # menu:
                 # "Keep holding her.":
                     # "I keep my arm around her, and she whispers to the air."
@@ -1984,13 +1986,13 @@ label .moviestart:
                 "I take my hand out of my pocket. You never know when it might turn out useful."
     jump .middleschooltalk
     return
-    
+
 label .middleschooltalk:
     n "It's not like you to cry so openly. Was it really that touching?"
     c "What do you mean, it's not like me? I cried all the time in middle school, didn't I?"
     c "Yeah, now that you mention it..."
     jump .flashback
-    
+
 label .flashback:
     scene hallway with pixellate
     "I sift through a current of hazy memories coming back to me, thinking back to the first time we met."
@@ -1998,7 +2000,7 @@ label .flashback:
     "We hadn't really talked to each other or anything. It was recess, and my usual group of friends was away for some reason."
     "That's when I saw Catherine."
     "I'd like to say something cliched, like she was amazingly beautiful and I fell in love with her at first sight."
-    "But that's not really the case. She wasn't a very good-looking kid back then." 
+    "But that's not really the case. She wasn't a very good-looking kid back then."
     "She wore thick glasses and obviously didn't do much sports."
     "Anyway, it wasn't her appearance which drew my attention. It was the girls bullying her."
     "I think they were teasing her about her glasses, or something equally stupid."
@@ -2007,24 +2009,24 @@ label .flashback:
         "So I went to help her.":
             "Being the strongheaded fool I was, I went to tell those idiots to lay off."
             "They started spreading some bad rumours about me, but it's not like I cared."
-            call .friends 
+            call .friends
         "So I cheered her up afterwards.":
             "Well, I was actually too timid to do anything about it at that specific moment."
             "But later that day, I saw her crying by a tree, so I went to cheer her up, telling her to ignore those idiots."
-            call .friends 
+            call .friends
         "So I went to join the bullies":
             $ affection_modify('Catherine', -1)
             "So being the total jerkass I used to be, I went to join in on the fun."
             "Yeah, we really hated each other after that. I've no idea how we ended up together."
             # "But I felt really sorry after she started crying, and secretly went to her to apologize, begging for her forgiveness."
-            # call .friends 
+            # call .friends
     jump .opinion
-    
+
 label .friends:
     "Cat and I started to spend a lot of time together after that. I had quite a lot of friends, and she joined our group as an equal."
     "Despite not really being into the sort of nerdy stuff we liked, she seemed a lot happier after that."
     return
-    
+
 label .opinion:
     scene movie_theatre dark with pixellate
     "Cat looks into my eyes."
@@ -2050,7 +2052,7 @@ label .opinion:
             c "Thanks, Nick. We should do things together more often."
             "With one last hug, we go our separate ways."
     return
-    
+
 label .kiss:
     "She closes her eyes expectantly."
     $ cat_mood += 1
@@ -2059,7 +2061,7 @@ label .kiss:
             "In the darkness of the movie theatre, I press my mouth on her soft, slightly open lips."
         "Hesitate.":
             "Since I won't make the first move, she does, pressing her rosy lips upon mine."
-    
+
     if seating == "front":
         "The parent sitting next to us probably doesn't appreciate our wanton display of carnal desires."
         "But it's really their own fault for bringing kids to a movie like this in the first place."
@@ -2067,7 +2069,7 @@ label .kiss:
         "The couple next to us is kissing as well, and I can hear the teenagers variously cheering and booing in the background."
     else:
         "The teens next to us are giggling and whispering to each other, but I do my best to ignore them."
-    
+
     scene movie_theatre with Dissolve(4.0)
     "After a long kiss, we move out of the theatre."
     scene city_street with dissolve
@@ -2084,7 +2086,7 @@ label .kiss:
     elif cat_mood < 0:
         $ affection_modify('Catherine', -1)
     return
-    
+
 label .date_intro:
     "As I arrive at the movie theatre, I see that Catherine is already here."
     show cat_torso orange
@@ -2093,7 +2095,7 @@ label .date_intro:
     n "Sorry, have you been waiting for long?"
     c "N-no, just a short while."
     return
- 
+
 label Catherine_broken_up_mall:
     if act == 'mall':
         scene mall
@@ -2149,7 +2151,7 @@ label Catherine_broken_up_mall:
                     c "... That's good to hear."
             jump .ending
     return
-        
+
 label .sorry:
     n "Catherine, I'm sorry. I didn't mean to hurt you."
     n "Please forgive me."
@@ -2189,7 +2191,7 @@ label .sorry:
             jump .guydescription
         "Well, I've got a new girlfriend too!":
             jump .newgirlfriend
-            
+
 label .newgirlfriend:
     n "W-well, you know what? I've found a new girlfriend too!"
     show cat surprise
@@ -2284,7 +2286,7 @@ label .guydescription:
     show cat angry
     c "This is serious, Nick!"
     return
-    
+
 label .interrupt:
     show cat at left, flip
     show cat_torso at left, flip behind cat
@@ -2312,7 +2314,7 @@ label .interrupt:
             with moveoutleft
     return
 
-            
+
 label .ending:
     menu:
         "Kiss her.":
@@ -2370,7 +2372,7 @@ label .ending:
             hide cat_torso
             with moveoutleft
     return
-        
+
 label .loveyou:
     c "Nick, I..."
     # If she really likes you, she'll be willing to try again
@@ -2378,7 +2380,7 @@ label .loveyou:
     hide cat
     hide cat_torso
     with moveoutleft
-    
+
 # Code for handling Bioware-style Hub-and-Spokes conversation in an elegant (or "elegant") way
 
 label HubMenu(calling_label, hide_if_last_asked, list_of_choices, exit_choice = False):
@@ -2387,7 +2389,7 @@ label HubMenu(calling_label, hide_if_last_asked, list_of_choices, exit_choice = 
     # will be shown after the player has tried the choice once. The rep-alt should provide a short recap of the earlier discussion.
     # Check the examples above, it'll probably be clearer.
     # Supports up to 6 choices, but it's easy to extend.
-    
+
     menu:
 
         "[list_of_choices[0][0]]" if len(list_of_choices) >= 1 and (not hide_if_last_asked or last_seen != list_of_choices[0][1] ) and not list_of_choices[0][1] in hub_seen_labels:
@@ -2397,7 +2399,7 @@ label HubMenu(calling_label, hide_if_last_asked, list_of_choices, exit_choice = 
         "[list_of_choices[1][0]]" if len(list_of_choices) >= 2 and (not hide_if_last_asked or last_seen != list_of_choices[0][1] ) and list_of_choices[0][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[1][1]
             $ last_seen = list_of_choices[0][1]
-            
+
         "[list_of_choices[2][0]]" if len(list_of_choices) >= 3 and (not hide_if_last_asked or last_seen != list_of_choices[2][1] ) and not list_of_choices[2][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[2][1]
             $ last_seen = list_of_choices[2][1]
@@ -2405,7 +2407,7 @@ label HubMenu(calling_label, hide_if_last_asked, list_of_choices, exit_choice = 
         "[list_of_choices[3][0]]" if len(list_of_choices) >= 4 and (not hide_if_last_asked or last_seen != list_of_choices[2][1] ) and list_of_choices[2][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[3][1]
             $ last_seen = list_of_choices[2][1]
-            
+
         "[list_of_choices[4][0]]" if len(list_of_choices) >= 5 and (not hide_if_last_asked or last_seen != list_of_choices[4][1] ) and not list_of_choices[4][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[4][1]
             $ last_seen = list_of_choices[4][1]
@@ -2413,7 +2415,7 @@ label HubMenu(calling_label, hide_if_last_asked, list_of_choices, exit_choice = 
         "[list_of_choices[5][0]]" if len(list_of_choices) >= 6 and (not hide_if_last_asked or last_seen != list_of_choices[4][1] ) and list_of_choices[4][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[5][1]
             $ last_seen = list_of_choices[4][1]
-            
+
         "[list_of_choices[6][0]]" if len(list_of_choices) >= 7 and (not hide_if_last_asked or last_seen != list_of_choices[6][1] ) and not list_of_choices[6][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[6][1]
             $ last_seen = list_of_choices[6][1]
@@ -2421,7 +2423,7 @@ label HubMenu(calling_label, hide_if_last_asked, list_of_choices, exit_choice = 
         "[list_of_choices[7][0]]" if len(list_of_choices) >= 8 and (not hide_if_last_asked or last_seen != list_of_choices[6][1] ) and list_of_choices[6][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[7][1]
             $ last_seen = list_of_choices[6][1]
-            
+
         "[list_of_choices[8][0]]" if len(list_of_choices) >= 9 and (not hide_if_last_asked or last_seen != list_of_choices[8][1] ) and not list_of_choices[8][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[8][1]
             $ last_seen = list_of_choices[8][1]
@@ -2429,7 +2431,7 @@ label HubMenu(calling_label, hide_if_last_asked, list_of_choices, exit_choice = 
         "[list_of_choices[9][0]]" if len(list_of_choices) >= 10 and (not hide_if_last_asked or last_seen != list_of_choices[8][1] ) and list_of_choices[8][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[9][1]
             $ last_seen = list_of_choices[8][1]
-            
+
         "[list_of_choices[10][0]]" if len(list_of_choices) >= 11 and (not hide_if_last_asked or last_seen != list_of_choices[10][1] ) and not list_of_choices[10][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[10][1]
             $ last_seen = list_of_choices[10][1]
@@ -2437,9 +2439,9 @@ label HubMenu(calling_label, hide_if_last_asked, list_of_choices, exit_choice = 
         "[list_of_choices[11][0]]" if len(list_of_choices) >= 12 and (not hide_if_last_asked or last_seen != list_of_choices[10][1] ) and list_of_choices[10][1] in hub_seen_labels:
             $ target = calling_label + "." + list_of_choices[11][1]
             $ last_seen = list_of_choices[10][1]
-         
-        # Exit choice 
+
+        # Exit choice
         "[exit_choice[0]]" if exit_choice:
             $ target = calling_label + "." + exit_choice[1]
-            
+
     jump expression target

@@ -1,5 +1,3 @@
-init:
-    image fx slash = "images/fx_slash.png"
 
 label Ruins_battle1:
     $ spear_broken = False
@@ -333,9 +331,9 @@ label .act_Silvia:
             s "It's raining daggers, right?"
             "She leaps into the air."
             "The rider realizes something is off and..."
-            show fx_daggers
+            show fx daggers
             pause 0.6
-            hide fx_daggers
+            hide fx daggers
             $ i = renpy.random.random()
             if i <= 0.3:
                 hide enemy_chicken with moveoutright
@@ -373,9 +371,9 @@ label .act_Silvia:
             s "Your wish..."
             "She leaps and disappears into thin air, appearing right behind the rider!"
             s "... is my command!"
-            show fx_daggers at flip
+            show fx daggers at flip
             pause 0.15
-            hide fx_daggers at flip
+            hide fx daggers at flip
             $ i = renpy.random.random()
             if i <= 0.3:
                 "However, the rider barely manages to dodge her nefarious strike."
