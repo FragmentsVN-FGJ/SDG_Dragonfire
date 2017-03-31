@@ -4,6 +4,8 @@ init:
     $ mp_costs = {'Light Barrier': 10, 'Curing Light': 10, 'Furious Strike': 20, 'Blade Sphere Control': 30, 'Hail of Daggers': 30, "Poisoned Blade": 20, "Depths of Slumber": 30}
     $ max_hp = {'Nick': 100, 'Aerith': 100, 'Silvia': 100, 'Rider':70}
     $ max_mp = {'Nick': 100, 'Aerith': 100, 'Silvia': 100}
+    $ current_hp = {'Nick': max_hp['Nick'], 'Aerith': max_hp['Aerith'], 'Silvia': max_hp['Silvia'], 'Rider': max_hp['Rider']}
+    $ current_mp = {'Nick': max_mp['Nick'], 'Aerith': max_mp['Aerith'], 'Silvia': max_mp['Silvia']}
     $ idtolabel = {}
     $ light_barrier_active = {}
     $ poison_counter = {}
@@ -713,7 +715,7 @@ label ask_Aerith_to_cast(technique_name, target_desc, target):
         #call usetechnique('Aerith', technique_name, target)
         if technique_name == "Curing Light":
             call CuringLight("Aerith", target)
-            $ stats_frame(target, 90, current_hp[target], max_hp[target])
+            #$ stats_frame(target, 90, current_hp[target], max_hp[target])
         elif technique_name == "Light Barrier":
             call LightBarrier("Aerith", target)
         hide air

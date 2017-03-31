@@ -44,8 +44,6 @@ label Ruins_battle1:
     $ victorious = False
     $ playerparty = ["Nick", "Aerith", "Silvia"]
     $ playerdeath = False
-    $ current_hp = {'Nick': max_hp['Nick'], 'Aerith': max_hp['Aerith'], 'Silvia': max_hp['Silvia'], 'Rider': max_hp['Rider']}
-    $ current_mp = {'Nick': max_mp['Nick'], 'Aerith': max_mp['Aerith'], 'Silvia': max_mp['Silvia']}
     $ target_list = ["Rider"]
     $ nick_acted = False
     show screen hp_window(playerparty, target_list, current_hp, current_mp)
