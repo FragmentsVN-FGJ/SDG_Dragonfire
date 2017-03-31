@@ -2,7 +2,7 @@ init:
     $ event("RuinsStart", "act == 'ruins'", priority=20)
 
     $ mp_costs = {'Light Barrier': 10, 'Curing Light': 10, 'Furious Strike': 20, 'Blade Sphere Control': 30, 'Hail of Daggers': 30, "Poisoned Blade": 20, "Depths of Slumber": 30}
-    $ max_hp = {'Nick': 100, 'Aerith': 100, 'Silvia': 100}
+    $ max_hp = {'Nick': 100, 'Aerith': 100, 'Silvia': 100, 'Rider':70}
     $ max_mp = {'Nick': 100, 'Aerith': 100, 'Silvia': 100}
     $ idtolabel = {}
     $ light_barrier_active = {}
