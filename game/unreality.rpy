@@ -10,7 +10,7 @@ define mv = Character("Synthetic voice")
 
 label smith_call1:
     show player_room gradient_map
-    play music "bgm/EnterNewLife.mp3"
+    play music bgm_cheerful
     "Someone is calling."
     "It's not an ordinary call, though."
     "An encrypted call, sent through Signal."
@@ -56,11 +56,11 @@ label smith_call1:
     mv "So. Five hundred grand, Valentine's day. Unless you want a present you'll never forget."
     "He hangs up."
     "I'm on my bed, seated in a fetal position. And I think, think, think, too shocked to even cry."
-    play music "bgm/hope(Ver1.00).ogg"
+    play music bgm_main
     return
 
 label smith_call2:
-    play music "bgm/EnterNewLife.mp3"
+    play music bgm_cheerful
     scene player_room gradient_map
     "My wristband is vibrating."
     "It's not Catherine. A call through signal."
@@ -84,11 +84,11 @@ label .answer:
     mv "She good in bed? I'll find out."
     n "You f-"
     "I'm left seething in rage as he hangs up."
-    play music "bgm/hope(Ver1.00).ogg"
+    play music bgm_main
     return
 
 label ending_for_now:
-    play music "bgm/EnterNewLife.mp3"
+    play music bgm_cheerful
     scene player_room gradient_map
     "My wristband vibrates, and I shudder."
     "It's another call through Signal. I didn't get the money in time."
@@ -170,7 +170,7 @@ label ending_for_now:
 
 label madman:
     scene city_street
-    play music "bgm/EnterNewLife.mp3"
+    play music bgm_cheerful
     "It's raining."
     "We're making our way back to Catherine's apartment."
     show cat_torso orange at left
@@ -234,7 +234,7 @@ label .luxphoros:
     scene city_street gradient_map with dissolve
     show cat_torso orange at closeup
     show cat not_normal at closeup
-    play music "bgm/wrong.wav"
+    play music bgm_scary
     "I look in her eyes, and I can see that something is very wrong here."
     "Am I... hallucinating? Why doesn't she look like a human anymore?"
     c "You shouldn't act like that, Nicholas."
@@ -247,7 +247,7 @@ label .luxphoros:
     show cat eyes_closed_smile at closeup
     c "Okay?"
     "W-what the hell does she mean, okay...?"
-    play music "bgm/hope(Ver1.00).ogg"
+    play music bgm_main
     return
 
 label retro_message:
@@ -259,7 +259,7 @@ label retro_message:
     "There's no date. Maybe they're really old."
     "Some of these names are really weird, anyway. Like the last one is just 'HER'."
     scene arcade gradient_map with dissolve
-    play music "bgm/wrong.wav"
+    play music bgm_scary
     "I blink as I take a closer look at the rest of the names."
     "Wait a minute."
     "These aren't names."
@@ -270,7 +270,7 @@ label retro_message:
     "Is it a coincidence? Am I, am I just imagining it?"
     scene city_street gradient_map with dissolve
     "I leave quickly, and as I walk the night streets, I can't help but feel I am being watched."
-    play music "bgm/hope(Ver1.00).ogg"
+    play music bgm_main
     return
 
 label at_the_bar_once_again:
@@ -281,7 +281,7 @@ label at_the_bar_once_again:
     "I feel a bit sick. Are those drugs really messing with my head that much?"
     "I need to stop this. It's not healthy. It's not..."
     "My nausea grows, and I move into the bathroom, more to check on my on reflection than anything else."
-    play music "bgm/buzz.wav"
+    play music bgm_buzz
     "I do look a bit pale. And my eyes are bloodshot, perhaps from a lack of sleep."
     "I splash my face with cold water, hoping to regain my bearings."
     "Just me and my reflection, watching each other in silence."
@@ -308,7 +308,7 @@ label at_the_bar_once_again:
     "It was definitely meant for me. Who else could it be for?"
     "My pace gradually quickens to a sprint, and I run, back home, back to safety, away from all this..."
     "... Insanity!"
-    play music "bgm/hope(Ver1.00).ogg"
+    play music bgm_main
     jump events_skip_period
     return
 
@@ -316,7 +316,7 @@ label truck:
     scene city_street
     "As I'm walking home, I'm struck by the beauty of the weather."
     "It sure is nice and cool, the evening air. I close my eyes, breathe it in and let it rejuvenate me."
-    play music "bgm/wrong.wav"
+    play music bgm_scary
     "As I open my eyes, I realize something strange."
     "I don't remember getting here. I was over there a moment ago."
     "Furthermore, this is no time to be in the middle of the road...!"
@@ -327,7 +327,7 @@ label truck:
     show player_room with dissolve
     "I awaken screaming. It was... a dream? A nightmare? None of that... happened?"
     "It felt so real... I stare at my hand, trying to ensure its authenticity."
-    play music "bgm/hope(Ver1.00).ogg"
+    play music bgm_main
     "I'm glad to be alive, at least."
     "Still disoriented, I begin to make breakfast."
     $ truck_handled = False
@@ -347,7 +347,7 @@ label truck_after:
     "Before going to sleep, I browse through the news stories for the day."
     "It's mostly the usual click-bait. Nothing too interesting."
     "One story does catch my attention, though."
-    play music "bgm/wrong.wav"
+    play music bgm_scary
     scene player_room gradient_map with dissolve
     "'Local man hit by truck: manufacturers blame a bug in the mapping system'"
     "I click on the story to read more. Someone was hit by a self-driving truck earlier today."
@@ -357,6 +357,6 @@ label truck_after:
     "His clothes! Why does he wear the same clothes!?"
     "I close the browser. I just can't take this anymore!"
     "I experience great difficulty falling asleep that night, tormented by visions of approaching headlights..."
-    play music "bgm/hope(Ver1.00).ogg"
+    play music bgm_main
     scene black with Dissolve(2.0)
     return

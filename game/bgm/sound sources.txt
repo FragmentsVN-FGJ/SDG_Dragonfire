@@ -35,3 +35,5 @@ Sheathe sword sound:
 	SFX_Raise_Shield.mp3
 	CC0
 	https://www.freesound.org/people/mooseranger/sounds/170715/
+
+Sources for the rest of the sounds currently unknown.

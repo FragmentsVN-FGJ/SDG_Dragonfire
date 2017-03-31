@@ -1,37 +1,3 @@
-init:
-    define sfx_battlecry = "bgm/SFX_battlecry.mp3"
-    define sfx_battlecry_f = "bgm/SFX_battlecry_f.mp3"
-    define sfx_battlehorn = "bgm/SFX_Battlehorn_sinister.mp3"
-    define sfx_fire = "bgm/SFX_fire.mp3"
-    define sfx_running = "bgm/SFX_Footsteps_grass.mp3"
-    define sfx_potion = "bgm/SFX_Drink_potion.mp3"
-    define sfx_heal= "bgm/SFX_Heal_regen.mp3"
-    define sfx_shield = "bgm/SFX_Raise_Shield.mp3"
-    define sfx_collapse = "bgm/SFX_Rock_Collapse.mp3"
-    define sfx_thump = "bgm/SFX_Rock_Thump.mp3"
-    define sfx_block = "bgm/SFX_Hammer_hit_2.mp3"
-    define sfx_critical = "bgm/SFX_Sword_hit_flesh.mp3"
-    define sfx_critical_short = "bgm/SFX_Sword_hit_flesh_short.mp3"
-    define sfx_hit = "bgm/SFX_Sword_hit.mp3"
-    define sfx_hit_2 = "bgm/SFX_Sword_hit_2.mp3"
-    define sfx_miss = "bgm/SFX_Sword_slash_8.mp3"
-    define sfx_dagger = "bgm/SFX_Sword_hit_armor.mp3"
-
-    define sfx_grunt_1 = "bgm/SFX_Grunt_1.mp3"
-    define sfx_grunt_2 = "bgm/SFX_Grunt_2.mp3"
-    define sfx_grunt_3 = "bgm/SFX_Grunt_3.mp3"
-    define sfx_grunt_4 = "bgm/SFX_Grunt_4.mp3"
-    define sfx_grunt_5 = "bgm/SFX_Grunt_5.mp3"
-    define sfx_grunt_6 = "bgm/SFX_Grunt_6.mp3"
-    define sfx_grunt_7 = "bgm/SFX_Grunt_7.mp3"
-    define sfx_grunt_8 = "bgm/SFX_Grunt_8.mp3"
-    define sfx_grunt_9 = "bgm/SFX_Grunt_9.mp3"
-    define sfx_grunt_10 = "bgm/SFX_Grunt_angry_2.mp3"
-    define sfx_grunt_1_f = "bgm/SFX_Grunt_1_f.mp3"
-    define sfx_grunt_4_f = "bgm/SFX_Grunt_4_f.mp3"
-    define sfx_grunt_5_f = "bgm/SFX_Grunt_5_f.mp3"
-    define sfx_death_1 = "bgm/SFX_Grunt_pain_1.mp3"
-    define sfx_death_2 = "bgm/SFX_Grunt_pain_2.mp3"
 
 label Ruins_battle1:
     $ spear_broken = False
@@ -84,7 +50,7 @@ label Ruins_battle1:
         yalign 1.0
         xalign 0.9
         linear 1.0 xalign 0.6
-    play music "bgm/Battle1.wav"
+    play music bgm_battle
     show enemy_chicken normal at wigglemiddle
     "The fight rages on for a while, and we manage to finish off two of the warriors."
     "One more to go!"
@@ -916,6 +882,6 @@ label .victorious:
         np "Sure it did. Well, let's move on."
         show sil normal
     hide screen hp_window
-    play music "bgm/LanayruDesert.mp3"
+    play music bgm_desert
     jump Ruins_courtyard_menu
     return

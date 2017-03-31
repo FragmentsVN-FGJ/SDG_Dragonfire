@@ -75,6 +75,55 @@ init:
         pause 0.5
         linear 1.0 xalign -10.0
 
+
+    define bgm_battle = "bgm/BGM_Battle_Encounter.mp3" # changed from Battle1.wav
+    define bgm_battle_loop = "bgm/BGM_Battle_Zone_Loop.mp3"
+    define bgm_cheerful = "bgm/BGM_Cheerful.mp3" # changed from EnterNewLife.mp3
+    define bgm_derp_loop = "bgm/BGM_Dumb_Loop.mp3" # changed from fanfare.mp3
+    define bgm_dungeon = "bgm/BGM_Dungeon_Ambience.mp3"
+    define bgm_sad_loop = "bgm/BGM_Melancholy_Loop.mp3"
+    define bgm_main = "bgm/BGM_Piano_Cinematic.mp3" # changed from hope(ver1.00).ogg
+    define bgm_loop = "bgm/BGM_Simple_Drums_Loop.mp3"
+    define bgm_scary = "bgm/BGM_Trouble.mp3" # changed from wrong.wav
+    #kept ones
+    define bgm_buzz = "bgm/buzz.wav" #TODO change into original unless it's CC0 or something??
+    define bgm_desert = "bgm/LanayruDesert.mp3" #TODO change into original song?
+
+
+    define sfx_battlecry = "bgm/SFX_battlecry.mp3"
+    define sfx_battlecry_f = "bgm/SFX_battlecry_f.mp3"
+    define sfx_battlehorn = "bgm/SFX_Battlehorn_sinister.mp3"
+    define sfx_fire = "bgm/SFX_fire.mp3"
+    define sfx_running = "bgm/SFX_Footsteps_grass.mp3"
+    define sfx_potion = "bgm/SFX_Drink_potion.mp3"
+    define sfx_heal= "bgm/SFX_Heal_regen.mp3"
+    define sfx_shield = "bgm/SFX_Raise_Shield.mp3"
+    define sfx_collapse = "bgm/SFX_Rock_Collapse.mp3"
+    define sfx_thump = "bgm/SFX_Rock_Thump.mp3"
+    define sfx_block = "bgm/SFX_Hammer_hit_2.mp3"
+    define sfx_critical = "bgm/SFX_Sword_hit_flesh.mp3"
+    define sfx_critical_short = "bgm/SFX_Sword_hit_flesh_short.mp3"
+    define sfx_hit = "bgm/SFX_Sword_hit.mp3"
+    define sfx_hit_2 = "bgm/SFX_Sword_hit_2.mp3"
+    define sfx_miss = "bgm/SFX_Sword_slash_8.mp3"
+    define sfx_dagger = "bgm/SFX_Sword_hit_armor.mp3"
+
+    define sfx_grunt_1 = "bgm/SFX_Grunt_1.mp3"
+    define sfx_grunt_2 = "bgm/SFX_Grunt_2.mp3"
+    define sfx_grunt_3 = "bgm/SFX_Grunt_3.mp3"
+    define sfx_grunt_4 = "bgm/SFX_Grunt_4.mp3"
+    define sfx_grunt_5 = "bgm/SFX_Grunt_5.mp3"
+    define sfx_grunt_6 = "bgm/SFX_Grunt_6.mp3"
+    define sfx_grunt_7 = "bgm/SFX_Grunt_7.mp3"
+    define sfx_grunt_8 = "bgm/SFX_Grunt_8.mp3"
+    define sfx_grunt_9 = "bgm/SFX_Grunt_9.mp3"
+    define sfx_grunt_10 = "bgm/SFX_Grunt_angry_2.mp3"
+    define sfx_grunt_1_f = "bgm/SFX_Grunt_1_f.mp3"
+    define sfx_grunt_4_f = "bgm/SFX_Grunt_4_f.mp3"
+    define sfx_grunt_5_f = "bgm/SFX_Grunt_5_f.mp3"
+    define sfx_death_1 = "bgm/SFX_Grunt_pain_1.mp3"
+    define sfx_death_2 = "bgm/SFX_Grunt_pain_2.mp3"
+
 init python:
     credits = ('Script', 'MagusDei'), ('Sprites and hand-drawn backgrounds', 'Qazhax'), ('Background images', 'Snehadri'), ('Programming', 'MagusDei'), ('Programming', 'Qazhax'), ('Logo', 'John Smith'), ('Future music and SFX', 'xZidene'), ('Dungeon and MMO design', 'Bahafyr')
     credits_s = "{size=80}Credits\n\n"
@@ -311,7 +360,7 @@ label start:
     # The script here is run before any event.
 
     # Battle music
-    play music "bgm/Battle1.wav"
+    play music bgm_battle
 
     n "Damnit!"
 
@@ -737,7 +786,7 @@ label WeaselRetreat:
 
 label WeaselVictory:
 
-    play music "bgm/fanfare.mp3"
+    play music bgm_derp_loop
 
     hide air
 
@@ -799,7 +848,7 @@ label WeaselVictory:
     return
 
 label RoomDescription:
-    play music "bgm/buzz.wav"
+    play music bgm_buzz
 
     scene player_room with dissolve
 
@@ -821,7 +870,7 @@ label RoomDescription:
     nvlNarrator "Plebs."
     nvlNarrator "I detach the treadmill's harness from my waist, proceeding to hop off."
     nvl clear
-    play music "bgm/hope(Ver1.00).ogg"
+    play music bgm_main
     scene bg_vr with dissolve
     nvlNarrator "After the natural disorientation and nausea of entering the bleaker tonalities of reality has passed away, I place the HMD on the floor."
     nvlNarrator "The headset is brand new, with fresnel lens and dual 8k-screens providing a 210-degree field of view at 120 frames per second."
@@ -882,7 +931,7 @@ label RoomDescription:
     nvl clear
     window show
 
-    play music "bgm/wrong.wav"
+    play music bgm_scary
 
     nvlNarrator "My dreams are uneasy that night."
     nvlNarrator "I am lying on the floor of my apartment."
@@ -902,7 +951,7 @@ label RoomDescription:
 
     nvl clear
 
-    play music "bgm/hope(Ver1.00).ogg"
+    play music bgm_main
 
     nvlNarrator "My eyes blink open as the timed lights in my room reach their brightest setting."
     nvlNarrator "For a moment, I just lie in bed, doing my most to calm down."

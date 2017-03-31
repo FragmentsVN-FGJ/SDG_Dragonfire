@@ -16,9 +16,9 @@ init:
     $ event("Catherine_parlor", "act == 'parlor' and (act, day) in promises.keys()", event.only(), event.once(), priority=5)
 
     $ event("Catherine_movie_scene", "act == 'movies' and (act, day) in promises.keys()", event.once(), priority=5)
-    
+
     $ event("generic_promise_event", "(act, day) in promises.keys()", priority=10)
-    
+
     $ event("Catherine_house_calls_ignored1", "act == 'cathouse' and call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] == 1", event.only(), priority=100)
     $ event("Catherine_house_calls_ignored2", "act == 'cathouse' and call_ignored and 'Catherine' in unhandled_forgotten_promises.keys() and unkept_promises_personal_counter['Catherine'] >= 2")
 
@@ -703,7 +703,7 @@ label Catherine_gym_together:
     "He plays with the settings of the robot, and it sprouts two extra arms and legs!"
     jack "Ready... set... go!"
     "Jack recedes into the background as the robot springs to life!"
-    play music "bgm/Battle1.wav"
+    play music bgm_battle
     "Its red visor turns from target to target, finally locking onto..."
     $ cat_in_air = False
     $ nick_in_air = False
@@ -941,7 +941,7 @@ else:
 return
 
 label .victory:
-    play music "bgm/Hope(Ver1.00).ogg"
+    play music bgm_main
     show cat fuun
     show cat_torso green behind cat
     with moveinright
@@ -1056,7 +1056,7 @@ label .atthedoor:
             "It's kind of bad-mannered to just waltz in like this, but I'm sure she won't mind if I explain it to her afterwards."
             "I turn the key in the lock and walk into her apartment."
             scene dirty_room_1
-            play music "bgm/wrong.wav"
+            play music bgm_scary
             "There's definitely something going on here."
             "Her shoes are still in the cabinet, so she must be inside."
             "But she's nowhere to be seen. There's a quiet racket coming from the door to the right, which is connected to her bedroom."
@@ -1089,7 +1089,7 @@ label .atthedoor:
                     n "Is... is someone in there?"
                     "For a moment, the sound goes quiet."
                     c "N-Nick? Uh, just stay there for a while!"
-                    play music "bgm/Hope(Ver1.00).ogg"
+                    play music bgm_main
                     "She closes the door to her bedroom, and I can hear her going all around the room, as if looking for something."
                     n "Is everything okay in there?"
                     c "Yeah, sure, just let me get dressed. Weren't we supposed to meet at six?"
@@ -1131,7 +1131,7 @@ label .gettingclothed:
     "I can hear her frantically search for clothing."
     c "Why didn't you knock? Eh, what am I gonna wear, no way... Weren't we supposed to meet at six?"
     n "Um... no, it was at five."
-    play music "bgm/Hope(Ver1.00).ogg"
+    play music bgm_main
     "While she's getting dressed, I quietly leave the bat where I took it."
     if bat_noticed == 2:
         "I hope she didn't have time to register it."

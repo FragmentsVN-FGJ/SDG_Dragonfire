@@ -180,7 +180,7 @@ label .ending:
     "Silvia and I don't feel any strain at all from something like this."
     "But she's as high-level as us. She should have gotten used to it by now..."
     scene black with fade
-    play music "bgm/hope(Ver1.00).ogg"
+    play music bgm_main
     return
 
 label Ruins_innertemple_menu:
@@ -360,7 +360,7 @@ label Ruins_training_menu:
             "We say our farewells and log out."
             hide sil
             scene black with dissolve
-            play music "bgm/hope(Ver1.00).ogg"
+            play music bgm_main
             return
     jump Ruins_training_menu
 
@@ -641,7 +641,7 @@ label .courtyard_menu:
                     hide air
                     hide sil
                     $ affection_modify('Silvia', -1)
-                    play music "bgm/hope(Ver1.00).ogg"
+                    play music bgm_main
                     return
     jump .courtyard_menu
 
@@ -749,7 +749,7 @@ label Silvia_oob:
 
 label Ruins_entrance:
     scene bg_temple with fade
-    play music "bgm/LanayruDesert.mp3"
+    play music bgm_desert
     show air eyes_wide at left
     with moveinleft
     show sil cat at right
@@ -835,7 +835,7 @@ label DFO_login:
         jump DFO_login2
     $ first_login = False
     scene player_room
-    play music "bgm/EnterNewLife.mp3"
+    play music bgm_cheerful
     nvl clear
     nvlNarrator "Oh yeah, it's time to play some DFO!"
     nvlNarrator "I've assembled the equipment and I'm raring to go!"
