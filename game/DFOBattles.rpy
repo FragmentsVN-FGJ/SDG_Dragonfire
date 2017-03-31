@@ -1,3 +1,37 @@
+init:
+    define sfx_battlecry = "bgm/SFX_battlecry.mp3"
+    define sfx_battlecry_f = "bgm/SFX_battlecry_f.mp3"
+    define sfx_battlehorn = "bgm/SFX_Battlehorn_sinister.mp3"
+    define sfx_fire = "bgm/SFX_fire.mp3"
+    define sfx_running = "bgm/SFX_Footsteps_grass.mp3"
+    define sfx_potion = "bgm/SFX_Drink_potion.mp3"
+    define sfx_heal= "bgm/SFX_Heal_regen.mp3"
+    define sfx_shield = "bgm/SFX_Raise_Shield.mp3"
+    define sfx_collapse = "bgm/SFX_Rock_Collapse.mp3"
+    define sfx_thump = "bgm/SFX_Rock_Thump.mp3"
+    define sfx_block = "bgm/SFX_Hammer_hit_2.mp3"
+    define sfx_critical = "bgm/SFX_Sword_hit_flesh.mp3"
+    define sfx_critical_short = "bgm/SFX_Sword_hit_flesh_short.mp3"
+    define sfx_hit = "bgm/SFX_Sword_hit.mp3"
+    define sfx_hit_2 = "bgm/SFX_Sword_hit_2.mp3"
+    define sfx_miss = "bgm/SFX_Sword_slash_8.mp3"
+    define sfx_dagger = "bgm/SFX_Sword_hit_armor.mp3"
+
+    define sfx_grunt_1 = "bgm/SFX_Grunt_1.mp3"
+    define sfx_grunt_2 = "bgm/SFX_Grunt_2.mp3"
+    define sfx_grunt_3 = "bgm/SFX_Grunt_3.mp3"
+    define sfx_grunt_4 = "bgm/SFX_Grunt_4.mp3"
+    define sfx_grunt_5 = "bgm/SFX_Grunt_5.mp3"
+    define sfx_grunt_6 = "bgm/SFX_Grunt_6.mp3"
+    define sfx_grunt_7 = "bgm/SFX_Grunt_7.mp3"
+    define sfx_grunt_8 = "bgm/SFX_Grunt_8.mp3"
+    define sfx_grunt_9 = "bgm/SFX_Grunt_9.mp3"
+    define sfx_grunt_10 = "bgm/SFX_Grunt_angry_2.mp3"
+    define sfx_grunt_1_f = "bgm/SFX_Grunt_1_f.mp3"
+    define sfx_grunt_4_f = "bgm/SFX_Grunt_4_f.mp3"
+    define sfx_grunt_5_f = "bgm/SFX_Grunt_5_f.mp3"
+    define sfx_death_1 = "bgm/SFX_Grunt_pain_1.mp3"
+    define sfx_death_2 = "bgm/SFX_Grunt_pain_2.mp3"
 
 label Ruins_battle1:
     $ spear_broken = False
@@ -16,14 +50,17 @@ label Ruins_battle1:
     $ target_list = ["Rider"]
     $ nick_acted = False
     show screen hp_window(playerparty, target_list, current_hp, current_mp)
+    play sound sfx_battlehorn
     "As we approach, trapdoors spring open all around us, sending sand flying in every direction!"
     show sil star
     s "It's an ambush! Hihihi!"
     hide sil
+    play sound sfx_battlecry
     show enemy_chicken normal as enemy_chicken2 at left, gettingcloser with moveinbottom:
         yalign 1.0
     show enemy_swordchicken normal as enemy_chicken3 at right, gettingcloser with moveinbottom:
         yalign 1.0
+    play sound sfx_battlecry_f
     hide enemy_chicken2 with moveoutleft
     show enemy_chicken normal as enemy_chicken4 at left, gettingcloser with moveinbottom:
         yalign 1.0
@@ -35,10 +72,12 @@ label Ruins_battle1:
     "Through the sand I see the vague shapes of ostrich-riding warriors, screeching for battle!"
     show fx slash at flash
     show enemy_chicken hurt
+    play sound sfx_critical
     pause 0.1
     show enemy_chicken normal
     pause 0.1
     show enemy_chicken hurt as enemy_chicken4
+    play sound sfx_critical
     pause 0.1
     show enemy_chicken normal as enemy_chicken4
     hide fx slash
@@ -74,6 +113,7 @@ label .start_round:
             if light_barrier_active[person] > 0:
                 light_barrier_active[person] -= 1
                 if light_barrier_active[person] == 0:
+                    #TODO add sound for light barrier ending, maybe heavily edited breaking glass?
                     renpy.say(None, "[person]'s light barrier wears off.")
         for person in poison_counter.keys():
             if poison_counter[person] > 0:
@@ -90,6 +130,7 @@ label .poison(person):
             pause 0.1
             show enemy_chicken
             hide enemy_chicken with moveoutbottom
+            play sound sfx_grunt_10
             "The rider can't withstand the poison, and dies."
         else:
             "[person] dies from poisoning."
@@ -98,16 +139,19 @@ label .poison(person):
             show enemy_chicken hurt
             pause 0.1
             show enemy_chicken
+            play sound sfx_grunt_8
             "The rider is hurt by the poison!"
         else:
+            play sound sfx_grunt_9
             "[person] suffers due to the poison!"
     if poison_counter[person] == 0:
-        "The poisoning ceases."
+        "The poison wears off" #"The poisoning ceases."
     return
 
 label .act_phase:
     menu:
         "Continue Blade Sphere Control" if target_list and blade_sphere_control:
+            play sound sfx_shield
             "I keep my focus, waiting for the rider to make his move."
             return
         "Remain vigilant" if not target_list:
@@ -139,19 +183,23 @@ label .act_attack:
     if rider_asleep:
         "Now's my chance!"
         show fx slash at flash
+        play sound sfx_critical
         pause 0.1
         hide fx slash
         "While the rider is fast asleep, I strike at the ostrich with my sword, severing its long neck!"
         show fx slash at flash
+        play sound sfx_critical
         pause 0.1
         hide fx slash
         "Time to finish this! I raise my sword and plunge it into the rider's chest!" #TODO make the slash happen at the middle of the line instead of before
         hide enemy_chicken with moveoutbottom
+        play sound sfx_grunt_9
         "His eyes shoot open just as he falls into death's icy grasp."
         $ victorious = True
         return
     "Readying my sword for a side slash, I charge full-speed toward the rider!"
     show fx slash at flash
+    play sound sfx_miss
     pause 0.1
     hide fx slash
     $ i = renpy.random.random()
@@ -161,6 +209,7 @@ label .act_attack:
     else:
         $ j = renpy.random.random()
         if j <= 0.05:
+            play sound sfx_critical
             "Yes! A critical hit!"
             call .death("Rider")
         else:
@@ -183,6 +232,7 @@ label .act_techniques:
             pause 0.1
             hide fx slash
             if rider_asleep:
+                play sound sfx_critical
                 show enemy_chicken hurt
                 pause 0.1
                 show enemy_chicken normal
@@ -193,15 +243,19 @@ label .act_techniques:
             if i <= 0.7:
                 # Test for spear_broken
                 if not spear_broken:
+                    play sound sfx_hit_2
                     "He raises his spear to parry my attack."
                     "My sword slams straight through it, shattering it in pieces!"
                     $ spear_broken = True
                     return
                 show enemy_chicken hurt
+                play sound sfx_critical
                 pause 0.1
                 show enemy_chicken normal
+                play sound sfx_death_1
                 "He raises the remnants of his spear, but my attack goes straight through them, his arm and his head."
                 hide enemy_chicken with moveoutright
+                play sound sfx_running
                 "The ostrich, now carrying only a corpse severed in half, sees it best to escape."
                 $ victorious = True
                 return
@@ -211,6 +265,7 @@ label .act_techniques:
         "Blade Sphere Control" if current_mp["Nick"] > mp_costs["Blade Sphere Control"] and not blade_sphere_control:
             $ current_mp["Nick"] -= mp_costs["Blade Sphere Control"]
             "I close my eyes to find internal peace."
+            play sound sfx_shield
             np "Blade Sphere Control!"
             show overlay lightblue
             "Let's see him get through this technique!"
@@ -233,17 +288,20 @@ label .act_Aerith:
                     call .act_Aerith_begin_casting("Curing Light", 'me')
                     if spell_successful:
                         show overlay green
+                        play sound sfx_heal
                         "The green light fills me with strength."
                         hide overlay
                         call CuringLight('Aerith', 'Nick')
                 "Heal yourself!":
                     call .act_Aerith_begin_casting("Curing Light", 'yourself')
                     if spell_successful:
+                        play sound sfx_heal
                         "Green light flows over Aerith, closing her wounds."
                         call CuringLight('Aerith', 'Aerith')
                 "Heal Silvia!":
                     call .act_Aerith_begin_casting("Curing Light", 'Silvia')
                     if spell_successful:
+                        play sound sfx_heal
                         call CuringLight('Aerith', 'Silvia')
                 "Return":
                     jump .act_Aerith
@@ -252,6 +310,11 @@ label .act_Aerith:
             if spell_successful:
                 $ current_mp["Aerith"] -= mp_costs["Depths of Slumber"]
                 a "Gift him with a peaceful sleep! Depths of Slumber!"
+                #TODO add sleep spell sound, sound of falling asleep
+                show overlay purple
+                pause 0.1
+                hide overlay purple with dissolve
+                show enemy_chicken at sleep #TODO make chicken wiggle again if they wake up
                 "The rider falls asleep, leaving his ostrich-mount confused."
                 $ rider_asleep = True
                 jump .act_phase
@@ -290,16 +353,19 @@ label .act_Silvia:
             $ silvia_hidden = False
             call .dealdamage("Rider", damage['Silvia']['sneak_attack'], False)
             if target_died:
+                play sound [sfx_critical, sfx_death_2]
                 "Already wounded, the rider can't survive Silvia's attack."
                 hide enemy_chicken with moveoutbottom
                 "He falls off the ostrich, and it escapes to the desert."
                 $ victorious = True
             else:
+                play sound sfx_miss
                 "Silvia's blade strikes a deep wound into the rider's back."
             return
         "Attack" if not silvia_hidden and target_list:
             np "Silvia, attack!"
             "She has a go at it, lunging toward the rider!"
+            play sound sfx_miss
             $ i = renpy.random.random()
             if i <= 0.3:
                 "But the ostrich is too fast even for her!"
@@ -309,15 +375,18 @@ label .act_Silvia:
                 show enemy_chicken hurt
                 pause 0.1
                 show enemy_chicken normal
+                play sound sfx_grunt_6
                 "She lands a strike on the rider's back!"
                 call .dealdamage("Rider", damage['Silvia']['attack'], False)
                 if target_died:
                     hide enemy_chicken with moveoutbottom
+                    play sound sfx_death_1
                     "The rider can't take it any longer, and succumbs to his wounds."
                     "The ostrich, left without master, escapes into the desert."
                     $ victorious = True
                     return
                 else:
+                    play sound sfx_grunt_4
                     "He screams in pain and fury."
                     return
         "Hide" if not silvia_hidden:
@@ -334,17 +403,61 @@ label .act_Silvia:
             s "It's raining daggers, right?"
             "She leaps into the air."
             "The rider realizes something is off and..."
-            show fx daggers
-            pause 0.6
-            hide fx daggers
             $ i = renpy.random.random()
             if i <= 0.3:
+                show fx daggers
+                pause 0.05
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.09
+                stop sound
+                pause 0.05
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.09
+                stop sound
+                pause 0.05
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.09
+                stop sound
+                hide fx daggers
                 hide enemy_chicken with moveoutright
+                play sound sfx_running
                 "... turns around to run!"
                 s "It seems I have lost sight of him and his ridiculous mount, liege."
                 "Damn!"
                 jump .rider_escape
             else:
+                show fx daggers
+                pause 0.14
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.14
+                play sound sfx_dagger
+                pause 0.03
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_dagger
+                pause 0.14
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                hide fx daggers
                 show enemy_chicken hurt
                 pause 0.1
                 show enemy_chicken normal
@@ -357,13 +470,17 @@ label .act_Silvia:
                 pause 0.1
                 show enemy_chicken normal
                 "... cowers in place as he sees the blades falling toward him!"
+                play sound sfx_grunt_4 #TODO add ostritch screech sound
                 "Strike! The ostrich screeches in pain!"
                 call .dealdamage('Rider', damage['Silvia']['hail'], False)
                 if target_died:
                     hide enemy_chicken with moveoutbottom
+                    #TODO add sound of person falling on sand
+                    play sound sfx_grunt_3
                     "The ostrich goes into a frenzy, dropping the rider to the ground."
                     "He can't hold on any longer, and dies quickly, the red of his blood mixing with the desert sand."
                 else:
+                    play sound sfx_grunt_6
                     "The ostrich starts to frenzy, but the rider barely manages to calm it down."
                     "They're not going to hold out for much longer, though." # This is a damage message, need to proceduralize...
                     return
@@ -374,14 +491,28 @@ label .act_Silvia:
             s "Your wish..."
             "She leaps and disappears into thin air, appearing right behind the rider!"
             s "... is my command!"
-            show fx daggers at flip
-            pause 0.15
-            hide fx daggers at flip
             $ i = renpy.random.random()
             if i <= 0.3:
+                show fx daggers at flip
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.09
+                stop sound
+                hide fx daggers at flip
                 "However, the rider barely manages to dodge her nefarious strike."
                 return
             else:
+                show fx daggers at flip
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.03
+                play sound sfx_hit
+                pause 0.09
+                hide fx daggers at flip
                 show enemy_chicken hurt
                 pause 0.1
                 show enemy_chicken normal
@@ -389,10 +520,12 @@ label .act_Silvia:
                 call .dealdamage("Rider", damage['Silvia']['poison_attack'], False)
                 if target_died:
                     hide enemy_chicken with moveoutbottom
+                    play sound sfx_grunt_2
                     "He falls off his mount and speedily succumbs to his wounds."
                     "The ostrich runs into the horizon."
                     $ victorious = True
                 else:
+                    play sound sfx_grunt_5
                     "The blade goes straight through his right arm."
                     "He seems disoriented by the poison, but still has will to fight left in him!"
                     $ poison_counter["Rider"] = renpy.random.randint(1, 3)
@@ -402,6 +535,7 @@ label .act_Silvia:
     return
 
 label .act_defend:
+    play sound sfx_shield
     "I raise my shield in defense."
     "Let's see you get through this!"
     $ nick_defense = True
@@ -418,15 +552,20 @@ label .rider_turn:
         $ i = renpy.random.random()
         if i <= 0.5:
             hide enemy_chicken with moveoutleft
+            play sound sfx_running
             pause 0.5
             jump .rider_escape
         else:
             if j > 0.5:
+                play sound sfx_running
+                hide enemy_chicken with moveoutleft
+                show enemy_chicken normal at wigglemiddle with moveinright
                 "The rider circles around us, waiting for an opening."
             return
         #jump .act_phase
     else:
         show enemy_chicken normal at wigglemiddle
+        play sound sfx_running
         "Suddenly, the rider ambushes us!"
         $ target_list.append("Rider")
         call .rider_attack
@@ -459,13 +598,16 @@ label .death(target):
     if target == "Nick":
         screen black
         with dissolve
+        play sound sfx_grunt_2
         "Blood trickles over my eyes, and I begin a long descent into darkness..."
         $ playerdeath = True
     elif target == "Aerith":
+        play sound sfx_grunt_4_f #TODO add aerith screams
         "Aerith falls to the ground as her body disintegrates into fine purple dust, blown away by an intangible wind."
         $ playerparty.remove("Aerith")
     elif target == "Silvia":
         $ playerparty.remove("Silvia")
+        play sound sfx_grunt_5_f
         "Silvia disappears in a cloud of lavender mist."
     elif target == "Rider":
         # I'd like to do some cool procedural stuff with Tracery here, but it'll have to wait until after NaNo
@@ -476,12 +618,14 @@ label .death(target):
             pause 0.1
             show enemy_chicken normal
             hide enemy_chicken with moveoutleft
+            play sound sfx_grunt_5
             "I land a deep wound on his side, and he falls off his mount, which escapes into the desert."
             "He quietly bleeds to death."
         elif i == 2:
             show enemy_chicken hurt
             pause 0.1
             show enemy_chicken normal
+            play sound sfx_battlecry
             "He screams as my blade cuts his stomach open."
             "He falls to the ground, a bloody mess."
             hide enemy_chicken with moveoutright
@@ -490,6 +634,8 @@ label .death(target):
             show enemy_chicken hurt
             pause 0.1
             show enemy_chicken normal
+            play sound sfx_critical
+            play sound sfx_grunt_10
             "My strike goes right through him, splitting his body in half."
             hide enemy_chicken with moveoutleft
             "The ostrich runs away."
@@ -497,9 +643,12 @@ label .death(target):
             show enemy_chicken hurt
             pause 0.1
             show enemy_chicken normal
+            play sound [sfx_block, sfx_grunt_3]
             "I strike at him with full force, causing him to fall off!"
             hide enemy_chicken with moveoutright
+            play sound sfx_running
             "The ostrich runs away, leaving its rider moaning on the ground."
+            play sound sfx_critical
             "I finish him with a well-aimed strike right through the chest."
     return
 
@@ -529,12 +678,15 @@ label .rider_attack(rider_target = None, attack = None):
 label .rider_fire(rider_target):
     if rider_target == "Nick":
         show fx fire
+        play sound sfx_fire
         pause 0.8
         hide fx fire
         "He comes a bit closer. Suddenly, the ostrich breathes fire on me!"
     else:
         "He goes closer to [rider_target]. Then, he commands his ostrich to breathe fire!"
+        play sound sfx_fire
     if blade_sphere_control:
+        play sound sfx_grunt_4
         "Damn! Blade Sphere Control can't protect against breath weapons!"
     if rider_target == "Nick" and nick_defense:
         "Haha! My shield heats up a bit, but that's no problem at all."
@@ -543,9 +695,13 @@ label .rider_fire(rider_target):
         "The fire reflects off of Aerith's barrier."
         show enemy_chicken hurt
         pause 0.1
+        play sound sfx_battlecry
         show enemy_chicken at rolling
         "Seems the rider got a taste of his own poison. He bursts into flames, jumps off his mount, and rolls in the sand."
+        play sound sfx_running
         hide enemy_chicken with moveoutbottom
+        pause 0.2
+        play sound sfx_critical
         "I finish him with a single strike."
         $ victorious = True
         return
@@ -553,13 +709,16 @@ label .rider_fire(rider_target):
         show overlay red
         pause 0.25
         show overlay red at ghost
+        play sound sfx_battlecry
         "The flames sear painfully into my flesh."
         hide overlay
         call .dealdamage('Nick', damage["Rider"]['Fire'])
     elif rider_target == "Aerith":
+        play sound sfx_grunt_4_f #TODO add aerith screams
         "Aerith screams as the flames burn her skin."
         call .dealdamage('Aerith', damage["Rider"]['Fire'])
     else:
+        play sound sfx_grunt_1_f
         "Silvia grits her teeth as the skin on her arms is charred by the flames."
         call .dealdamage('Silvia', damage["Rider"]['Fire'])
     $ attack_successful = True
@@ -567,31 +726,45 @@ label .rider_fire(rider_target):
 
 label .rider_charge(rider_target):
     if rider_target == "Nick":
+        play sound sfx_running
         "He lunges right at me!"
+        play sound sfx_hit
+        pause 0.09
+        stop sound
         show enemy_chicken normal at ramming
     else:
+        play sound sfx_running
         "He charges toward [rider_target]!"
+        play sound sfx_hit
+        pause 0.09
+        stop sound
     if blade_sphere_control:
+        play sound [sfx_block, sfx_hit]
         "He can't get through Blade Sphere Control, though!"
         call .dealdamage("Rider", damage['Nick']['blade_sphere_control'], False)
         if target_died:
             hide enemy_chicken with moveoutbottom
+            play sound sfx_grunt_3
             "He is hit off his mount, and dies whimpering pitifully on the sands."
             $ victorious = True
             return
         else:
+            play sound sfx_grunt_4
             "He screams as my blade cuts into his arm!"
             if not spear_broken:
                 "His spear breaks as well."
                 $ spear_broken = True
             return
     if rider_target == "Aerith" and light_barrier_active['Aerith'] > 0:
+        play sound sfx_grunt_5_f #TODO add aerith screams
         "He slams right into Aerith. She's protected by the sphere, but still falls prone."
         return
     if rider_target == "Nick" and nick_defense:
         with hpunch
+        play sound sfx_grunt_5
         "My shield is of no use as he rams right into me, sending me flying to the ground."
         show overlay red
+        play sound sfx_critical
         pause 0.15
         hide overlay
         pause 0.1
@@ -609,6 +782,7 @@ label .rider_charge(rider_target):
         with hpunch
         "His pounce catches me by surprise, and I have no time to leap out of the way!"
         show overlay red
+        play sound sfx_critical
         pause 0.15
         hide overlay
         pause 0.1
@@ -629,20 +803,31 @@ label .rider_charge(rider_target):
         "Silvia's expression turns pained as the ostrich tramples over her!"
         call .dealdamage("Silvia", damage["Rider"]["Charge"])
     $ attack_successful = True
+    play sound sfx_running
     return
 
 label .rider_spear(rider_target):
     if rider_target == "Nick":
         #show enemy_chicken normal at ramming
+        play sound sfx_running
         "He comes close and attempts to impale me with his spear."
         show fx slash_spear
-        pause 0.1
+        play sound sfx_hit
+        pause 0.09
+        stop sound
+        pause 0.01
         hide fx
     else:
+        play sound sfx_running
         "The rider makes an attempt to impale [rider_target]!"
+        play sound sfx_hit
+        pause 0.09
+        stop sound
 
     if blade_sphere_control:
+        play sound [sfx_block, sfx_hit]
         "Yeah, just try to get past my technique!"
+        play sound sfx_grunt_7
         show enemy_chicken hurt
         pause 0.1
         show enemy_chicken normal
@@ -655,26 +840,35 @@ label .rider_spear(rider_target):
                 "Damn. Almost got his hand too."
                 $ spear_broken = True
             else:
+                play sound sfx_critical
                 "I cut a deep wound into his arm."
         return
     if rider_target == "Aerith" and light_barrier_active['Aerith'] > 0:
+        play sound sfx_dagger #TODO add aerith scream even if she does not take damage, "eep"
         "It's no use. The attack harmlessly bounces off Aerith's barrier."
         return
     if rider_target == "Nick" and nick_defense:
+        play sound sfx_block
         "The attack is easily deflected by my shield. Why even bother trying?"
         return
     if rider_target == "Nick":
+        play sound sfx_hit_2
         show overlay red
         pause 0.1
         hide overlay
         "I raise my arm just in time, but the spear still manages to land a blow."
+        play sound sfx_grunt_8
         call .dealdamage("Nick", damage["Rider"]["Spear"])
     elif rider_target == "Aerith":
+        play sound sfx_grunt_4_f #TODO add aerith screams
         "Aerith crosses her arms in front of her, but that offers no protection at all!"
+        play sound sfx_grunt_1_f
         "The spear pierces deep into her arms."
         call .dealdamage("Aerith", damage["Rider"]["Spear"])
     else:
+        #TODO add a less squishy hitting flesh sound, liky something you'd get from piercing flesh in leather armor
         "Silvia attempts to dodge the attack, but can't get out of the way in time."
+        play sound sfx_grunt_9
         "It's painful to see the spear sink into her back."
         call .dealdamage("Silvia", damage["Rider"]["Spear"])
     $ attack_successful = True

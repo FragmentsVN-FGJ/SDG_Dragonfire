@@ -31,12 +31,16 @@ init:
             linear 0.5 xalign 0.5 yanchor 1.0 ypos 1.1
             linear 0.5 xalign 0.60 yalign 1.0
             repeat
+
     transform rolling:
         linear 0.5 xalign 0.5 yanchor 1.0 ypos 1.4
         linear 0.5 xalign 0.40 yanchor 1.0 ypos 1.5
         linear 0.5 xalign 0.5 yanchor 1.0 ypos 1.4
         linear 0.5 xalign 0.60 yanchor 1.0 ypos 1.5
         repeat
+
+    transform sleep:
+        linear 0.5 xalign 0.5 yanchor 1.0 ypos 1.4
 
     transform ramming:
         zoom 1.0
