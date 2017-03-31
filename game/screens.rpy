@@ -97,12 +97,23 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                             right_padding 10
                             text_size 18
                         bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red.png"
-                    #if name in ['Nick', 'Aerith', 'Silvia']:
+                        $ hp1 = current_hp[name]
+                        $ hp2 = max_hp[name]
+                        label "[hp1] / [hp2]":
+                            top_padding 3
+                            left_margin -150
+                            text_size 14
                     hbox:
                         label "MP":
                             right_padding 8
                             text_size 18
                         bar value current_mp[name] range max_mp[name] left_bar "gui/bar/left_blue.png"
+                        $ mp1 = current_mp[name]
+                        $ mp2 = max_mp[name]
+                        label "[mp1] / [mp2]":
+                            top_padding 3
+                            left_margin -150
+                            text_size 14
     vbox:
         xmaximum 300
         xalign 1.0
@@ -118,6 +129,12 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                             right_padding 10
                             text_size 18
                         bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red.png"
+                        $ hp1 = current_hp[name]
+                        $ hp2 = max_hp[name]
+                        label "[hp1] / [hp2]":
+                            top_padding 3
+                            left_margin -150
+                            text_size 14
 
 ## Say screen ##################################################################
 ##
