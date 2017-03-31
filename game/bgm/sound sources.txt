@@ -30,3 +30,8 @@ Sword slash sound:
 	SFX_Sword_slash_8.mp3
 	CC0
 	https://www.freesound.org/people/smokebomb99/sounds/147289/
+
+Sheathe sword sound:
+	SFX_Raise_Shield.mp3
+	CC0
+	https://www.freesound.org/people/mooseranger/sounds/170715/
