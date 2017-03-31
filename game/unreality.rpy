@@ -9,7 +9,7 @@ init:
 define mv = Character("Synthetic voice")
 
 label smith_call1:
-    show player_room_gradient_map
+    show player_room gradient_map
     play music "bgm/EnterNewLife.mp3"
     "Someone is calling."
     "It's not an ordinary call, though."
@@ -61,7 +61,7 @@ label smith_call1:
 
 label smith_call2:
     play music "bgm/EnterNewLife.mp3"
-    scene player_room_gradient_map
+    scene player_room gradient_map
     "My wristband is vibrating."
     "It's not Catherine. A call through signal."
     "Should I... maybe I can just ignore it."
@@ -89,7 +89,7 @@ label .answer:
 
 label ending_for_now:
     play music "bgm/EnterNewLife.mp3"
-    scene player_room_gradient_map
+    scene player_room gradient_map
     "My wristband vibrates, and I shudder."
     "It's another call through Signal. I didn't get the money in time."
     "And now it's payback time."
@@ -110,7 +110,7 @@ label ending_for_now:
     "A sound comes through, faint and distant."
     "Someone is crying in the background. A woman."
     "Catherine!" # Red
-    show city_street_gradient_map with dissolve
+    show city_street gradient_map with dissolve
     "I run through the streets to her house. I don't even know how I got here, but it doesn't matter."
     "Catherine! Please, Catherine! No...!"
     "That bastard! That fucking bastard...!"
@@ -206,12 +206,12 @@ label madman:
             "We try to walk around the man, but he won't let us leave."
             "Man" "God. God will destroy the world, end the simulation! The apocalypse, the singularity is nigh!"
             jump .luxphoros
-        
+
 label .luxphoros:
     n "What?"
     "I glance over at Catherine, but her expression is perfectly blank. Maybe she doesn't want to talk with the guy."
     n "Look, we don't want your fliers or whatever. Just, you know, piss off."
-    "Man" "Fliers? No fliers. Luxphoros. God!"        
+    "Man" "Fliers? No fliers. Luxphoros. God!"
     "That's a god from DFO. The one Aerith worships."
     n "Huh? Luxphoros is just a character in a virtual reality game."
     n "I think you should lay off the games for a while. You seem pretty confused."
@@ -231,7 +231,7 @@ label .luxphoros:
     show cat eyes_closed at closeup
     n "Cat...?"
     "Did I say something wrong?"
-    scene city_street_gradient_map with dissolve
+    scene city_street gradient_map with dissolve
     show cat_torso orange at closeup
     show cat not_normal at closeup
     play music "bgm/wrong.wav"
@@ -250,7 +250,7 @@ label .luxphoros:
     play music "bgm/hope(Ver1.00).ogg"
     return
 
-label retro_message:        
+label retro_message:
     scene arcade
     "I boot up some of the retro games again."
     "Oh, sweet, they have a new game! A shoot-em-up, by the looks of it."
@@ -268,7 +268,7 @@ label retro_message:
     "I am going to kill her!?"
     "My hands tremble on the joystick as I stare at the screen in shock."
     "Is it a coincidence? Am I, am I just imagining it?"
-    scene city_street_gradient_map with dissolve
+    scene city_street gradient_map with dissolve
     "I leave quickly, and as I walk the night streets, I can't help but feel I am being watched."
     play music "bgm/hope(Ver1.00).ogg"
     return
@@ -304,7 +304,7 @@ label at_the_bar_once_again:
     "'Remember to keep your promises, Nicholas.'"
     stop music
     "For a moment, I can't even breathe. Then I walk away, far away from that bar, that message."
-    scene city_street_gradient_map with dissolve
+    scene city_street gradient_map with dissolve
     "It was definitely meant for me. Who else could it be for?"
     "My pace gradually quickens to a sprint, and I run, back home, back to safety, away from all this..."
     "... Insanity!"
@@ -334,7 +334,7 @@ label truck:
     $ morning_act = None
     $ afternoon_act = None
     $ evening_act = None
-    
+
     window hide
     scene black with dissolve
     centered "{size=+10}{color=#fff}Morning{/color}{/size}{w=1.0}{nw}"
@@ -348,7 +348,7 @@ label truck_after:
     "It's mostly the usual click-bait. Nothing too interesting."
     "One story does catch my attention, though."
     play music "bgm/wrong.wav"
-    scene player_room_gradient_map with dissolve
+    scene player_room gradient_map with dissolve
     "'Local man hit by truck: manufacturers blame a bug in the mapping system'"
     "I click on the story to read more. Someone was hit by a self-driving truck earlier today."
     "I look at the film captured by the truck's on board cameras."

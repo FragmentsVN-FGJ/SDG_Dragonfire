@@ -1,6 +1,6 @@
 init:
     $ event("RuinsStart", "act == 'ruins'", priority=20)
-    
+
     $ mp_costs = {'Light Barrier': 10, 'Curing Light': 10, 'Furious Strike': 20, 'Blade Sphere Control': 30, 'Hail of Daggers': 30, "Poisoned Blade": 20, "Depths of Slumber": 30}
     $ max_hp = {'Nick': 100, 'Aerith': 100, 'Silvia': 100}
     $ max_mp = {'Nick': 100, 'Aerith': 100, 'Silvia': 100}
@@ -8,23 +8,23 @@ init:
     $ light_barrier_active = {}
     $ poison_counter = {}
     $ damage = {'Nick': {'blade_sphere_control': 10, 'attack': 20}, 'Silvia': {'sneak_attack': 40, 'attack': 20, 'hail': 20, 'poison_attack': 20}, 'Aerith': {}, 'Rider': {'Spear': 20, 'Fire': 20, 'Charge': 30}, 'poison': 10 }
-    
+
     $ heal_amount = {"Curing Light": 20}
-    
+
     $ default_tooltips = {'Light Barrier': "A barrier of light protects the caster from all harm. MP: 10", 'Curing Light': "The light of Luxphoros heals target for 20 damage. MP: 10", 'Furious Strike': "Bash a foe for great justice! Your attack causes a shockwave and breaks the target's weapons if they parry. MP: 20", 'Blade Sphere Control': "The ultimate protective technique prevents physical attacks against you and other party members nearby, retaliating for 10 damage. Upholding the technique requires constant focus. MP 30", 'Hail of Daggers': "Raining death from above hits all foes for 20 damage. Just make sure your own party members are not in range! MP: 30", "Poisoned Blade": "Poisoned blade deals 20 damage and poisons the enemy for 1-3 rounds. Poison deals 10 damage per round. MP: 20", "Depths of Slumber": "Magical powder sends enemies to sleep. MP: 30"}
 
     image white = Solid((255,255,255,255))
-    
+
 init python:
     def stats_frame(name, level, hp, maxhp, **properties):
-    
+
         ui.frame(xfill=False, yminimum=None, **properties)
-    
+
         ui.hbox() # (name, "HP", bar) from (level, hp, maxhp)
         ui.vbox() # name from ("HP", bar)
-    
+
         ui.text(name, size=20)
-    
+
         ui.hbox() # "HP" from bar
         ui.text("HP", size=20)
         ui.bar(maxhp, hp,
@@ -33,18 +33,18 @@ init python:
                 right_bar=Frame("rrslider_empty.png", 12, 0),
                 thumb=None,
                 thumb_shadow=None)
-    
+
         ui.close()
         ui.close()
-    
+
         ui.vbox() # Level from (hp/maxhp)
 
         ui.text("Lv. %d" % level, xalign=0.5, size=20)
         ui.text("%d/%d" % (hp, maxhp), xalign=0.5, size=20)
-    
+
         ui.close()
         ui.close()
-    
+
 define comp = Character('Computer')
 define np = DynamicCharacter('np_name', color="#191970")
 
@@ -110,7 +110,7 @@ label Ruins_dragon:
     "Damn! We have to move!"
     "It burrows into the ground. We eventually learn to anticipate where it'll be, and manage to defeat it with great effort."
     jump .victorious
-    
+
 label .victorious:
     "As the dragon dies with a mighty roar, its tail sweeps out the last of the pillars holding the chamber together!"
     "... And it begins to collapse!"
@@ -164,7 +164,7 @@ label .victorious:
             s "For more bloodshed! Hihihi!"
             "R-right... We touch the teleporter stone to return to the cathedral."
             jump .ending
-            
+
 label .ending:
     scene white with dissolve
     pause 0.5
@@ -192,20 +192,20 @@ label Ruins_innertemple_menu:
         "Go back out":
             jump Ruins_innerchambers_menu
     jump Ruins_innertemple_menu
-    
+
 label Ruins_innertemple:
     # Hallway straight and stairs to the right
-    
+
     if 'Ruins_innertemple' in seen_before.keys() and seen_before['Ruins_innertemple']:
         "We reach the temple once more."
-        if not battle5_won:                
+        if not battle5_won:
             "The ritual is still continuing."
             jump .attack_menu
         else:
             jump Ruins_innertemple_menu
     $ battle5_won = False
     $ seen_before['Ruins_innertemple'] = True
-    
+
     "We've finally found the source of the ominous chanting."
     "A group of violet-robed mages is standing in a circle around an altar."
     "A flash of purple light is reflected from an object their leader is holding above his head."
@@ -234,7 +234,7 @@ label Ruins_innertemple:
     with moveoutleft
     "She's got a point. The cult leader is approaching the altar."
     jump .attack_menu
-    
+
 label .attack_menu:
     menu:
         "Attack!":
@@ -245,7 +245,7 @@ label .attack_menu:
             "We silently go back the way we came."
             jump Ruins_innerchambers_menu
         # Spells, techniques etc.
-    
+
 label .attack:
     "The fanatics turn around to face us, eyes widened by the surprise."
     "Then, they regain their bearings."
@@ -253,14 +253,14 @@ label .attack:
     with vpunch
     "Unexpectedly, the leader runs to the altar, killing the man in haste."
     jump .battle
-    
+
 label .wait:
     "The high priest approaches the man lying helpless on the altar."
     "Then, he raises the ceremonial dagger high above his head..."
     with vpunch
     "And strikes!"
     jump .battle
-    
+
 label .battle:
     "From where the dagger pierced the man's heart, a black, half-vaporous ooze spews forth, engulfing the leader."
     "He breathes the vapours in, filling himself with the power of darkness." # Teh cheeze, i luv it
@@ -289,7 +289,7 @@ label Ruins_innerchambers_menu:
             "We make our way back to the hall."
             jump Ruins_training_menu
     jump Ruins_innerchambers_menu
-    
+
 label Ruins_innerchambers:
     "As we move past the great hall, we come upon a structure which looks like a small temple."
     if 'Ruins_innerchambers' in seen_before.keys() and seen_before['Ruins_innerchambers']:
@@ -301,7 +301,7 @@ label Ruins_innerchambers:
             jump Ruins_innerchambers_menu
     $ battle4_won = False
     $ seen_before['Ruins_innerchambers'] = True
-    show sil this_is_fine at left 
+    show sil this_is_fine at left
     with moveinleft
     s "A temple within a temple? How unexpected."
     "The entrance to the temple is blocked by a brass gate, and guarded on either side by a warrior statue of stone."
@@ -331,7 +331,7 @@ label .approach:
     "Eventually we manage to get them to strike each other, taking them out."
     hide sil
     jump .victorious
-    
+
 label .victorious:
     show sil hmm at left
     with moveinleft
@@ -340,7 +340,7 @@ label .victorious:
     hide sil
     $ battle4_won = True
     jump Ruins_innerchambers_menu
-            
+
 
 label Ruins_training_menu:
     menu:
@@ -361,7 +361,7 @@ label Ruins_training_menu:
             play music "bgm/hope(Ver1.00).ogg"
             return
     jump Ruins_training_menu
-          
+
 label Ruins_training:
     if 'Ruins_training' in seen_before.keys() and seen_before['Ruins_training']:
         "We go down the spiraling staircase, and the great hall unfolds before our eyes."
@@ -382,14 +382,14 @@ label Ruins_training:
     hide air
     hide sil
     jump .goin_menu
-    
+
 label .goin_menu:
     menu:
         "Go in.":
             jump .goin
         "Turn back":
             "We move back up the stairs into the living quarters."
-            jump Ruins_outer_menu            
+            jump Ruins_outer_menu
 
 label .goin:
     show air 7 at left
@@ -422,7 +422,7 @@ label .goin:
     hide sil
     $ battle3_won = True
     jump Ruins_training_menu
-    
+
 label Ruins_outer_menu:
     menu:
         "Move forward":
@@ -435,7 +435,7 @@ label Ruins_outer_menu:
             "We return outside."
             jump Ruins_courtyard_menu
     jump Ruins_outer_menu
-    
+
 label Ruins_outer:
     if 'Ruins_outer' in seen_before.keys() and seen_before['Ruins_outer']:
         "We go down the bronze door, arriving at the living quarters."
@@ -504,18 +504,18 @@ label .approach_menu:
             call Silvia_oob
         "Turn back":
             jump .turnback
-            
+
 label .approach:
     "The man looks shocked and points at us, then calls others to his aid!"
     "Novice" "My blood for N'Gashai!"
     "He charges us, wielding a kukri decorated with a dragon's head!"
     "The woman behind him starts casting a spell, materializing the ephemeral form of a dragon over her body."
     jump .victorious
-    
+
 label .turnback:
     "We head back outside, careful to avoid detection."
     jump Ruins_courtyard_menu
-    
+
 label .victorious:
     show air angry_shout at left
     with moveinleft
@@ -531,8 +531,8 @@ label .victorious:
     hide sil
     $ battle2_won = True
     jump Ruins_outer_menu
-    
-    
+
+
 # label Ruins_cultists:
     # s "Cultists..."
     # "Most of them seem to be novices, wearing brown woolen robes."
@@ -558,7 +558,7 @@ label .victorious:
 
 
 
-        
+
 label RuinsStart:
     $ silvia_hidden = False
     call DFO_login
@@ -567,7 +567,7 @@ label RuinsStart:
     call Ruins_courtyard
     jump events_skip_period
     return
-    
+
 label Ruins_courtyard_menu:
     menu:
         "Let's go in.":
@@ -586,7 +586,7 @@ label Ruins_courtyard_menu:
             scene black with dissolve
             return
     jump Ruins_courtyard_menu
-    
+
 label Ruins_courtyard:
     show air 10 at left
     with moveinleft
@@ -603,7 +603,7 @@ label Ruins_courtyard:
     hide air
     hide sil
     jump .courtyard_menu
-    
+
 label .courtyard_menu:
     menu:
         "Should we approach?"
@@ -648,7 +648,7 @@ label Nicholas_oob:
         "Return":
             return
     return
-                    
+
 label Aerith_oob:
     menu:
         "Cast Light Barrier on...":
@@ -701,7 +701,7 @@ label .cure_target:
 
 #label .heal_target:
 
-#label .mass_heal:    
+#label .mass_heal:
 
 label ask_Aerith_to_cast(technique_name, target_desc, target):
     show air 7 at left
@@ -722,12 +722,12 @@ label ask_Aerith_to_cast(technique_name, target_desc, target):
         show air blush6
         a "I'm afraid I don't have enough mana."
         hide air
-    return    
+    return
 
 label Silvia_oob:
     menu:
         "Hide" if not silvia_hidden:
-            show sil normal at left 
+            show sil normal at left
             with moveinleft
             np "Silvia, could you hide yourself?"
             hide sil with dissolve
@@ -744,7 +744,7 @@ label Silvia_oob:
             return
         "Return":
             return
-    
+
 label Ruins_entrance:
     scene bg_temple with fade
     play music "bgm/LanayruDesert.mp3"
@@ -779,8 +779,8 @@ label Ruins_entrance:
     show sil cat2
     s "Lead the way, and we shall follow."
     return
-    
-    
+
+
 label DFO_init:
     scene white with dissolve
     scene bg_fort with pixellate
@@ -822,12 +822,12 @@ label DFO_init:
     hide air
     hide sil
     return
-    
+
 label DFO_login2:
     scene bg_vr
     "I pop a pill, put on the equipment, and start up the game."
     jump DFO_init
-    
+
 label DFO_login:
     if not first_login:
         jump DFO_login2
@@ -850,7 +850,7 @@ label DFO_login:
     nvlNarrator "Damn! I can't let the nostalgia get to me. This is it."
     nvlNarrator "For a moment, I look wistully at the white pill I'm holding in my hands."
     nvlNarrator "I place it on my tongue, downing it with a gulp of tap water."
-    scene player_room_gradient_map with dissolve
+    scene player_room gradient_map with dissolve
     nvl clear
     nvlNarrator "It will take around 10 minutes for the effects to start."
     nvlNarrator "Meanwhile, I'll just boot up the system."
@@ -881,7 +881,7 @@ label DFO_login:
     "Time to log in! My username is..."
     call nameNP
     return
-    
+
 label nameNP:
     $ np_name = ""
     while not np_name:
@@ -915,8 +915,8 @@ label nameNP:
     comp "Input password."
     comp "Thank you, [np_name]. Logging in..."
     return
-    
-    
+
+
 # Profanities and stuff, don't look...
 init python:
     profanity = ['anal', 'anus', 'arse', 'ass', 'ballsack', 'balls', 'bastard', 'bitch', 'biatch', 'bloody', 'blowjob', 'blow job', 'bollock', 'bollok', 'boner', 'boob', 'bugger', 'bum', 'butt', 'clitoris', 'cock', 'coon', 'crap', 'cunt', 'damn', 'dick', 'dildo', 'dyke', 'fag', 'feck', 'fellate', 'fellatio', 'felching', 'fuck', 'f u c k', 'fudgepacker', 'fudge packer', 'flange', 'hell', 'homo', 'jerk', 'jizz', 'knobend', 'knob end', 'labia', 'lmao', 'lmfao', 'muff', 'nigger', 'nigga', 'omg', 'penis', 'piss', 'poop', 'prick', 'pube', 'pussy', 'queer', 'scrotum', 'sex', 'shit', 's hit', 'sh1t', 'slut', 'smegma', 'spunk', 'tit', 'tosser', 'turd', 'twat', 'vagina', 'wank', 'whore', 'wtf']
