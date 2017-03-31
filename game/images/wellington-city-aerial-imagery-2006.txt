@@ -38,6 +38,7 @@ Resolution: 0.4m
 - reduced resolution to 640x720
 - combined with another image
 - adjusted colours and applied filters in GIMP on 05 Mar 2017
+- adjusted colours and applied filters in Clip Studio Paint on 27 Mar 2017
 
 ------------------------------------------------------------------------
  LICENSE: Creative Commons Attribution 3.0 New Zealand
