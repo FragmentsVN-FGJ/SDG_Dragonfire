@@ -124,8 +124,8 @@ init python:
 ###
 #Image resources
 ###
-image calendar_bg = "images/bg.png" #Background image
-image dayButton = "images/gray.png" #Image representing each week day
+image calendar_bg = "gui/cal_bg yc2.png" #Background image
+image dayButton = "gui/cal_button.png" #Image representing each week day
 
 label calendar(direction):
 
