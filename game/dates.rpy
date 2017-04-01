@@ -136,6 +136,7 @@ label .cat_pays:
     return
         
 label .what_to_do:
+    $ stress += stress_modifiers['arcade']
     "Cat looks around the hall, her face displaying nothing but mild disinterest."
     menu:
         "Let's play retro games.":
@@ -347,6 +348,7 @@ label .catpays:
     return
     
 label .opinion:
+    $ stress += stress_modifiers['movies']
     n "So, how did you like it?"
     c "I can't really decide... Did you like it?"
     menu:

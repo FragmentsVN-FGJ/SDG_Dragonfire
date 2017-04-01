@@ -1272,6 +1272,7 @@ label parlorBreakUp:
     scene black with Dissolve(5.00)
     pause 3.0
 
+    $ stress += stress_modifiers['breakup']
     $ broken_up = True
     $ affection_modify('Catherine', -2)
 
@@ -1291,6 +1292,7 @@ label parlorArgue:
         "With that, she storms out."
         show cat at getup_and_leave
         show cat_torso at getup_and_leave
+        $ stress += stress_modifiers['breakup']
         $ broken_up = True
         $ affection_modify('Catherine', -2)
     else:
@@ -1315,6 +1317,7 @@ label parlorHypocrisy:
         "With that, she storms out."
         show cat at getup_and_leave
         show cat_torso at getup_and_leave
+        $ stress += stress_modifiers['breakup']
         $ broken_up = True
         $ affection_modify('Catherine', -2)
     else:
@@ -1381,6 +1384,7 @@ label quitDFO:
         "She gets up and leaves."
         show cat at getup_and_leave
         show cat_torso at getup_and_leave
+        $ stress += stress_modifiers['breakup']
         $ broken_up = True
         $ affection_modify('Catherine', -2)
     else:
@@ -1406,6 +1410,7 @@ label parlorAccept:
         "With that, she gets up and goes."
         show cat at getup_and_leave
         show cat_torso at getup_and_leave
+        $ stress += stress_modifiers['breakup']
         $ broken_up = True
         $ affection_modify('Catherine', -2)
     else:
@@ -1433,6 +1438,7 @@ label parlorPlead:
         "Before I have a chance to respond, she gets up and leaves."
         show cat at getup_and_leave
         show cat_torso at getup_and_leave
+        $ stress += stress_modifiers['breakup']
         $ broken_up = True
         $ affection_modify('Catherine', -2)
     else:

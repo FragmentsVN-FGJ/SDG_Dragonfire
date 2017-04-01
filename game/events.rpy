@@ -1805,7 +1805,7 @@ label Catherine_movie_scene:
     $ seen_before_asked = False
     $ cat_mood = 0
     $ promises[('movies', day)][('Catherine', 'meet')] = True
-    $ stress -= 2
+    $ stress += stress_modifiers['movies']
     scene city_street
     call .date_intro
     n "Anyway, let's go."
