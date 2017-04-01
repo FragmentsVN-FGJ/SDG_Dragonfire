@@ -267,12 +267,28 @@ label .battle:
     "From where the dagger pierced the man's heart, a black, half-vaporous ooze spews forth, engulfing the leader."
     "He breathes the vapours in, filling himself with the power of darkness." # Teh cheeze, i luv it
     "He sprouts wings and claws, his entire body taken over by the ethereal form of a monstrous black dragon!"
-    "His form is connected by a thin cord of darkness to the corpse on the altar. I wonder..."
-    "I run to the altar and cut the cord with my sword, destroying his form."
-    "We make short work of the cultists after that."
-    jump .victorious
-
+    if dungeon_progress >= 4:
+        jump .victorious
+    else:
+        jump .loss
+    
+label .loss:
+    "We do our best, but the dragon regenerates each turn."
+    "Silvia is the first to go down."
+    "Then, it's my turn."
+    "Damn! We were so close."
+    play music bgm_main
+    return    
+    
 label .victorious:
+    "We start fighting, but it's as hopeless as before."
+    s "Liege! Look under the dragon!"
+    "What does she mean...? Wait!"
+    "The ethereal form of the dragon is connected by a thin cord of darkness to the corpse on the altar. I wonder..."
+    "I run to the altar and cut the cord with my sword!"
+    with hpunch
+    "The dragon vanishes instantly, and the cult leader falls to his death."
+    "We make short work of the cultists after that."
     "The dagger crumbles into dust, which flows beneath the altar."
     "Hey, wait a minute!"
     "I push the altar forward, revealing a secret entrance!"
@@ -330,11 +346,46 @@ label .approach:
     show sil trick
     "Silvia evades them easily, and we go on the offensive."
     "The statues are too slow to strike us with their blades, but they also seem impervious to all our techniques."
-    "Eventually we manage to get them to strike each other, taking them out."
-    hide sil
-    jump .victorious
+    if dungeon_progress >= 3:
+        jump .victorious
+    else:
+        jump .loss
 
+label .loss:
+    a "They're immune to all of my spells...!"
+    s "Do not lose your bearings, priestess!"
+    "It's too late. One of the statues approaches Aerith from behind, killing her with a single blow."
+    "Without a healer, the rest of our party soon follows."
+    "Better luck next time."
+    play music bgm_main
+    return
+    
 label .victorious:
+    s "Ah! Of course!"
+    np "What?"
+    s "We have determined that our techniques are incapable of harming them..."
+    np "What are you getting at?"
+    s "Are there not other weapons available?"
+    np "Oh, now I get it. Good thinking."
+    a "Huh? I still don't get it..."
+    np "Watch and see."
+    "Standing right in the middle of the chamber, I use my taunt technique."
+    play music bgm_derp_loop
+    np "Hey, blockheads! Catch me if you can!"
+    np "Oh wait, guess you're too statue-nary!"
+    "I'm sure their ears would be bleeding right about now if it was physically possible."
+    "They raise their scimitars, both coming right at me from opposite sides of the chamber."
+    "At the last moment, I jump out of the way, and they strike each other!"
+    "Dead in a single strike! As the magic animating them falters, they fall to the floor, nothing but a pile of rubble."
+    "Aerith and Silvia come over to the gate."
+    a "Can I strangle him."
+    s "After me, priestess."
+    np "Come on, it wasn't {i}that{/i} bad."
+    s "Liege..."
+    s "That was quite probably the worst pun ever made in the history of this world."
+    "Yeesh. They just can't appreciate a good humorist."
+    play music bgm_desert
+    hide sil
     show sil hmm at left
     with moveinleft
     s "We must hope that the defence of our future enemies is not as impenetrable."
@@ -506,18 +557,32 @@ label .approach_menu:
             call Silvia_oob
         "Turn back":
             jump .turnback
+    jump .approach_menu
 
 label .approach:
     "The man looks shocked and points at us, then calls others to his aid!"
     "Novice" "My blood for N'Gashai!"
     "He charges us, wielding a kukri decorated with a dragon's head!"
     "The woman behind him starts casting a spell, materializing the ephemeral form of a dragon over her body."
-    jump .victorious
+    if dungeon_progress >= 2:
+        jump .victorious
+    else:
+        jump .loss
 
 label .turnback:
     "We head back outside, careful to avoid detection."
     jump Ruins_courtyard_menu
 
+label .loss:
+    show air angry_shout at left
+    with moveinleft
+    show sil rage at right
+    with moveinright
+    "We try our best, but the last battle has left us exhausted, and we succumb to our wounds."
+    "We'll have to try again another day."
+    play music bgm_main
+    return
+    
 label .victorious:
     show air angry_shout at left
     with moveinleft
@@ -564,9 +629,9 @@ label .victorious:
 label RuinsStart:
     $ silvia_hidden = False
     call DFO_login
-    call DFO_init
-    call Ruins_entrance
-    call Ruins_courtyard
+    #call DFO_init
+    #call Ruins_entrance
+    #call Ruins_courtyard
     jump events_skip_period
     return
 
@@ -780,7 +845,54 @@ label Ruins_entrance:
     np "A-anyway! Let's go!"
     show sil cat2
     s "Lead the way, and we shall follow."
-    return
+    jump Ruins_courtyard
+    
+label DFO_init_final_battle:
+    scene white with dissolve
+    scene bg_fort with pixellate
+    show sil normal at right
+    show air 7 at left
+    "I arrive to see Silvia and Aerith already waiting for me."
+    "Aerith looks especially excited."
+    a "You took forever! Let's go, we'll win this time for sure!"
+    np "Silvia, how are you so calm?"
+    s "Patience is the virtue of the assassin. One must wait for the right time to strike."
+    s "... Which is now!"
+    "I-I see."
+    play music bgm_desert
+    scene bg_temple with dissolve
+    "We arrive at the entrance. The rider, the novices, the ostrich-dragon, the statues... after so many failed attempts we can finally defeat them with ease."
+    "And now it's time for our ultimate victory. The final battle is here!"
+    s "The ritual nears completion. It is time to strike!"
+    jump Ruins_innertemple
+    
+label DFO_init_statues_defeated:
+    scene white with dissolve
+    scene bg_fort with pixellate
+    show sil normal at right
+    show air 7 at left
+    "I feel a profound sense of peace as the virtual world engulfs me."
+    a "I really want to challenge those statues again. I'm sure we can do it this time!"
+    s "Oh? Has valor finally lighted upon your heart?"
+    np "See, that's how the addiction starts!"
+    "Is it mean that we treat her like a newbie even though she's already a pro?"
+    play music bgm_desert
+    scene bg_temple with dissolve
+    "We teleport to the dungeon. Armed with our knowledge from previous runs, we make it past the great hall without a hitch."
+    jump Ruins_innerchambers
+    
+label DFO_init_rider_defeated:
+    scene white with dissolve
+    scene bg_fort with pixellate
+    show sil normal at right
+    show air 7 at left
+    "Aerith and Silvia are already here to greet me."
+    s "Shall we go? My daggers lust for blood."
+    "Uh-huh."
+    play music bgm_desert
+    scene bg_temple with dissolve
+    "We use the teleporter to get to the dungeon. This time, we manage to defeat the riders with only some difficulty."
+    jump Ruins_courtyard_menu
 
 
 label DFO_init:
@@ -823,19 +935,30 @@ label DFO_init:
     a "I-if you say so..."
     hide air
     hide sil
-    return
+    jump Ruins_entrance
 
 label DFO_login2:
     scene bg_vr
     "I pop a pill, put on the equipment, and start up the game."
-    jump DFO_init
+    if dungeon_progress > 0:
+        $ dungeon_progress += 1
+        "Dungeon progress is now [dungeon_progress]"
+    if dungeon_progress <= 1:
+        jump DFO_init
+    elif dungeon_progress == 2:
+        jump DFO_init_rider_defeated
+    elif dungeon_progress == 3:
+        jump DFO_init_statues_defeated
+    else:
+        jump DFO_init_final_battle
 
 label DFO_login:
     if not first_login:
         jump DFO_login2
     $ first_login = False
+    $ dungeon_progress = 0
     scene player_room
-    play music bgm_cheerful
+    play music bgm_main
     nvl clear
     nvlNarrator "Oh yeah, it's time to play some DFO!"
     nvlNarrator "I've assembled the equipment and I'm raring to go!"
@@ -882,7 +1005,7 @@ label DFO_login:
     "You might be able to fake my voice with a recording, but you'd still need to get the password on top of that."
     "Time to log in! My username is..."
     call nameNP
-    return
+    jump DFO_init
 
 label nameNP:
     $ np_name = ""
