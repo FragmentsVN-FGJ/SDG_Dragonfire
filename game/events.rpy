@@ -196,6 +196,7 @@ label Catherine_afternoon_call_ignored2:
         "Leave her be":
             "Sorry, Cat. This is better for us both."
             $ affection_modify('Catherine', -1)
+            $ stress += stress_modifiers['breakup']
             $ broken_up = True
     return
 
@@ -214,6 +215,7 @@ label Catherine_afternoon_call_ignored:
             c "Whatever. I didn't expect you to understand."
             "She ends the call with that."
         "Ignore":
+            $ stress += stress_modifiers['ignore_calls']
             $ call_ignored = True
             "I wonder how long we can keep this up?"
     return
@@ -239,8 +241,10 @@ label Catherine_morning_call3:
             c "This is as hard on me as it is on you, but... Goodbye, Nick."
             "She hangs up, one last fatal blow to my guts."
             n "C-Catherine..."
+            $ stress += stress_modifiers['breakup']
             $ broken_up = True
         "Ignore":
+            $ stress += stress_modifiers['ignore_calls']
             $ call_ignored = True
             "I ignore her call, feeling kind of embarrassed."
     $ affection_modify('Catherine', -1)
@@ -257,6 +261,7 @@ label Catherine_evening_call3:
             $ call_ignored = False
             jump Catherine_calls_ignored
         "Ignore":
+            $ stress += stress_modifiers['ignore_calls']
             $ call_ignored = True
             "Please, Cat, just don't call me anymore..."
     return
@@ -271,6 +276,7 @@ label Catherine_calls_ignored:
     c "Nicholas, it's over. I can't trust you. And you clearly do not like me. Goodbye."
     "Before I can say anything, she hangs up one last time."
     "And I'm left contemplating my life in silence."
+    $ stress += stress_modifiers['breakup']
     $ broken_up = True
     return
 
@@ -282,6 +288,7 @@ label Catherine_afternoon_call2:
             $ call_ignored = False
             jump answer_Catherine_afternoon_call2
         "Ignore":
+            $ stress += stress_modifiers['ignore_calls']
             $ call_ignored = True
             "I ignore the call, hoping that she will do likewise."
     return
@@ -313,6 +320,7 @@ label answer_Catherine_afternoon_call2:
             c "You know, maybe that would be for the best."
             n "Eh, what!?"
             c "No need to call back, Nick. Goodbye."
+            $ stress += stress_modifiers['breakup']
             $ broken_up = True
         "Apologize":
             n "I'm really sorry, Cat. It won't happen again."
@@ -330,6 +338,7 @@ label Catherine_morning_call1:
             $ call_ignored = False
             jump answer_Catherine_morning_call
         "Ignore":
+            $ stress += stress_modifiers['ignore_calls']
             $ call_ignored = True
             $ affection_modify('Catherine', -1)
             "I click the ignore button."
@@ -344,6 +353,7 @@ label Catherine_afternoon_call1:
             $ call_ignored = False
             call answer_Catherine_ignored_call
         "Ignore":
+            $ stress += stress_modifiers['ignore_calls']
             $ call_ignored = True
             "I click the ignore button again."
             "I'm too busy, okay?"
@@ -357,6 +367,7 @@ label Catherine_evening_call1:
             $ call_ignored = False
             call answer_Catherine_ignored_call
         "Ignore":
+            $ stress += stress_modifiers['ignore_calls']
             $ call_ignored = True
             "I click the ignore button and hope she doesn't call again."
     return

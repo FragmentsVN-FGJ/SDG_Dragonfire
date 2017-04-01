@@ -9,6 +9,7 @@ init:
 define mv = Character("Synthetic voice")
 
 label smith_call1:
+    $ stress += stress_modifiers['unreality']
     show player_room gradient_map
     play music bgm_cheerful
     "Someone is calling."
@@ -60,6 +61,7 @@ label smith_call1:
     return
 
 label smith_call2:
+    $ stress += stress_modifiers['unreality']
     play music bgm_cheerful
     scene player_room gradient_map
     "My wristband is vibrating."
@@ -88,6 +90,7 @@ label .answer:
     return
 
 label ending_for_now:
+    $ stress += stress_modifiers['unreality']
     play music bgm_cheerful
     scene player_room gradient_map
     "My wristband vibrates, and I shudder."
@@ -169,6 +172,7 @@ label ending_for_now:
 # Mr. Smith, uses a speech synthesiser to mask his voice
 
 label madman:
+    $ stress += stress_modifiers['unreality']
     scene city_street
     play music bgm_cheerful
     "It's raining."
@@ -251,6 +255,7 @@ label .luxphoros:
     return
 
 label retro_message:
+    $ stress += stress_modifiers['unreality']
     scene arcade
     "I boot up some of the retro games again."
     "Oh, sweet, they have a new game! A shoot-em-up, by the looks of it."
@@ -274,6 +279,7 @@ label retro_message:
     return
 
 label at_the_bar_once_again:
+    $ stress += stress_modifiers['unreality']
     scene techno_bar with fade
     "I blink."
     "I am... in the bar? Wait, why am I here again?"
@@ -313,6 +319,7 @@ label at_the_bar_once_again:
     return
 
 label truck:
+    $ stress += stress_modifiers['unreality']
     scene city_street
     "As I'm walking home, I'm struck by the beauty of the weather."
     "It sure is nice and cool, the evening air. I close my eyes, breathe it in and let it rejuvenate me."
@@ -343,6 +350,7 @@ label truck:
     jump morning
 
 label truck_after:
+    $ stress += stress_modifiers['unreality']
     scene player_room
     "Before going to sleep, I browse through the news stories for the day."
     "It's mostly the usual click-bait. Nothing too interesting."

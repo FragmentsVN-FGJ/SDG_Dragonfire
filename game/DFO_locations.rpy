@@ -953,6 +953,7 @@ label DFO_login2:
         jump DFO_init_final_battle
 
 label DFO_login:
+    $ stress += stress_modifiers['DFO']
     if not first_login:
         jump DFO_login2
     $ first_login = False
