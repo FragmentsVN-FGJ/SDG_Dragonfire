@@ -697,7 +697,6 @@ label .rider_charge(rider_target):
         pause 0.09
         stop sound
         show enemy_chicken normal at ramming
-        $ renpy.pause(0.5, hard=True)
     else:
         play sound sfx_running
         "He charges toward [rider_target]!"
@@ -739,7 +738,7 @@ label .rider_charge(rider_target):
         hide overlay
         pause 0.2
         show enemy_chicken normal at backwardsramming
-        pause 1.0
+        $ renpy.pause(1, hard=True)
         show enemy_chicken normal at wigglemiddle
         "Blood splatters everywhere, and my body is full of bruises."
         call .dealdamage("Nick", damage["Rider"]["Charge"])
@@ -757,7 +756,7 @@ label .rider_charge(rider_target):
         hide overlay
         pause 0.2
         show enemy_chicken normal at backwardsramming
-        pause 1.0
+        $ renpy.pause(1, hard=True)
         show enemy_chicken normal at wigglemiddle
         "The ostrich tramples all over me, leaving painful bruises."
         call .dealdamage("Nick", damage["Rider"]["Charge"])
