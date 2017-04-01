@@ -353,7 +353,8 @@ label .act_Silvia:
                     play sound sfx_grunt_4
                     "He screams in pain and fury."
                     return
-        "Hide" if not silvia_hidden:
+        "Hide" if not silvia_hidden and current_mp['Silvia'] > mp_costs['Hide']:
+            $ current_mp['Silvia'] -= mp_costs['Hide']
             np "Silvia! Hide!"
             s "Very well."
             "She melds into the shadows."
