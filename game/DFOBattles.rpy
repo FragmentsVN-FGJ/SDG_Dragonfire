@@ -19,6 +19,7 @@ label Ruins_battle1:
     s "It's an ambush! Hihihi!"
     hide sil
     play sound sfx_battlecry
+
     show enemy_chicken normal as enemy_chicken2 at left, gettingcloser with moveinbottom:
         yalign 1.0
     show enemy_swordchicken normal as enemy_chicken3 at right, gettingcloser with moveinbottom:
@@ -370,6 +371,7 @@ label .act_Silvia:
             if i <= 0.3:
                 show fx daggers
                 pause 0.05
+                hide enemy_chicken with moveoutright
                 play sound sfx_hit
                 pause 0.03
                 play sound sfx_hit
@@ -394,7 +396,6 @@ label .act_Silvia:
                 pause 0.09
                 stop sound
                 hide fx daggers
-                hide enemy_chicken with moveoutright
                 play sound sfx_running
                 "... turns around to run!"
                 s "It seems I have lost sight of him and his ridiculous mount, liege."
@@ -402,6 +403,7 @@ label .act_Silvia:
                 jump .rider_escape
             else:
                 show fx daggers
+                show enemy_chicken normal at rolling
                 pause 0.14
                 play sound sfx_hit
                 pause 0.03
@@ -421,7 +423,7 @@ label .act_Silvia:
                 pause 0.03
                 play sound sfx_hit
                 hide fx daggers
-                show enemy_chicken hurt
+                show enemy_chicken hurt at wigglemiddle
                 pause 0.1
                 show enemy_chicken normal
                 pause 0.05
@@ -646,8 +648,8 @@ label .rider_fire(rider_target):
         hide fx fire
         "He comes a bit closer. Suddenly, the ostrich breathes fire on me!"
     else:
-        "He goes closer to [rider_target]. Then, he commands his ostrich to breathe fire!"
         play sound sfx_fire
+        "He goes closer to [rider_target]. Then, he commands his ostrich to breathe fire!"
     if blade_sphere_control:
         play sound sfx_grunt_4
         "Damn! Blade Sphere Control can't protect against breath weapons!"
@@ -774,7 +776,7 @@ label .rider_spear(rider_target):
         #show enemy_chicken normal at ramming
         play sound sfx_running
         "He comes close and attempts to impale me with his spear."
-        show fx slash_spear
+        show fx slash_spear at wigglemiddle
         play sound sfx_hit
         pause 0.09
         stop sound

@@ -87,7 +87,7 @@ init:
     define bgm_scary = "bgm/BGM_Trouble.mp3" # changed from wrong.wav
     #kept ones
     define bgm_buzz = "bgm/buzz.wav" #TODO change into original unless it's CC0 or something??
-    define bgm_desert = "bgm/LanayruDesert.mp3" #TODO change into original song?
+    define bgm_desert = "bgm/BGM_Dungeon_Ambience.mp3" #TODO change into a proper desert music
 
 
     define sfx_battlecry = "bgm/SFX_battlecry.mp3"
