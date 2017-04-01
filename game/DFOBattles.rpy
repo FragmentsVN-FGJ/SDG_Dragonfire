@@ -885,5 +885,6 @@ label .victorious:
         show sil normal
     hide screen hp_window
     play music bgm_desert
+    $ dungeon_progress = 1
     jump Ruins_courtyard_menu
     return

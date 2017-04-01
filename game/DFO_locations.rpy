@@ -4,11 +4,6 @@ init:
     $ mp_costs = {'Light Barrier': 10, 'Curing Light': 10, 'Furious Strike': 20, 'Blade Sphere Control': 30, 'Hail of Daggers': 30, "Poisoned Blade": 20, "Depths of Slumber": 30}
     $ max_hp = {'Nick': 100, 'Aerith': 100, 'Silvia': 100, 'Rider':70}
     $ max_mp = {'Nick': 100, 'Aerith': 100, 'Silvia': 100}
-    $ current_hp = {'Nick': max_hp['Nick'], 'Aerith': max_hp['Aerith'], 'Silvia': max_hp['Silvia'], 'Rider': max_hp['Rider']}
-    $ current_mp = {'Nick': max_mp['Nick'], 'Aerith': max_mp['Aerith'], 'Silvia': max_mp['Silvia']}
-    $ idtolabel = {}
-    $ light_barrier_active = {}
-    $ poison_counter = {}
     $ damage = {'Nick': {'blade_sphere_control': 10, 'attack': 20}, 'Silvia': {'sneak_attack': 40, 'attack': 20, 'hail': 20, 'poison_attack': 20}, 'Aerith': {}, 'Rider': {'Spear': 20, 'Fire': 20, 'Charge': 30}, 'poison': 10 }
 
     $ heal_amount = {"Curing Light": 20}
@@ -628,6 +623,11 @@ label .victorious:
 
 label RuinsStart:
     $ silvia_hidden = False
+    $ current_hp = {'Nick': max_hp['Nick'], 'Aerith': max_hp['Aerith'], 'Silvia': max_hp['Silvia'], 'Rider': max_hp['Rider']}
+    $ current_mp = {'Nick': max_mp['Nick'], 'Aerith': max_mp['Aerith'], 'Silvia': max_mp['Silvia']}
+    $ idtolabel = {}
+    $ light_barrier_active = {}
+    $ poison_counter = {}
     call DFO_login
     #call DFO_init
     #call Ruins_entrance
@@ -1046,4 +1046,4 @@ label nameNP:
 init python:
     profanity = ['anal', 'anus', 'arse', 'ass', 'ballsack', 'balls', 'bastard', 'bitch', 'biatch', 'bloody', 'blowjob', 'blow job', 'bollock', 'bollok', 'boner', 'boob', 'bugger', 'bum', 'butt', 'clitoris', 'cock', 'coon', 'crap', 'cunt', 'damn', 'dick', 'dildo', 'dyke', 'fag', 'feck', 'fellate', 'fellatio', 'felching', 'fuck', 'f u c k', 'fudgepacker', 'fudge packer', 'flange', 'hell', 'homo', 'jerk', 'jizz', 'knobend', 'knob end', 'labia', 'lmao', 'lmfao', 'muff', 'nigger', 'nigga', 'omg', 'penis', 'piss', 'poop', 'prick', 'pube', 'pussy', 'queer', 'scrotum', 'sex', 'shit', 's hit', 'sh1t', 'slut', 'smegma', 'spunk', 'tit', 'tosser', 'turd', 'twat', 'vagina', 'wank', 'whore', 'wtf']
     takenNames = ['aerith', 'silvia', 'lucia', 'grayknight', 'nekochan']
-    atleasttryNames = ['q', 'qw', 'qwe', 'qwer', 'qwert', 'qwerty', 'a', 'as', 'asd', 'asdf', 'asdfg', 'z', 'zx', 'zxc', 'zxcv', 'zxcvb']
+    atleasttryNames = ['q', 'qw', 'qwe', 'qwer', 'qwert', 'qwerty', 'a', 'as', 'asd', 'asdf', 'asdfg', 'z', 'zx', 'zxc', 'zxcv', 'zxcvb', 'dfgh', 'sdfgh']
