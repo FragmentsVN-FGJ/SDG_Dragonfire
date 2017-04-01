@@ -1548,6 +1548,10 @@ label day:
         call ending_for_now
         call events_end_day
         jump Ending_Credits
+        
+    if stress >= 10:
+        call events_end_day
+        jump stress_ending
 
     # Now, we jump the day planner, which may set the act variables
     # to new values. We jump it with a list of periods that we want
@@ -1660,6 +1664,9 @@ label night:
 
         "Just as I'm going to sleep, I realize I forgot my [promise_pluralized] to [forgotten_people]."
 
+    if stress >= 8:
+        "All the stress caused by recent events makes my dreams dark and uneasy."
+        
     # We call events_end_day to let it know that the day is done.
     call events_end_day
 
@@ -1694,4 +1701,24 @@ label Ending_Credits:
     show thankyou at truecenter
     pause 4
     hide thankyou with dissolve
+    return
+
+label stress_ending:
+    scene black with dissolve
+    "I am on a bridge, staring at the ocean below."
+    "The waves look so gray, so peaceful..."
+    "I just want peace..."
+    "Why can't I have peace?"
+    "I look at the waves one last time, closing my eyes, and then..."
+    "I'm flying. I'm flying! I'm f...!"
+    "Strange. It feels as if time has frozen."
+    "Was it only a dream? Was it all just a dream?"
+    mv "This will not do."
+    "What?"
+    "All around me, time starts to rewind. I'm back on the bridge."
+    "I'm back home."
+    "The days move past, my memories with them..."
+    "And I return, return to the beginning of it all."
+    nvl clear
+    nvlNarrator "Game Over. Return to challenge again."
     return
