@@ -8,6 +8,23 @@ init:
 
 define mv = Character("Synthetic voice")
 
+image dirty_room_vortex:
+    "bg/dirty_room_1.png"
+    
+    "bg/dirty_room_1 gradient_map.png" with Dissolve(2)
+    
+    "bg/dirty_room_1_gradient_map_1.png" with dissolve
+    pause 0.5
+    "bg/dirty_room_1_gradient_map_2.png" with dissolve
+    pause 0.5
+    "bg/dirty_room_1_gradient_map_3.png" with dissolve
+    pause 0.5
+    "bg/dirty_room_1_gradient_map_4.png" with dissolve
+    pause 0.5
+    "bg/dirty_room_1_gradient_map_5.png" with dissolve
+    pause 0.5
+    Solid((0,0,0,255)) with Dissolve(3)
+
 label smith_call1:
     $ stress += stress_modifiers['unreality']
     show player_room gradient_map
@@ -91,13 +108,15 @@ label .answer:
 
 label ending_for_now:
     $ stress += stress_modifiers['unreality']
-    play music bgm_cheerful
+    play music bgm_main
     scene player_room gradient_map
     "My wristband vibrates, and I shudder."
     "It's another call through Signal. I didn't get the money in time."
     "And now it's payback time."
+    scene black with fade
     "For a moment, I listen to the buzzing of the flies in my room, afraid to pick up the call."
     "And then, there's silence."
+    scene player_room grayscale2 with fade
     "I open my eyes to see everything turned gray and frozen."
     n "W-wha...?"
     "The flies... are frozen in mid-air!"
@@ -142,7 +161,8 @@ label ending_for_now:
     "What is this!?"
     "It's Silvia's dagger! That's not possible...!"
     window hide
-    pause 1
+    scene dirty_room_vortex
+    $ renpy.pause(8, hard = True)
     window show
     "It's a strange sensation. Screaming without hearing your own scream. Without feeling it."
     "Just some awareness in the background of the hurricane storming through your mind, telling you that you're screaming."

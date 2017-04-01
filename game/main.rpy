@@ -1701,7 +1701,7 @@ label Ending_Credits:
     show thankyou at truecenter
     pause 4
     hide thankyou with dissolve
-    return
+    $ renpy.full_restart()
 
 label stress_ending:
     scene black with dissolve
@@ -1721,4 +1721,4 @@ label stress_ending:
     "And I return, return to the beginning of it all."
     nvl clear
     nvlNarrator "Game Over. Return to challenge again."
-    return
+    $ renpy.full_restart()
