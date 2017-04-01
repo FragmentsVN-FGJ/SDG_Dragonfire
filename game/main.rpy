@@ -151,7 +151,7 @@ init python:
 
 
     dp_period("Afternoon", "afternoon_act")
-    dp_choice("Ice Cream Parlor", "parlor", x=175, y=450, show="stress < 8" tooltip="Queens Gelateria, best ice cream in town. Prices from 6000 bits up. (-2 stress)")
+    dp_choice("Ice Cream Parlor", "parlor", x=175, y=450, show="stress < 8", tooltip="Queens Gelateria, best ice cream in town. Prices from 6000 bits up. (-2 stress)")
     dp_choice("Restaurant", "restaurant", x=400, y=350, tooltip="Good in case I'm too lazy to cook for myself. Fries for 12 000 bits. (-1 stress)")
     #dp_choice("Bowling", "bowling")
     dp_choice("Mall", "mall", x=425, y=180, show="stress < 8", tooltip="I could look for sales, if it's not too crowded. (may decrease stress)")
@@ -164,9 +164,9 @@ init python:
     dp_period("Evening", "evening_act")
 
     dp_choice("Bar", "bar", x=650, y=400, tooltip="Techno bar. Should I get a drink? It's 7000 bits. (-1 stress)")
-    dp_choice("Movie theatre", "movies", x=340, y=500, tooltip="I could go watch some movies. By myself. For 15 000 bits. (-2 stress)")
+    dp_choice("Movie theatre", "movies", x=340, y=470, tooltip="I could go watch some movies. By myself. For 15 000 bits. (-2 stress)")
     dp_choice("VR Arcade", "arcade", x=150, y=400, tooltip="VR Arcade, though I'll probably end up playing retro games. 7000 bits. (-1 stress)")
-    dp_choice("Catherine's apartment", "cathouse", x=200, y=150, show="stress < 8" tooltip="I wonder if she's home...?")
+    dp_choice("Catherine's apartment", "cathouse", x=200, y=150, show="stress < 8", tooltip="I wonder if she's home...?")
     dp_choice("Clean room", "clean", x=350, y=550, tooltip="I wonder how it always gets so dirty... (-1 stress)")
 
     # HELPER FUNCTIONS
