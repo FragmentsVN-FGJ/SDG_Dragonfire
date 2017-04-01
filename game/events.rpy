@@ -170,16 +170,26 @@ label callCatherine:
             $ date_day = day+3
         "Next week":
             $ date_day = day+4
+        "Never mind.":
+            jump .nevermind
     c "Yeah, okay. Where should we meet?"
     menu:
         "Movie theater":
             $ date_location = "movies"
         "VR Arcade":
             $ date_location = "arcade"
+        "Never mind":
+            jump .nevermind
     c "All right, see you there!"
     n "Yeah, see you!"
     "I can barely wait."
     $ promises[(date_location, date_day)] = {("Catherine", "meet"): False}
+    return
+    
+label .nevermind:
+    n "Actually, never mind. I'll call you later."
+    "She sounds a bit bemused."
+    c "Uh-huh. Later."
     return
 
 label Catherine_afternoon_call_ignored2:

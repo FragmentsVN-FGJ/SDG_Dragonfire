@@ -271,6 +271,10 @@ label runningtrack:
     
     "I run the lap a few times."
     
+    $ i = renpy.random.random()
+    if i < 0.5:
+        "The repetitiveness somehow reminds me of grinding in DFO."
+    
     $ fitness += fitness_bonuses['runningtrack']
     $ stress += stress_modifiers['runningtrack']
     
@@ -337,7 +341,8 @@ label library:
     elif i < 0.7:
         "A research journal has an article on a drug which is shown to improve VR proprioception by modifying neurotransmitters in the temporal lobe."
     elif i < 0.8:
-        "I play around with the 3D printer, creating a model of Samus Aran."
+        $ character = renpy.random.choice(['Samus Aran', 'Master Chief', 'Lain Iwakura'])
+        "I play around with the 3D printer, creating a model of [character]."
     elif i < 0.9:
         "I talk with some of the hackers at the library."
     else:
@@ -718,6 +723,7 @@ label .what_analysis:
 label .what_analysis_recap:
     n "Could you show me that VR thing again? It was cool."
     m "The 7-dimensional scatter plot? Sure."
+    m "It's pretty addictive, isn't it? Almost like some weird sort of 'infornography'."
     "I place the headset over my eyes again. This time, I can almost make out patterns in the way the technicolor points and crosses move across the vast expanses of the black background."
     n "Yup, still cool, still confusing."
     m "It takes a while to really spot the patterns. It's rewarding work, in and of itself."
