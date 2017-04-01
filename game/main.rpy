@@ -142,42 +142,32 @@ init python:
     register_stat("Stress", "stress", 3, 10)
     register_stat("μBC (bits)", "cash", 27126, 999999)
 
-    #dp_period("Morning", "morning_act")
-    #dp_choice("Attend Class", "class")
-    #dp_choice("Cut Class", "cut")
-
-    # This is an example of an event that should only show up under special circumstances
-    #dp_choice("Fly to the Moon", "fly", show="strength >= 100 and intelligence >= 100")
-
     dp_period("Morning", "morning_act")
     dp_choice("Swimming hall", "swimming", x=300, y=350, tooltip="Entrance fee 3000 bits.")
     dp_choice("Gym", "gym", x=400, y=450, tooltip="Daily fee is 1000 bits.")
     dp_choice("Running Track", "track", x=150, y=200, tooltip="Free entry. A good way to build up fitness.")
     dp_choice("Call Catherine", "callcat", x=1100,y=675, show="not broken_up and day > 1", tooltip="I could try setting up a date...")
-    dp_choice("Clean room", "clean", x=350, y=550, tooltip="My room is as unkempt as my hair. Very.")
+    dp_choice("Clean room", "clean", x=350, y=550, tooltip="My room is as unkempt as my hair. Very. (-1 stress)")
 
 
     dp_period("Afternoon", "afternoon_act")
-    #dp_choice("Study", "study")
-    #dp_choice("Hang Out", "hang")
-    dp_choice("Ice Cream Parlor", "parlor", x=175, y=450, tooltip="Queens Gelateria, best ice cream in town. Prices from 6000 bits up.")
-    dp_choice("Restaurant", "restaurant", x=400, y=350, tooltip="Good in case I'm too lazy to cook for myself. Fries for 12 000 bits.")
+    dp_choice("Ice Cream Parlor", "parlor", x=175, y=450, show="stress < 8" tooltip="Queens Gelateria, best ice cream in town. Prices from 6000 bits up. (-2 stress)")
+    dp_choice("Restaurant", "restaurant", x=400, y=350, tooltip="Good in case I'm too lazy to cook for myself. Fries for 12 000 bits. (-1 stress)")
     #dp_choice("Bowling", "bowling")
-    dp_choice("Mall", "mall", x=425, y=180, tooltip="I could look for sales, if it's not too crowded.")
+    dp_choice("Mall", "mall", x=425, y=180, show="stress < 8", tooltip="I could look for sales, if it's not too crowded. (may decrease stress)")
     dp_choice("Library", "library", x=550, y=200, tooltip="Books, computers and a makerspace. Free, of course.")
-    dp_choice("Work", "work", x=150, y=550, tooltip="The pay is 9000 bits per day. Not bad.")
-    dp_choice("Business school", "business", x=200, y=100, tooltip="I've got no business there, probably.")
-    dp_choice("Ruins of Kvaagwyr", "ruins", x=755, y=450, tooltip="A high-level dungeon released as a part of the new expansion for DFO. It will take the whole day to play it.")
+    dp_choice("Work", "work", x=150, y=550, show="stress < 8", tooltip="The pay is 9000 bits per day. Not bad. (+2 stress)")
+    dp_choice("Business school", "business", x=200, y=100, show="stress < 8", tooltip="I've got no business there, probably.")
+    dp_choice("Ruins of Kvaagwyr", "ruins", x=755, y=450, tooltip="A high-level dungeon released as a part of the new expansion for DFO. It will take the whole day to play it. (-4 stress)")
 
 
     dp_period("Evening", "evening_act")
-    #dp_choice("Exercise", "exercise")
-    #dp_choice("Play Games", "play")
 
-    dp_choice("Bar", "bar", x=650, y=400, tooltip="Techno bar. Should I get a drink? It's 3000 bits.")
-    dp_choice("Movie theatre", "movies", x=350, y=500, tooltip="I could go watch some movies. By myself. For 15 000 bits.")
-    dp_choice("VR Arcade", "arcade", x=150, y=400, tooltip="VR Arcade, though I'll probably end up playing retro games. 7000 bits.")
-    dp_choice("Catherine's apartment", "cathouse", x=200, y=150, tooltip="I wonder if she's home...?")
+    dp_choice("Bar", "bar", x=650, y=400, tooltip="Techno bar. Should I get a drink? It's 7000 bits. (-1 stress)")
+    dp_choice("Movie theatre", "movies", x=340, y=500, tooltip="I could go watch some movies. By myself. For 15 000 bits. (-2 stress)")
+    dp_choice("VR Arcade", "arcade", x=150, y=400, tooltip="VR Arcade, though I'll probably end up playing retro games. 7000 bits. (-1 stress)")
+    dp_choice("Catherine's apartment", "cathouse", x=200, y=150, show="stress < 8" tooltip="I wonder if she's home...?")
+    dp_choice("Clean room", "clean", x=350, y=550, tooltip="I wonder how it always gets so dirty... (-1 stress)")
 
     # HELPER FUNCTIONS
 
