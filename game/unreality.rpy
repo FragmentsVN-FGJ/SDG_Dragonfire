@@ -1,5 +1,5 @@
 init:
-    $ event("smith_call1", "period == 'morning' and day>=4 and (not first_login or day>=7)", event.once(), priority=1)
+    $ event("smith_call1", "period == 'morning' and day>=5 and (not first_login or day>=7)", event.once(), priority=1)
     $ event("smith_call2", "period == 'morning' and day==10", event.depends("smith_call1"), event.once(), priority=1)
     $ event("madman", "act != 'parlor' and (act, day) in promises.keys()", event.once(), priority=150)
     $ event("retro_message", "act == 'arcade'", event.depends("smith_call1"), event.only(), event.once(), priority=180)

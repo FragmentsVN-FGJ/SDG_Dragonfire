@@ -718,8 +718,12 @@ label Nicholas_oob:
 
 label Aerith_oob:
     menu:
-        "Cast Light Barrier on...":
-            call .light_barrier_target
+        "Cast Light Barrier":
+            $ target = "Aerith"
+            $ target_desc = "yourself"
+            call ask_Aerith_to_cast("Light Barrier", target_desc, target)
+        #"Cast Light Barrier on...":
+            #call .light_barrier_target
         "Cast Curing Light on...":
             call .cure_target
         #"Cast Mass Cure"
@@ -894,7 +898,22 @@ label DFO_init_rider_defeated:
     "We use the teleporter to get to the dungeon. This time, we manage to defeat the riders with only some difficulty."
     jump Ruins_courtyard_menu
 
-
+label DFO_init_repeat:
+    scene white with dissolve
+    scene bg_fort with pixellate
+    show sil normal at right
+    if not broken_up:
+        show air 8 at left
+    else:
+        show air 7 at left
+    "I blink as my eyes adjust to the vibrant hyper-reality surrounding me."
+    s "Shall we challenge the Ruins once more?"
+    np "That's what I was thinking."
+    s "This time, we shall surely be victorious."
+    "Let's hope so..."
+    scene bg_temple with fade
+    jump Ruins_courtyard.courtyard_menu
+    
 label DFO_init:
     scene white with dissolve
     scene bg_fort with pixellate
@@ -944,7 +963,7 @@ label DFO_login2:
         $ dungeon_progress += 1
         "Dungeon progress is now [dungeon_progress]"
     if dungeon_progress <= 1:
-        jump DFO_init
+        jump DFO_init_repeat
     elif dungeon_progress == 2:
         jump DFO_init_rider_defeated
     elif dungeon_progress == 3:

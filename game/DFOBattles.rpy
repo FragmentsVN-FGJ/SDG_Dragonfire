@@ -697,6 +697,7 @@ label .rider_charge(rider_target):
         pause 0.09
         stop sound
         show enemy_chicken normal at ramming
+        $ renpy.pause(0.5, hard=True)
     else:
         play sound sfx_running
         "He charges toward [rider_target]!"
@@ -877,6 +878,7 @@ label .rider_spear(rider_target):
 
 label .victorious:
     hide enemy_chicken
+    $ target_list = []
     np "Whew! That wasn't too easy!"
     if "Silvia" in playerparty:
         show sil wot
