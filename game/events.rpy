@@ -563,7 +563,6 @@ label .Catherine_investigation(visibility, place):
     return
 
 label .Catherine_conversation:
-    # Funny music here
     menu:
         "This is some anime cliche, isn't it!?":
             n "This is like the oldest cliche ever! Next you're gonna beat me up for seeing you naked!"
@@ -575,6 +574,7 @@ label .Catherine_conversation:
     show cat frown
     "Cat frowns and blinks, as if confused, but then..."
     show cat fuun
+    play music bgm_derp_loop
     "... she starts giggling!"
     show cat blush_smile
     $ affection_modify('Catherine', 1)
@@ -592,6 +592,7 @@ label .Catherine_conversation:
 
 label Catherine_gym_broken_up:
     $ cash -= prices['gym']
+    play music bgm_main
     scene gym
     show cat normal_right at right
     show cat_torso orange at right behind cat
@@ -962,7 +963,7 @@ label .robot_act:
     jump .act_phase
 
 label .victory:
-    play music bgm_main
+    play music bgm_cheerful
     show cat fuun
     show cat_torso green behind cat
     with moveinright
@@ -1050,6 +1051,7 @@ label Catherine_study_together:
     # be able to choose between that, the library and the parlor.
     $ cat_mood = 0
     scene city_street
+    play music bgm_main
     "I'm standing in front of the door to Catherine's apartment."
     "It's just an ordinary apartment in a small tower block right by the docks."
     "It still manages to be far more fancy than mine, though, with an entrance, two rooms and a kitchen."
@@ -1817,6 +1819,7 @@ label Catherine_movie_scene:
     $ promises[('movies', day)][('Catherine', 'meet')] = True
     $ stress += stress_modifiers['movies']
     scene city_street
+    play music bgm_main
     call .date_intro
     n "Anyway, let's go."
     "We arrive at the ticket booth."

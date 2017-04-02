@@ -14,6 +14,11 @@
 # Set up a default schedule.
 
 init:
+    transform closeupzoomoutcenter:
+        zoom 1.75
+        yalign 0.0
+        linear 2.0 zoom 1.0
+
     transform zoomoutcenter:
         zoom 1.0
         xalign 0.5
@@ -334,6 +339,7 @@ image baudrillard = Text("{size=36}{color=#fff}\"We will live in this world, whi
 image thankyou = Text("{size=40} Thank you for playing!", text_align=0.5)
 image cred = Text(credits_s, text_align=0.5)
 image theend = Text("{size=40}Conglaturation ! ! !\n \n This story is not so happy end. \n \n You have completed a great demo. \n \n And prooved the justice of our culture. \n \n Being the wise and courageour Nick you are, you feel strongth welling in your body. \n \n Now go and wait to challenge again, for ever lasting peace!", text_align=0.5)
+image gameover = Text("{size=40}Game Over. \n\n Return to challenge again.", text_align=0.5)
 
 
 image fx daggers:
@@ -972,7 +978,7 @@ label RoomDescription:
     nvlNarrator "One of these days, for certain..."
     "Suddenly, my wristband vibrates to signal a call."
     "I read the name projected on my forearm."
-    "{color=#f00}Catherine.{/color}" # Can this be colored red?
+    "{color=#f00}Catherine.{/color}" 
     "My heart skips a beat, and I hover my finger over the ignore button."
     "Then, I manage to get a hold of myself. Lifting my index finger to my ear, I pick up the call."
     n "Hi."
@@ -1062,6 +1068,7 @@ label parlorStart:
     $ cat_mood = 0
     $ parlor_visited = True
 
+    play music bgm_main
     scene parlour_in
 
     $ ice_cream = None
@@ -1147,6 +1154,7 @@ label parlorStart:
     jump parlorConversation
 
 label parlorConversation:
+    play music "bgm/SFX_City_ambience_1.mp3"
     "There's a bit of an awkward silence as we sit down. Cat is staring at the table, avoiding eye contact."
     "She's fiddling with a napkin, deliberating something, but can't get the words out."
     $ parlorwait = False
@@ -1598,6 +1606,8 @@ label parlorInterrupt:
 # This is the label that is jumped to at the start of a day.
 label day:
 
+    call play_cheerful
+
     # Increment the day it is.
     $ day += 1
 
@@ -1652,6 +1662,7 @@ label day:
 
     # We process each of the three periods of the day, in turn.
 label morning:
+    call play_cheerful
     window show
 
     # Set these variables to appropriate values, so they can be
@@ -1666,6 +1677,7 @@ label morning:
     # afternoon.
 
 label afternoon:
+    call play_cheerful
     # It's possible that we will be skipping the afternoon, if one
     # of the events in the morning jumped to skip_next_period. If
     # so, we should skip the afternoon.
@@ -1689,6 +1701,7 @@ label afternoon:
 
 
 label evening:
+    call play_cheerful
     # The evening is the same as the afternoon.
     if check_skip_period():
         jump night
@@ -1708,6 +1721,7 @@ label evening:
 
 
 label night:
+    call play_cheerful
     scene black with dissolve
     window show
 
@@ -1808,8 +1822,10 @@ label stress_ending:
     "I'm back home."
     "The days move past, my memories with them..."
     "And I return, return to the beginning of it all."
-    nvl clear
-    nvlNarrator "Game Over. Return to challenge again."
+    scene white with Dissolve(2)
+    show gameover with dissolve
+    pause 5
+    hide gameover with dissolve
     $ renpy.full_restart()
 
 label ending_celebration:
@@ -1905,14 +1921,14 @@ label trailer:
     pause 2
     
     scene bg_fort
-    show air blush2 at backwardsramming
+    show air blush2 at closeupzoomoutcenter
     endingAerith "Nicholas!{w=1.0}{nw}"
     scene bg_field
-    show sil annoyed at backwardsramming, flip
+    show sil annoyed at closeupzoomoutcenter, flip
     endingSilvia "Liege!{w=1.0}{nw}"
     scene player_room
-    show cat_torso green at backwardsramming
-    show cat scream at backwardsramming
+    show cat_torso green at closeupzoomoutcenter
+    show cat scream at closeupzoomoutcenter
     endingCatherine "Nicky...!{w=1.0}{nw}"
     
     scene bg_fort with dissolve
@@ -1945,4 +1961,13 @@ label trailer:
     
     pause 2
     
+    return
+    
+label play_cheerful:
+    if day <= 7:
+        if not renpy.music.get_playing() == "bgm/BGM_Cheerful.mp3":
+            play music bgm_cheerful
+    else:
+        if not renpy.music.get_playing() == "bgm/BGM_Piano_Cinematic":
+            play music bgm_main
     return
