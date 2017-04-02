@@ -87,11 +87,19 @@ label Ruins_dragon:
     show air blush at right, flip
     a "Huh?"
     # Startle anim
+    show air blush at spooked
+    show enemy_dragon2 normal behind air, sil with dissolve:
+        yalign 0.5
+        xanchor 0.5
+        xpos 0.8
     "Aerith is startled as the wall behind her suddenly sprouts a huge slitted eye!"
     "I slowly realize that it's not a wall at all, but the head of a giant serpentine dragon!"
     show sil flmao
     s "Ah. This must be the N'Gashai we heard mention of."
+    play sound sfx_dragon
     "Is this really the time to discuss that!?"
+    show enemy_dragon2 at center with moveinright:
+        yalign 0.5
     show sil hurt at center
     show air blush2 at right
     with vpunch
@@ -101,15 +109,34 @@ label Ruins_dragon:
     "It's preparing to roast us alive! We have to move fast!"
     hide sil
     hide air
+    show enemy_dragon2 at breathefire
     with moveoutright
+    show fx fire
+    play sound sfx_fire
+    pause 0.8
+    hide fx fire
     "We hide behind the pillars just as the flames begin to scorch the air around us."
+    show enemy_dragon2 at shake
+    play sound sfx_thump
     "It breaks some of the pillars with its tail!"
     "Damn! We have to move!"
+    play sound sfx_digging
+    show enemy_dragon2 at digging
+    pause 1.0
+    stop sound
     "It burrows into the ground. We eventually learn to anticipate where it'll be, and manage to defeat it with great effort."
     jump .victorious
 
 label .victorious:
+    play sound [sfx_dragon, sfx_thump]
+    show enemy_dragon2 normal with moveinbottom:
+        yalign 0.5
+        xalign 0.5
+    show enemy_dragon2 at shake
+    pause 0.8
+    hide enemy_dragon2 with moveoutbottom
     "As the dragon dies with a mighty roar, its tail sweeps out the last of the pillars holding the chamber together!"
+    play sound sfx_collapse
     "... And it begins to collapse!"
     np "Run!"
     "We make our way back through the tunnel as it collapses behind us!"
@@ -261,31 +288,37 @@ label .wait:
 label .battle:
     "From where the dagger pierced the man's heart, a black, half-vaporous ooze spews forth, engulfing the leader."
     "He breathes the vapours in, filling himself with the power of darkness." # Teh cheeze, i luv it
+    play sound sfx_dragon
     "He sprouts wings and claws, his entire body taken over by the ethereal form of a monstrous black dragon!"
     if dungeon_progress >= 4:
         jump .victorious
     else:
         jump .loss
-    
+
 label .loss:
     "We do our best, but the dragon regenerates each turn."
     "Silvia is the first to go down."
     "Then, it's my turn."
     "Damn! We were so close."
     play music bgm_main
-    return    
-    
+    return
+
 label .victorious:
     "We start fighting, but it's as hopeless as before."
+    show sil annoyed at right, flip with moveinright
     s "Liege! Look under the dragon!"
+    hide sil with moveoutright
     "What does she mean...? Wait!"
     "The ethereal form of the dragon is connected by a thin cord of darkness to the corpse on the altar. I wonder..."
+    play sound sfx_hit
     "I run to the altar and cut the cord with my sword!"
+    play sound sfx_grunt_4
     with hpunch
     "The dragon vanishes instantly, and the cult leader falls to his death."
     "We make short work of the cultists after that."
     "The dagger crumbles into dust, which flows beneath the altar."
     "Hey, wait a minute!"
+    #TODO add sfx for pushing heavy stones on stone floor
     "I push the altar forward, revealing a secret entrance!"
     $ battle5_won = True
     jump Ruins_innertemple_menu
@@ -331,15 +364,16 @@ label .approach_menu:
             jump Ruins_training_menu
 
 label .approach:
-    show sil normal at left
+    show sil normal
     with moveinleft
     "As Silvia approaches the gates, purple flames light up in the eyes of the statues."
     np "Look out!"
     "The statues jolt to life, lifting their scimitars into the air."
     show sil scared
     "They approach Silvia with heavy steps leaving their mark on the sand-covered floor."
-    show sil trick
+    show sil trick at shake
     "Silvia evades them easily, and we go on the offensive."
+    show sil normal at right, flip with moveinleft
     "The statues are too slow to strike us with their blades, but they also seem impervious to all our techniques."
     if dungeon_progress >= 3:
         jump .victorious
@@ -347,45 +381,70 @@ label .approach:
         jump .loss
 
 label .loss:
+    show air at left
     a "They're immune to all of my spells...!"
+    show sil rage
     s "Do not lose your bearings, priestess!"
+    show sil fail
+    play sound sfx_critical
+    hide air with moveoutbottom
     "It's too late. One of the statues approaches Aerith from behind, killing her with a single blow."
+    hide sil with moveoutbottom
     "Without a healer, the rest of our party soon follows."
     "Better luck next time."
     play music bgm_main
     return
-    
+
 label .victorious:
+    show sil wot
     s "Ah! Of course!"
     np "What?"
+    show sil cat
     s "We have determined that our techniques are incapable of harming them..."
     np "What are you getting at?"
+    show sil mwerrllyy
     s "Are there not other weapons available?"
+    show sil lol
     np "Oh, now I get it. Good thinking."
     a "Huh? I still don't get it..."
     np "Watch and see."
+    hide sil with moveoutright
     "Standing right in the middle of the chamber, I use my taunt technique."
     play music bgm_derp_loop
     np "Hey, blockheads! Catch me if you can!"
     np "Oh wait, guess you're too statue-nary!"
     "I'm sure their ears would be bleeding right about now if it was physically possible."
     "They raise their scimitars, both coming right at me from opposite sides of the chamber."
+    play sound sfx_hit
     "At the last moment, I jump out of the way, and they strike each other!"
+    play sound sfx_thump
     "Dead in a single strike! As the magic animating them falters, they fall to the floor, nothing but a pile of rubble."
+    show sil fail at left, flip
+    show air fail at right, flip
+    with moveinright
     "Aerith and Silvia come over to the gate."
+    show air fail2
     a "Can I strangle him."
+    show sil angry
+    show air fail
     s "After me, priestess."
     np "Come on, it wasn't {i}that{/i} bad."
+    show sil uwot2
     s "Liege..."
+    show sil uwot3
     s "That was quite probably the worst pun ever made in the history of this world."
+    show sil uwot2
     "Yeesh. They just can't appreciate a good humorist."
     play music bgm_desert
     hide sil
     show sil hmm at left
-    with moveinleft
+    #with moveinleft
+    show air eyes_wide
     s "We must hope that the defence of our future enemies is not as impenetrable."
+    hide air with moveoutright
+    show sil at center with moveinleft
     "Now undisturbed, Silvia picks the lock with ease, and the gate opens with a creak."
-    hide sil
+    hide sil with moveoutleft
     $ battle4_won = True
     jump Ruins_innerchambers_menu
 
@@ -577,7 +636,7 @@ label .loss:
     "We'll have to try again another day."
     play music bgm_main
     return
-    
+
 label .victorious:
     show air angry_shout at left
     with moveinleft
@@ -850,18 +909,23 @@ label Ruins_entrance:
     show sil cat2
     s "Lead the way, and we shall follow."
     jump Ruins_courtyard
-    
+
 label DFO_init_final_battle:
     scene white with dissolve
     scene bg_fort with pixellate
     show sil normal at right
-    show air 7 at left
+    show air 6 at left
     "I arrive to see Silvia and Aerith already waiting for me."
     "Aerith looks especially excited."
+    show air 2
     a "You took forever! Let's go, we'll win this time for sure!"
+    show air 8
     np "Silvia, how are you so calm?"
+    show sil annoyed
     s "Patience is the virtue of the assassin. One must wait for the right time to strike."
+    show sil star
     s "... Which is now!"
+    show sil cat
     "I-I see."
     play music bgm_desert
     scene bg_temple with dissolve
@@ -869,29 +933,37 @@ label DFO_init_final_battle:
     "And now it's time for our ultimate victory. The final battle is here!"
     s "The ritual nears completion. It is time to strike!"
     jump Ruins_innertemple
-    
+
 label DFO_init_statues_defeated:
     scene white with dissolve
     scene bg_fort with pixellate
     show sil normal at right
-    show air 7 at left
+    show air 8 at left
     "I feel a profound sense of peace as the virtual world engulfs me."
+    show air 2
     a "I really want to challenge those statues again. I'm sure we can do it this time!"
+    show air 8
+    show sil mwerrllyy
     s "Oh? Has valor finally lighted upon your heart?"
+    show sil lol
+    show air 7
     np "See, that's how the addiction starts!"
+    show sil normal
     "Is it mean that we treat her like a newbie even though she's already a pro?"
     play music bgm_desert
     scene bg_temple with dissolve
     "We teleport to the dungeon. Armed with our knowledge from previous runs, we make it past the great hall without a hitch."
     jump Ruins_innerchambers
-    
+
 label DFO_init_rider_defeated:
     scene white with dissolve
     scene bg_fort with pixellate
     show sil normal at right
-    show air 7 at left
+    show air eyes_wide at left
     "Aerith and Silvia are already here to greet me."
+    show sil evil_laugh
     s "Shall we go? My daggers lust for blood."
+    show sil cat
     "Uh-huh."
     play music bgm_desert
     scene bg_temple with dissolve
@@ -907,13 +979,15 @@ label DFO_init_repeat:
     else:
         show air 7 at left
     "I blink as my eyes adjust to the vibrant hyper-reality surrounding me."
+    show sil hmm
     s "Shall we challenge the Ruins once more?"
     np "That's what I was thinking."
+    show sil cat2
     s "This time, we shall surely be victorious."
     "Let's hope so..."
     scene bg_temple with fade
     jump Ruins_courtyard.courtyard_menu
-    
+
 label DFO_init:
     scene white with dissolve
     scene bg_fort with pixellate
@@ -923,10 +997,12 @@ label DFO_init:
     else:
         show air 7 at left
     "I blink as my eyes adjust to the vibrant hyper-reality surrounding me."
-    show air 7 at left with dissolve
-    with moveinleft
-    show sil normal at right with dissolve
-    with moveinleft
+    show black
+    hide black with dissolve
+    #show air 7 at left with dissolve
+    #with moveinleft
+    #show sil normal at right with dissolve
+    #with moveinleft
     "Silvia and Aerith are already here."
     s "Hi there."
     if broken_up:

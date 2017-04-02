@@ -50,6 +50,40 @@ init:
         zoom 1.75
         linear 1.0 zoom 1.0 yalign 1.0
 
+    transform spooked:
+        linear 0.1 ypos 0.9 yanchor 1.0
+        linear 0.1 yalign 1.0
+
+    transform shake:
+        linear 0.2 xpos 0.3
+        linear 0.4 xpos 0.7
+        linear 0.2 xpos 0.5
+
+    transform digging:
+        linear 1.0 ypos 2.0
+        pause 3.0
+        xpos 0.7
+        linear 0.5 ypos 0.5
+        pause 0.2
+
+        linear 1.0 ypos 2.0
+        pause 2.0
+        xpos 0.3
+        linear 0.5 ypos 0.5
+        pause 0.2
+
+        linear 1.0 ypos 2.0
+        pause 3.0
+        xpos 0.5
+        linear 0.5 ypos 0.5
+        pause 0.2
+        repeat
+
+
+    transform breathefire:
+        linear 1.0 xpos 0.65 ypos 0.45
+        linear 0.8 xalign 0.5 yalign 0.5
+
     transform flash:
         pause 0.1
         ypos 3.0
@@ -95,6 +129,7 @@ init:
     define sfx_battlehorn = "bgm/SFX_Battlehorn_sinister.mp3"
     define sfx_fire = "bgm/SFX_fire.mp3"
     define sfx_running = "bgm/SFX_Footsteps_grass.mp3"
+    define sfx_digging = "bgm/SFX_Footsteps_gravel.mp3"
     define sfx_potion = "bgm/SFX_Drink_potion.mp3"
     define sfx_heal= "bgm/SFX_Heal_regen.mp3"
     define sfx_shield = "bgm/SFX_Raise_Shield.mp3"
@@ -123,6 +158,7 @@ init:
     define sfx_grunt_5_f = "bgm/SFX_Grunt_5_f.mp3"
     define sfx_death_1 = "bgm/SFX_Grunt_pain_1.mp3"
     define sfx_death_2 = "bgm/SFX_Grunt_pain_2.mp3"
+    define sfx_dragon = "bgm/SFX_Grunt_Angry_1.mp3"
 
 init python:
     credits = ('Script', 'MagusDei'), ('Sprites and hand-drawn backgrounds', 'Qazhax'), ('Background images', 'Snehadri'), ('Programming', 'MagusDei'), ('Programming', 'Qazhax'), ('Logo', 'John Smith'), ('Future music and SFX', 'xZidene'), ('Dungeon and MMO design', 'Bahafyr')
@@ -1548,7 +1584,7 @@ label day:
         call ending_for_now
         call events_end_day
         jump Ending_Credits
-        
+
     if stress >= 10:
         call events_end_day
         jump stress_ending
@@ -1666,7 +1702,7 @@ label night:
 
     if stress >= 8:
         "All the stress caused by recent events makes my dreams dark and uneasy."
-        
+
     # We call events_end_day to let it know that the day is done.
     call events_end_day
 
