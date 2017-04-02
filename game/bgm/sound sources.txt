@@ -36,4 +36,23 @@ Sheathe sword sound:
 	CC0
 	https://www.freesound.org/people/mooseranger/sounds/170715/
 
+Heart beat sound:
+	SFX_Heart_Beat.mp3
+	CC0
+	https://freesound.org/people/thenudo/sounds/146765/
+
+Pouring soup sound:
+	SFX_Soup.mp3
+	File was changed to mp3 from flac
+	CC Attribution
+	https://freesound.org/people/Hitrison/sounds/251411/
+
+Death scream sound:
+	SFX_Scream_Death.mp3
+	File was changed to mp3 from Wav
+	CC Attribution Noncommercial
+	https://freesound.org/people/Syna-Max/sounds/58793/
+	
+
+
 Sources for the rest of the sounds currently unknown.
