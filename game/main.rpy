@@ -14,6 +14,12 @@
 # Set up a default schedule.
 
 init:
+    transform zoomoutcenter:
+        zoom 1.0
+        xalign 0.5
+        yalign 0.5
+        linear 1.5 zoom 0.6
+
     transform flip:
         xzoom -1.0
 
@@ -161,7 +167,7 @@ init:
     define sfx_dragon = "bgm/SFX_Grunt_Angry_1.mp3"
 
 init python:
-    credits = ('Script', 'MagusDei'), ('Sprites and hand-drawn backgrounds', 'Qazhax'), ('Background images', 'Snehadri'), ('Programming', 'MagusDei'), ('Programming', 'Qazhax'), ('Logo', 'John Smith'), ('Future music and SFX', 'xZidene'), ('Dungeon and MMO design', 'Bahafyr')
+    credits = ('Script', 'MagusDei'), ('Sprites and hand-drawn backgrounds', 'Qazhax'), ('Background images', 'Snehadri'), ('Programming', 'MagusDei'), ('Programming', 'Qazhax'), ('Logo', 'John Smith'), ('Music', 'xZidene'), ('Sound effects', 'xZidene'), ('Sound effects', 'Qazhax'), ('Dungeon and MMO design', 'Bahafyr')
     credits_s = "{size=80}Credits\n\n"
     e1 = ''
     for e in credits:
@@ -182,7 +188,7 @@ init python:
     dp_choice("Swimming hall", "swimming", x=300, y=350, tooltip="Entrance fee 3000 bits.")
     dp_choice("Gym", "gym", x=400, y=450, tooltip="Daily fee is 1000 bits.")
     dp_choice("Running Track", "track", x=150, y=200, tooltip="Free entry. A good way to build up fitness.")
-    dp_choice("Call Catherine", "callcat", x=1100,y=675, show="not broken_up and day > 1", tooltip="I could try setting up a date...")
+    dp_choice("Call Catherine", "callcat", x=200, y=150, show="not broken_up and day > 1", tooltip="I could try setting up a date...")
     dp_choice("Clean room", "clean", x=350, y=550, tooltip="My room is as unkempt as my hair. Very. (-1 stress)")
 
 
@@ -263,6 +269,53 @@ define n = Character("Nicholas", color="#191970")
 define s = Character("Silvia", color="#9932CC")
 define c = Character("Catherine", color="DC143C")
 define nvlNarrator = Character(None, kind=nvl, what_xsize = 950, what_size=28, what_xpos=200)
+
+image SDG_DF_fade1_big = "SDG_DF_fade1_big.png"
+    
+define endingNarrator = Character(None,
+                          color="#191970",
+                          what_size=36,
+                          what_xpos=0.4,
+                          window_xalign=0.5,
+                          window_yalign=0.5,
+                          window_background=None,
+                          what_outlines=[(3, "#191970", 0, 0)],
+                          what_cps=20
+                          )
+
+define endingSilvia = Character(None,
+                          color="#9932CC",
+                          what_size=36,
+                          what_xpos=0.4,
+                          window_xalign=0.5,
+                          window_yalign=0.5,
+                          window_background=None,
+                          what_outlines=[(3, "#9932CC", 0, 0)],
+                          what_cps=20
+                          )
+                          
+define endingAerith = Character(None,
+                          color="#fff",
+                          what_size=36,
+                          what_xpos=0.4,
+                          window_xalign=0.5,
+                          window_yalign=0.5,
+                          window_background=None,
+                          what_outlines=[(3, "#FF1493", 0, 0)],
+                          what_cps=20
+                          )
+
+define endingCatherine = Character(None,
+                          color="#DC143C",
+                          what_size=36,
+                          what_xpos=0.4,
+                          window_xalign=0.5,
+                          window_yalign=0.5,
+                          window_background=None,
+                          what_outlines=[(3, "#DC143C", 0, 0)],
+                          what_cps=20
+                          )
+
 
 define falldown = CropMove(0.2, "wipedown")
 
@@ -1758,3 +1811,138 @@ label stress_ending:
     nvl clear
     nvlNarrator "Game Over. Return to challenge again."
     $ renpy.full_restart()
+
+label ending_celebration:
+    $ tooltips = {}
+    play music bgm_cheerful
+    scene white
+    "Well, that was weird."
+    scene bg_fort with pixellate
+    show air 2 at left
+    show cat_torso green
+    show cat smile
+    show sil normal at right, flip
+    n "Don't you agree?"
+    n "Kind of took a dark turn there."
+    show air 7
+    a "I don't really get what that 'it was a great demo' thing was at the end."
+    show sil nervous_laugh
+    s "Surely a reference to some antiquated game. Think nothing of it."
+    show sil normal
+    n "Yes, they can't actually have meant it."
+    show cat question
+    c "So, when is the full version coming out?"
+    show sil cat2 at flip
+    s "Rumor tells that the game shall be out before summer."
+    show air 4
+    a "I wonder if they can actually do it, though..."
+    n "Well, I'll have to keep practicing my game design skills."
+    show air 6
+    show cat question
+    show sil mwerrllyy at flip
+    n "Maybe they'll hire me!"
+    c "You wish, Nick. Have you even made a single game yet?"
+    n "I'll have you know that yes, in fact, I have made a single game yet."
+    show cat surprise
+    c "What? Seriously?"
+    n "I'm serious. It really exists."
+    show sil flmao at flip
+    s "As real as the fabled invisible pink unicorn, I am sure."
+    n "Hah! Here it is, I'll show you!"
+    play music bgm_derp_loop
+    scene white with dissolve
+    "{size=36}Nick's T-shirt Game{/size}"
+    scene white with dissolve
+    show cat_torso green at closeup
+    show cat smile at closeup
+    "This is Catherine."
+    menu:
+        "Take off Catherine's T-shirt."
+        "Okay.":
+            show cat blush_smile at closeup
+            show cat_torso naked at closeup with dissolve
+            c "Hihihi, that tickles!"
+            "You won the game."
+        "No way!":
+            show cat pissed_but_hiding_it_under_a_poker_face
+            "You lost the game."
+    play music bgm_cheerful
+    scene bg_fort with pixellate
+    show air blush at left
+    show cat_torso green
+    show cat surprise
+    show sil shock at right, flip
+    n "Now do you believe me?"
+    n "Just leave it to the game master!"
+    "Everyone" "{cps=2}......{/cps}{nw}"
+    show air angry_shout
+    show cat angry
+    show sil rage at flip
+    with hpunch
+    "Everyone" "YOU ARE DEAD, NICK!"
+    hide air
+    hide cat_torso
+    hide cat
+    hide sil
+    with moveoutright
+    "Aaaaahhh!!!"
+    "Why does it always have to end like thiiiis!?"
+    return
+    
+label trailer:
+    play music bgm_scary
+    scene black
+    window hide
+    endingNarrator "It will end.{w=1.0}{nw}"
+    
+    scene bg_field
+    show sil hmm at closeup, flip
+    endingNarrator "This world isn't real.{w=1.0}{nw}"
+    show sil annoyed at closeup, flip
+    with hpunch
+    endingSilvia "Doesn't it feel real?{w=1.0}{nw}"
+    
+    pause 2
+    
+    scene bg_fort
+    show air blush2 at backwardsramming
+    endingAerith "Nicholas!{w=1.0}{nw}"
+    scene bg_field
+    show sil annoyed at backwardsramming, flip
+    endingSilvia "Liege!{w=1.0}{nw}"
+    scene player_room
+    show cat_torso green at backwardsramming
+    show cat scream at backwardsramming
+    endingCatherine "Nicky...!{w=1.0}{nw}"
+    
+    scene bg_fort with dissolve
+    endingNarrator "Damnit! What the hell is going on!?{w=1.0}{nw}"
+    show sil lecture at right with moveinright
+    endingSilvia "All will be explained once we reach the top.{w=1.0}{nw}"
+    
+    pause 2
+    
+    scene black with dissolve
+    show air 2 at right, closeup
+    endingAerith "There's an inscription here:{w=1.0}{nw}"
+    
+    show air 7 at right, closeup
+    endingAerith "{i}Lasciate ogne speranza, voi ch'intrate{/i}{w=1.0}{nw}"
+    
+    hide air
+    show sil lecture at left, closeup
+    endingSilvia "Abandon all hope, ye who enter here.{w=1.0}{nw}"
+    
+    pause 2
+
+    scene white with dissolve
+    show sil taunt at flip
+    endingSilvia "It's time to make your choice.{w=1.0}{nw}"
+    scene white with Dissolve(3)
+    show SDG_DF_fade1_big at zoomoutcenter
+    play sound sfx_fire
+    show fx fire behind SDG_DF_fade1_big
+    
+    pause 2
+    
+    return

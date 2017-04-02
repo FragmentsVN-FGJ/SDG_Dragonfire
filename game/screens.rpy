@@ -358,6 +358,11 @@ screen navigation():
         if main_menu:
 
             textbutton _("Start") action Start()
+            
+            if renpy.seen_label("Ending_Credits"):
+                textbutton _("Trailer") action Start("trailer")
+                
+                textbutton _("Celebration") action Start("ending_celebration")
 
         else:
 

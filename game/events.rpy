@@ -782,7 +782,7 @@ label .struggle:
     else:
         "Suddenly, it loosens its grasp, and I fall gracefully to the ground!"
         show cat
-        show cat_torso behind cat
+        show cat_torso orange behind cat
         with moveinbottom
         with vpunch
         $ nick_in_air = False
@@ -847,7 +847,7 @@ label .Catherine_press:
 label .press:
     "While the machine is concentrating on Catherine, I sneak up on it, attempting to press the power down button on its back."
     show cat
-    show cat_torso behind cat
+    show cat_torso orange behind cat
     with moveoutleft
     if not robot_stunned:
         "At the last moment, its head rotates 180 degrees to face me, and it lashes out at me!"
@@ -861,7 +861,7 @@ label .press:
 label .Catherine_distract:
     n "Catherine! Try to draw its attention!"
     show cat something2
-    show cat_torso behind cat
+    show cat_torso orange behind cat
     with moveinright
     c "U-uh, hey you stupid robot, don't forget about me!"
     with vpunch
@@ -894,7 +894,7 @@ label .react_phase:
         "Jump to protect her!" if robot_focusing == "Catherine" and not nick_in_air:
             "I jump in front of the robots arms!"
             show cat angry
-            show cat_torso behind cat
+            show cat_torso orange behind cat
             with moveinright
             c "Nick, get out of my way!"
             "Oh right, Cat already had experience in this, didn't she..."
@@ -937,29 +937,29 @@ label .dodge(method):
     return
 
 label .robot_act:
-if not robot_stunned:
-    if robot_focusing == "Catherine":
-        if not cat_in_air:
-            "The robot lashes out its huge arms, aimed right at Catherine!"
-            jump .react_phase
+    if not robot_stunned:
+        if robot_focusing == "Catherine":
+            if not cat_in_air:
+                "The robot lashes out its huge arms, aimed right at Catherine!"
+                jump .react_phase
+            else:
+                "Secure in Cat's captivity, the robot turns its attention to me."
+                $ robot_focusing = "Nick"
+                jump .act_phase
         else:
-            "Secure in Cat's captivity, the robot turns its attention to me."
-            $ robot_focusing = "Nick"
-            jump .act_phase
+            if not nick_in_air:
+                "The robot lunges one of its many arms in my direction!"
+                jump .react_phase
+            else:
+                "Having made sure that I'm not going anywhere, the robot shifts its focus to Catherine."
+                $ robot_focusing = "Catherine"
+                jump .act_phase
+    elif stun_counter < 1:
+        "The bot seems to recover from its daze."
+        $ robot_stunned = False
     else:
-        if not nick_in_air:
-            "The robot lunges one of its many arms in my direction!"
-            jump .react_phase
-        else:
-            "Having made sure that I'm not going anywhere, the robot shifts its focus to Catherine."
-            $ robot_focusing = "Catherine"
-            jump .act_phase
-elif stun_counter < 1:
-    "The bot seems to recover from its daze."
-    $ robot_stunned = False
-else:
-    $ stun_counter -= 1
-return
+        $ stun_counter -= 1
+    jump .act_phase
 
 label .victory:
     play music bgm_main
