@@ -488,6 +488,7 @@ label businessintro:
 # Other scenes
 
 label DFOServers:
+    play music bgm_main
     scene servers
     $ work_counter += 1
     "I'm pretty elated."

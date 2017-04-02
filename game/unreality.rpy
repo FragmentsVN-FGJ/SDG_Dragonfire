@@ -28,7 +28,7 @@ image dirty_room_vortex:
 label smith_call1:
     $ stress += stress_modifiers['unreality']
     show player_room gradient_map
-    play music bgm_cheerful
+    play music bgm_main
     "Someone is calling."
     "It's not an ordinary call, though."
     "An encrypted call, sent through Signal."
@@ -79,7 +79,7 @@ label smith_call1:
 
 label smith_call2:
     $ stress += stress_modifiers['unreality']
-    play music bgm_cheerful
+    play music bgm_main
     scene player_room gradient_map
     "My wristband is vibrating."
     "It's not Catherine. A call through signal."
@@ -131,7 +131,7 @@ label ending_for_now:
     "Then, at the edges of my hearing, a sound."
     "A sound comes through, faint and distant."
     "Someone is crying in the background. A woman."
-    "Catherine!" # Red
+    "{color=#f00}Catherine!{/color}"
     show city_street gradient_map with dissolve
     "I run through the streets to her house. I don't even know how I got here, but it doesn't matter."
     "Catherine! Please, Catherine! No...!"
@@ -164,6 +164,7 @@ label ending_for_now:
     scene dirty_room_vortex
     $ renpy.pause(8, hard = True)
     window show
+    play music bgm_sad_loop
     "It's a strange sensation. Screaming without hearing your own scream. Without feeling it."
     "Just some awareness in the background of the hurricane storming through your mind, telling you that you're screaming."
     scene black with dissolve
@@ -194,7 +195,7 @@ label ending_for_now:
 label madman:
     $ stress += stress_modifiers['unreality']
     scene city_street
-    play music bgm_cheerful
+    play music bgm_main
     "It's raining."
     "We're making our way back to Catherine's apartment."
     show cat_torso orange at left

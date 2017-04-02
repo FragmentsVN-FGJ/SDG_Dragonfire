@@ -84,6 +84,7 @@ label ForestGuy2:
     return
 
 label VRArcadeDate:
+    play music bgm_main
     scene city_street
     call date_arrival 
     $ cat_mood = 0
@@ -222,13 +223,7 @@ label .what_to_do:
     return
 
 label MovieTheatreDate:
-    #call .datestart
-    #call .ticketbooth
-    #call .seating
-    #call .movie
-    #call .opinions
-    #call .onhermind
-    #call .dateend
+    play music bgm_main
     scene city_street
     call date_arrival 
     $ cat_mood = 0
