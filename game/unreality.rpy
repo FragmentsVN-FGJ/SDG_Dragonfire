@@ -5,9 +5,31 @@ init:
     $ event("retro_message", "act == 'arcade'", event.depends("smith_call1"), event.only(), event.once(), priority=180)
     $ event("at_the_bar_once_again", "period == 'evening'", event.depends("smith_call1"), event.once(), event.only(), priority=3)
     $ event("truck", "period == 'evening' and day >= 8", event.only(), event.once(), event.depends("smith_call1"), priority=5)
-
+    
 define mv = Character("Synthetic voice")
 
+image static_anim:
+    im.MatrixColor("fx/noise_0.png", im.matrix.opacity(0.3))
+    pause 0.1
+    im.MatrixColor("fx/noise_1.png", im.matrix.opacity(0.3))
+    pause 0.1
+    im.MatrixColor("fx/noise_2.png", im.matrix.opacity(0.3))
+    pause 0.1
+    im.MatrixColor("fx/noise_3.png", im.matrix.opacity(0.3))
+    pause 0.1
+    repeat
+
+image static_anim_weak:
+    im.MatrixColor("fx/noise_0.png", im.matrix.opacity(0.1))
+    pause 0.1
+    im.MatrixColor("fx/noise_1.png", im.matrix.opacity(0.1))
+    pause 0.1
+    im.MatrixColor("fx/noise_2.png", im.matrix.opacity(0.1))
+    pause 0.1
+    im.MatrixColor("fx/noise_3.png", im.matrix.opacity(0.1))
+    pause 0.1
+    repeat
+    
 image dirty_room_vortex:
     "bg/dirty_room_1.png"
     
@@ -37,6 +59,7 @@ label smith_call1:
     "Except for one... So I already know who this is."
     "I have to pick it up. Any other choice would be illusory."
     n "H-hi?"
+    show static_anim_weak with Dissolve(2.0)
     mv "Well howdy-ho! How you doing, mate?"
     "His question isn't referring to my general well-being, obviously. He doesn't give a crap about that."
     n "My stash is running low."
@@ -71,10 +94,10 @@ label smith_call1:
     mv "Hey hey hey, let's keep it civil, here."
     mv "Although I guess you're on the wrong side of the law for that."
     mv "Shame you went down that road, huh? You had a good life ahead of you, and then you started messing with the wrong folk."
+    mv "Shoulda taken the red pill."
     mv "So. Five hundred grand, Valentine's day. Unless you want a present you'll never forget."
     "He hangs up."
     "I'm on my bed, seated in a fetal position. And I think, think, think, too shocked to even cry."
-    play music bgm_main
     return
 
 label smith_call2:
@@ -92,6 +115,7 @@ label smith_call2:
             return
 
 label .answer:
+    show static_anim_weak with dissolve
     mv "Surprised to hear from me, mister Anderson?"
     "No. Not in the least."
     n "Can't you give me more time?"
@@ -103,7 +127,6 @@ label .answer:
     mv "She good in bed? I'll find out."
     n "You f-"
     "I'm left seething in rage as he hangs up."
-    play music bgm_main
     return
 
 label ending_for_now:
@@ -150,11 +173,14 @@ label ending_for_now:
     "And I'm struck speechless by the scene that unfolds in that electric glow."
     "I break down sobbing. Because..."
     # Scream
+    play sound "bgm/SFX_Scream_Death.mp3"
     "It's blood! Blood everywhere!"
     "And its source is..."
     # Blood
+    play sound "bgm/SFX_Soup.mp3"
     "The knife planted deep inside her chest!"
     "No... No...!"
+    show static_anim with Dissolve(2.0)
     "Static. Why is there static, why now, at a time like this?"
     "Wait. The knife."
     "It's not one of Catherine's kitchen knifes."
@@ -212,6 +238,7 @@ label madman:
     show cat question
     n "Is that guy drunk or something?"
     show cat normal
+    show image static_anim_weak
     "Man" "It's a sign, a sign I tell you! The apocalypse draws near!"
     "The man comes uncomfortably close, standing in front of me and staring into my eyes with an almost hypnotic strength."
     "Man" "Rejoice, for the last days are coming!"
@@ -251,6 +278,7 @@ label .luxphoros:
     hide cat_torso
     hide cat
     with moveoutleft
+    hide static_anim_weak
     "Catherine stops in her tracks."
     show cat_torso green at closeup
     show cat eyes_closed at closeup
@@ -259,6 +287,7 @@ label .luxphoros:
     scene city_street gradient_map with dissolve
     show cat_torso orange at closeup
     show cat not_normal at closeup
+    show static_anim_weak
     play music bgm_scary
     "I look in her eyes, and I can see that something is very wrong here."
     "Am I... hallucinating? Why doesn't she look like a human anymore?"
@@ -272,12 +301,13 @@ label .luxphoros:
     show cat eyes_closed_smile at closeup
     c "Okay?"
     "W-what the hell does she mean, okay...?"
-    play music bgm_main
     return
 
 label retro_message:
     $ stress += stress_modifiers['unreality']
+    play music bgm_main
     scene arcade
+    show static_anim_weak
     "I boot up some of the retro games again."
     "Oh, sweet, they have a new game! A shoot-em-up, by the looks of it."
     "I try my best to get on the leaderboard, but it's no use. These scores are seriously out of my league."
@@ -301,6 +331,7 @@ label retro_message:
 
 label at_the_bar_once_again:
     $ stress += stress_modifiers['unreality']
+    play music bgm_main
     scene techno_bar with fade
     "I blink."
     "I am... in the bar? Wait, why am I here again?"
@@ -309,6 +340,7 @@ label at_the_bar_once_again:
     "I need to stop this. It's not healthy. It's not..."
     "My nausea grows, and I move into the bathroom, more to check on my on reflection than anything else."
     play music bgm_buzz
+    show static_anim_weak
     "I do look a bit pale. And my eyes are bloodshot, perhaps from a lack of sleep."
     "I splash my face with cold water, hoping to regain my bearings."
     "Just me and my reflection, watching each other in silence."
@@ -321,6 +353,7 @@ label at_the_bar_once_again:
     "As if someone was right behind me, breathing down my neck..."
     "The lights flicker back on."
     scene techno_bar gradient_map with dissolve
+    show static_anim_weak
     "There's no-one there. Just my own eyes staring back at me."
     "It was probably just a power outage. Those are rare, but I hear there's been strange storms lately..."
     "Still, I can't help glancing around the room."
@@ -353,6 +386,7 @@ label truck:
     scene black with dissolve
     pause 3
     show player_room with dissolve
+    show static_anim_weak
     "I awaken screaming. It was... a dream? A nightmare? None of that... happened?"
     "It felt so real... I stare at my hand, trying to ensure its authenticity."
     play music bgm_main
@@ -378,6 +412,7 @@ label truck_after:
     "One story does catch my attention, though."
     play music bgm_scary
     scene player_room gradient_map with dissolve
+    show static_anim_weak
     "'Local man hit by truck: manufacturers blame a bug in the mapping system'"
     "I click on the story to read more. Someone was hit by a self-driving truck earlier today."
     "I look at the film captured by the truck's on board cameras."
