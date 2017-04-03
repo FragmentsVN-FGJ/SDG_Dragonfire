@@ -153,6 +153,8 @@ init:
     define sfx_hit_2 = "bgm/SFX_Sword_hit_2.mp3"
     define sfx_miss = "bgm/SFX_Sword_slash_8.mp3"
     define sfx_dagger = "bgm/SFX_Sword_hit_armor.mp3"
+    define sfx_scream = "bgm/SFX_Scream_Death.mp3"
+    define sfx_blood = "bgm/SFX_Soup.mp3"
 
     define sfx_grunt_1 = "bgm/SFX_Grunt_1.mp3"
     define sfx_grunt_2 = "bgm/SFX_Grunt_2.mp3"
@@ -170,7 +172,7 @@ init:
     define sfx_death_1 = "bgm/SFX_Grunt_pain_1.mp3"
     define sfx_death_2 = "bgm/SFX_Grunt_pain_2.mp3"
     define sfx_dragon = "bgm/SFX_Grunt_Angry_1.mp3"
-
+    
 init python:
     credits = ('Script', 'MagusDei'), ('Sprites and hand-drawn backgrounds', 'Qazhax'), ('Background images', 'Snehadri'), ('Programming', 'MagusDei'), ('Programming', 'Qazhax'), ('Logo', 'John Smith'), ('Music', 'xZidene'), ('Sound effects', 'xZidene'), ('Sound effects', 'Qazhax'), ('Dungeon and MMO design', 'Bahafyr')
     credits_s = "{size=80}Credits\n\n"
@@ -180,7 +182,7 @@ init python:
             credits_s += "\n{size=40}" + e[0] + "\n"
         credits_s += "{size=60}" + e[1] + "\n"
         e1=e[0]
-    credits_s += "\n{size=40}Engine\n{size=60}Ren'py\n6.99.12.4"
+    credits_s += "\n{size=40}Engine\n{size=60}Ren'py\n6.99.12.4\n\nDSE\n3.11\nCalendar Animation\nby Zetsubou"
 
     crt = ImageDissolve("images/crt.png", 0.5, 0)
     #register_stat("Strength", "strength", 10, 100)
@@ -449,13 +451,16 @@ label start:
 
     n "Damnit!"
 
+    play sound sfx_grunt_1
     with hpunch
 
     # Sound effect
-
+    
     "The monster sinks its fangs into my skin, drawing blood!"
-
+    
     # Screen shake & sound
+    
+    play sound sfx_blood
 
     "I can feel the warm liquid trickling down my skin... Damnit!"
 
@@ -489,6 +494,31 @@ label start:
             jump WeaselPull
         "Time to retreat!":
             jump WeaselRetreat
+            
+label FX_Silvia_Hail:
+    show fx daggers
+    with vpunch
+    with vpunch
+    pause 0.14
+    play sound sfx_hit
+    pause 0.03
+    play sound sfx_hit
+    pause 0.03
+    play sound sfx_hit
+    pause 0.14
+    play sound sfx_dagger
+    pause 0.03
+    play sound sfx_hit
+    pause 0.03
+    play sound sfx_dagger
+    pause 0.14
+    play sound sfx_hit
+    pause 0.03
+    play sound sfx_hit
+    pause 0.03
+    play sound sfx_hit
+    hide fx daggers
+    return
 
 label WeaselPull:
     "Trampling the weasels around me, I run to protect Aerith!"
@@ -504,7 +534,10 @@ label WeaselFight:
 
     "I slash at the pack with my sword!"
 
+    show fx slash at flash
+    play sound sfx_critical
     with vpunch
+    hide fx slash
 
     "The weasels screech in pain, flying off in a torrent of blood!"
 
@@ -516,9 +549,8 @@ label WeaselFight:
 
     "I raise my shield just in time as a hail of daggers falls all around me, piercing the weasels and spraying blood everywhere!"
 
-    with vpunch
-    with vpunch
-
+    call FX_Silvia_Hail
+    
     "The monsters lie dead on the grass, painted crimson with blood."
 
     "I turn around to thank Silvia, but then I hear Aerith scream from behind."
@@ -565,6 +597,7 @@ label WeaselSilviaHailOfDaggersAerithAlone:
     hide sil with vpunch
     "She launches into the air and begins her technique."
     show air blush12 at center with vpunch
+    call FX_Silvia_Hail
     "The daggers rain upon the weasels, killing them instantly!"
     show air 12
     "Of course, they hit Aerith as well. I really should have realized that."
@@ -584,7 +617,9 @@ label WeaselAerithBarrier:
     a "Luxphoros, protect thy faithful in a time of need. Light Barrier!"
     show air chant2
     pause 0.5
+    show white with dissolve
     show air 8
+    hide white with dissolve
     "I watch as a sphere of searing white light envelops Aerith."
     $ Aerith_barrier = True
     "The weasels can't get to her now. However, they are turning towards me instead!"
@@ -666,11 +701,16 @@ label WeaselSilviaHailOfDaggers:
     n "Silvia! Use your hail of daggers, now!"
 
     "Silvia doesn't need to be told twice."
+    
+    call FX_Silvia_Hail
 
     if blade_sphere_control:
         "As the flurry of thrown knifes falls upon us, I block each and every one coming towards me and Aerith!"
+        show fx slash at flash
+        play sound sfx_hit
         with vpunch
         with vpunch
+        hide fx slash
     else:
         "The blades fall upon us, a rain of scathing edges!"
         with vpunch
@@ -712,9 +752,16 @@ label WeaselTaunt:
 
     "But they can't get through my perfect defense!"
 
+    show fx slash at flash
+    play sound sfx_critical
     with vpunch
+    pause 0.1
+    play sound sfx_critical
     with hpunch
+    pause 0.1
+    play sound sfx_critical
     with vpunch
+    hide fx slash
 
     "My sword strikes each and every one of them, cutting of their heads and piercing their beating hearts!"
 
@@ -733,8 +780,11 @@ label WeaselAerithCuringLight:
     show air 13
     a "Lord Luxphoros, lend us your power. Curing light!"
     show air 2
+    show overlay green
+    play sound sfx_heal
     "I feel the warm, green glow closing the wounds on my arms."
-
+    hide overlay green
+    
     "Freshly invigorated, we return our focus to the battle at hand."
 
     "The weasels are already getting ready to pounce. We have to react fast!"
@@ -761,6 +811,7 @@ label WeaselFuriousStrike:
 
     "But I am interrupted as one of the animals jumps right at me!"
 
+    play sound sfx_grunt_2
     with hpunch
 
     "Its fangs and claws tear into my arm!"
@@ -778,8 +829,11 @@ label WeaselFuriousStrike:
 
     "I slam the critter with my sword!"
 
+    show fx slash at flash
+    play sound sfx_hit_2
     with vpunch
     with vpunch
+    hide fx slash
 
     "The steel runs right through its torso, hitting the ground with unbelievable power!"
 
@@ -803,6 +857,11 @@ label AerithDepthsOfSlumber:
     "The weasels aren't about to let that happen!"
 
     "Three of them jump right at us!"
+
+    show fx slash at flash
+    play sound sfx_hit
+    pause 0.1
+    hide fx slash
 
     if blade_sphere_control:
         # Success
@@ -838,6 +897,9 @@ label AerithDepthsOfSlumberSuccess:
     a "Gift them with a peaceful sleep!"
     show air 8
     a "Depths of Slumber!"
+    show overlay purple
+    pause 0.1
+    hide overlay purple with dissolve
     "All around us, a glowing powder descends on the weasels, and they fall asleep one by one."
     show effect_sleep at truecenter with dissolve
     hide air with moveoutleft
@@ -871,7 +933,7 @@ label WeaselRetreat:
 
 label WeaselVictory:
 
-    play music bgm_derp_loop
+    play music bgm_cheerful
 
     hide air
 
@@ -993,6 +1055,7 @@ label RoomDescription:
     show cat angry at flip, ghost, right, closeup
     show cat_torso yellow at flip, ghost, right, closeup
     with Dissolve(0.1)
+    play sound sfx_grunt_10
     with hpunch
     c "That's a lie!" # Furious sprite
     "In my mind's eye, I see her face contort with rage."
