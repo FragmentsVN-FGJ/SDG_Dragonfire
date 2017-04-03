@@ -185,6 +185,7 @@ init python:
         credits_s += "{size=60}" + e[1] + "\n"
         e1=e[0]
     credits_s += "\n{size=40}Engine\n{size=60}Ren'py\n6.99.12.4\n\nDSE\n3.11\nCalendar Animation\nby Zetsubou"
+    credits_s += "\n{size=40}SFX Attributions\n{size=60}death_scream.wav\nby Syna-Max\n\n Pouring Soup in a Metal Pan\nHitrison"
 
     crt = ImageDissolve("images/crt.png", 0.5, 0)
     #register_stat("Strength", "strength", 10, 100)
@@ -1710,7 +1711,7 @@ label day:
     # Tell the user what period it will be.
     centered "{size=+10}{color=#fff}Morning{/color}{/size}{w=1.0}{nw}"
 
-    if day >= 11:
+    if day >= 1:
         call ending_for_now
         call events_end_day
         jump Ending_Credits
