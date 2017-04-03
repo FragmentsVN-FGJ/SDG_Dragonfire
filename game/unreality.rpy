@@ -164,12 +164,14 @@ label ending_for_now:
     "I keep turning the key in the lock, too nervous to think straight."
     "Finally, the door opens, and I run inside!"
     scene black with dissolve
+    play sound sfx_heartbeat
     "It's dark. All dark. The curtains are closed."
     "I step into a puddle of water on the floor."
     "Wait. Why's there water on the floor?"
     "I stumble around in the dark, looking for the light switch."
     "Finding it, I turn on the lights."
     scene dirty_room_1 with dissolve
+    stop sound
     "And I'm struck speechless by the scene that unfolds in that electric glow."
     "I break down sobbing. Because..."
     # Scream

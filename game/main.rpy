@@ -146,6 +146,7 @@ init:
     define sfx_shield = "bgm/SFX_Raise_Shield.mp3"
     define sfx_collapse = "bgm/SFX_Rock_Collapse.mp3"
     define sfx_thump = "bgm/SFX_Rock_Thump.mp3"
+    define sfx_thud = "bgm/SFX_Hammer_hit.mp3"
     define sfx_block = "bgm/SFX_Hammer_hit_2.mp3"
     define sfx_critical = "bgm/SFX_Sword_hit_flesh.mp3"
     define sfx_critical_short = "bgm/SFX_Sword_hit_flesh_short.mp3"
@@ -155,6 +156,7 @@ init:
     define sfx_dagger = "bgm/SFX_Sword_hit_armor.mp3"
     define sfx_scream = "bgm/SFX_Scream_Death.mp3"
     define sfx_blood = "bgm/SFX_Soup.mp3"
+    define sfx_heartbeat = "bgm/SFX_Heart_Beat.mp3"
 
     define sfx_grunt_1 = "bgm/SFX_Grunt_1.mp3"
     define sfx_grunt_2 = "bgm/SFX_Grunt_2.mp3"
@@ -1055,7 +1057,7 @@ label RoomDescription:
     show cat angry at flip, ghost, right, closeup
     show cat_torso yellow at flip, ghost, right, closeup
     with Dissolve(0.1)
-    play sound sfx_grunt_10
+    play sound sfx_thud
     with hpunch
     c "That's a lie!" # Furious sprite
     "In my mind's eye, I see her face contort with rage."
@@ -1358,7 +1360,9 @@ label parlorConsole:
     $ parloridle = True
     n "Kittie..."
     $ cat_mood -= 1
-    show cat something2 with vpunch
+    show cat something2
+    play sound sfx_thud
+    with vpunch
     "She slams her fist on the table."
     c "Don't call me that! First you disappear for two weeks, then I call you and you act as if nothing has happened!"
     show cat something

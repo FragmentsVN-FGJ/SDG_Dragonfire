@@ -1132,6 +1132,7 @@ label .atthedoor:
                     "I try the weight of the baseball bat, ready it, and approach the door."
                     "I can hear the strange noise right around the corner. Like someone stomping on the floor."
                     "Okay, here goes nothing!"
+                    play sound sfx_battlecry
                     "Shouting a battlecry, I storm into the room!"
                     # silence
                     show cat surprise at closeup, flip
