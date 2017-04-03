@@ -53,6 +53,9 @@ Death scream sound:
 	CC Attribution Noncommercial
 	https://freesound.org/people/Syna-Max/sounds/58793/
 	
+Static noise:
+	SFX_Noise.mp3
+	file was created by Qazhax
 
 
 Sources for the rest of the sounds currently unknown.
