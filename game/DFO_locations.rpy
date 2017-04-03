@@ -149,6 +149,7 @@ label .victorious:
     menu:
         "What should we do?"
         "Turn right":
+            $ seen_before['treasure_room'] = True
             hide sil with moveoutright
             "We run to the right just in time as the tunnel collapses entirely."
             "Everyone is panting heavily, but it seems we're in the clear."
@@ -181,11 +182,22 @@ label .victorious:
         "Keep going straight":
             "We manage to escape back to the temple as the tunnel collapses completely behind us."
             "A teleporter stone is floating in the air."
+            show sil phew at right
+            show air 9 at left
+            with moveinright
+            pause 0.5
+            show sil normal
             s "We should be able to use this to return to the cathedral."
+            show air eyes_wide
             a "So we completed the quest? But we didn't find the treasure..."
             np "Damn, maybe it was back there in the tunnels."
+            show sil herp
             s "Do not be distraught, liege. We may always return..."
+            show sil star
+            show air blush12
             s "For more bloodshed! Hihihi!"
+            show sil trick
+            show air blush9
             "R-right... We touch the teleporter stone to return to the cathedral."
             jump .ending
 
@@ -193,6 +205,7 @@ label .ending:
     scene white with dissolve
     pause 0.5
     scene bg_fort with pixellate
+    play music bgm_cheerful
     show sil cat2 at right
     show air 9 at left
     s "Was that not fun?"
@@ -350,7 +363,9 @@ label Ruins_innerchambers:
     show sil this_is_fine at left
     with moveinleft
     s "A temple within a temple? How unexpected."
+    show sil normal
     "The entrance to the temple is blocked by a brass gate, and guarded on either side by a warrior statue of stone."
+    show sil hmm
     s "The lock appears easy enough to pick. Shall I?"
     hide sil
     jump .approach_menu
@@ -381,7 +396,7 @@ label .approach:
         jump .loss
 
 label .loss:
-    show air at left
+    show air shock at left
     a "They're immune to all of my spells...!"
     show sil rage
     s "Do not lose your bearings, priestess!"
@@ -406,9 +421,12 @@ label .victorious:
     s "Are there not other weapons available?"
     show sil lol
     np "Oh, now I get it. Good thinking."
+    show air 7 at left with moveinleft
     a "Huh? I still don't get it..."
     np "Watch and see."
-    hide sil with moveoutright
+    hide sil
+    hide air
+    with moveoutright
     "Standing right in the middle of the chamber, I use my taunt technique."
     play music bgm_derp_loop
     np "Hey, blockheads! Catch me if you can!"
@@ -438,6 +456,7 @@ label .victorious:
     play music bgm_desert
     hide sil
     show sil hmm at left
+    with dissolve
     #with moveinleft
     show air eyes_wide
     s "We must hope that the defence of our future enemies is not as impenetrable."
@@ -511,20 +530,40 @@ label .goin:
     show sil lecture
     s "Do not let down your guard, faithful one!"
     "Silvia's reservations turn out to be appropriate."
+    play sound sfx_thump
+    with vpunch
+    with vpunch
+    show air 10
+    show sil hurt
     "All of a sudden, we hear a huge thump behind us."
     "A stone slab has fallen over the doorway, blocking the way back!"
+    play music bgm_battle_loop
+    play sound sfx_battlecry_f
     "I'm deafened by the shrieking ostriches and their shouting riders, emerging from hidden compartments in the walls."
+    with hpunch
+    play sound sfx_grunt_4
     "From the other end of the hallway, a huge ostrich with dragon wings approaches, threatening us with the flames it spits out of its throat."
     show air you_kidding
     show sil annoyed
     "Looks like it's time to..."
+    play music bgm_battle
     "Fight!"
+    with hpunch
+    hide air
+    with moveoutleft
+    hide sil
+    with moveoutright
     "I charge right at the dragon-ostrich! Furious Strike!"
+    with vpunch
     "Fatality! Superb!"
+    play sound sfx_critical
     "My sword pierces deep into its head, killing the monstrosity instantly."
-    show air angry_shout
-    show sil rage
+    show air angry_shout at left with moveinleft
+    show sil rage at right with moveinright
     "Aerith and Silvia have already dealt with the rest of the riders."
+    show sil evil_laugh
+    s "Hah! To challenge us is to court death itself!"
+    play music bgm_desert
     hide air
     hide sil
     $ battle3_won = True
@@ -718,6 +757,7 @@ label Ruins_courtyard:
     with moveinleft
     show sil normal at right
     with moveinleft
+    $ seen_before = {'treasure_room': False}
     "Broken pillars loom ominously around us, and I feel as if someone is gazing at us, hidden somewhere beyond sight..."
     a "This place looks abandoned... Maybe there's no-one here?"
     np "Why would they make a new dungeon without enemies?"
@@ -735,7 +775,6 @@ label .courtyard_menu:
         "Should we approach?"
         "Let's go!":
             "We approach the entrance as it glitters in the sunlight."
-            $ seen_before = {}
             $ tooltips = default_tooltips
             jump Ruins_battle1
         "[np_name]...":
@@ -910,6 +949,32 @@ label Ruins_entrance:
     s "Lead the way, and we shall follow."
     jump Ruins_courtyard
 
+label DFO_init_finished:
+    scene white with dissolve
+    scene bg_fort with pixellate
+    show sil normal at right
+    show air 6 at left
+    "I arrive in the familiar environs of Dragonfire Online."
+    show sil cat
+    s "Ah, greetings, liege."
+    show sil cat2
+    s "Where are we heading?"
+    np "I was thinking we could go to the Ruins again."
+    show air 7
+    a "But didn't we already defeat it...?"
+    a "I'm going to get nauseous again..."
+    np "It's better to grind at a dungeon we're already familiar with, right?"
+    if 'treasure_room' in seen_before.keys() and not seen_before['treasure_room']:
+        np "Besides, I want to see what will happen if we turn right at the end there."
+    s "Lead the way, liege."
+    scene bg_temple with fade
+    "We arrive at the entrance to the dungeon."
+    $ battle2_won = False
+    $ battle3_won = False
+    $ battle4_won = False
+    $ battle5_won = False
+    jump Ruins_courtyard.courtyard_menu
+    
 label DFO_init_final_battle:
     scene white with dissolve
     scene bg_fort with pixellate
@@ -1037,15 +1102,16 @@ label DFO_login2:
     "I pop a pill, put on the equipment, and start up the game."
     if dungeon_progress > 0:
         $ dungeon_progress += 1
-        "Dungeon progress is now [dungeon_progress]"
     if dungeon_progress <= 1:
         jump DFO_init_repeat
     elif dungeon_progress == 2:
         jump DFO_init_rider_defeated
     elif dungeon_progress == 3:
         jump DFO_init_statues_defeated
-    else:
+    elif dungeon_progress == 4:
         jump DFO_init_final_battle
+    else:
+        jump DFO_init_finished
 
 label DFO_login:
     $ stress += stress_modifiers['DFO']
@@ -1069,7 +1135,7 @@ label DFO_login:
     nvlNarrator "And now it's over."
     nvlNarrator "Until we get neural interfaces, I doubt it will be possible to increase immersion any further."
     nvlNarrator "Damn! I can't let the nostalgia get to me. This is it."
-    nvlNarrator "For a moment, I look wistully at the white pill I'm holding in my hands."
+    nvlNarrator "For a moment, I look wistully at the blue pill I'm holding in my hands."
     nvlNarrator "I place it on my tongue, downing it with a gulp of tap water."
     scene player_room gradient_map with dissolve
     nvl clear
