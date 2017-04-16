@@ -82,59 +82,125 @@ style frame:
 ################################################################################
 
 screen hp_window(playerparty, enemyparty, current_hp, current_mp):
+    style_prefix "hp"
     vbox:
-        id "hpboxes"
-        xmaximum 300
+        id "us"
+        xmaximum 465
         for name in playerparty:
             frame:
+                style_group "hp_us"
                 xpadding 15
                 xmargin 5
-                ymargin 5
+                top_margin 5
+                bottom_margin 10
                 vbox:
-                    label name
+                    python:
+                        hp1 = current_hp[name]
+                        hp2 = max_hp[name]
+                        hp3 = hp1*1.0/hp2
+                        if hp3 > 0.5:
+                            hurtness = "normal"
+                        elif hp3 > 0.2:
+                            hurtness = "mild_hurt"
+                        else:
+                            hurtness = "hurt"
+                        fname = "nick"
+                        if name == "Nick":
+                            fname = "nick"
+                        elif name == "Aerith":
+                            fname = "air"
+                        elif name == "Silvia":
+                            fname = "sil"
+                        profile = Image("images/status/dfo_status_"+fname+" "+hurtness+".png", yalign=0, xalign=0)
+                    frame:
+                        background profile
+                        xmaximum 0
+                        ymaximum 0
+                        xmargin -15
+                        ymargin -5
+                    label name:
+                        left_padding 150
+                        top_padding 15
+                        text_size 26
                     hbox:
                         label "HP":
-                            right_padding 10
+                            left_padding 160
+                            right_padding 5
                             text_size 18
-                        bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red.png"
+                        bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png"
                         $ hp1 = current_hp[name]
                         $ hp2 = max_hp[name]
                         label "[hp1] / [hp2]":
-                            top_padding 3
-                            left_margin -150
+                            top_padding 2
+                            left_margin -155
                             text_size 14
                     hbox:
                         label "MP":
-                            right_padding 8
+                            left_padding 170
+                            right_padding 5
                             text_size 18
-                        bar value current_mp[name] range max_mp[name] left_bar "gui/bar/left_blue.png"
+                        bar value current_mp[name] range max_mp[name] left_bar "gui/bar/left_blue_edge.png" right_bar "gui/bar/right_blue_edge.png"
                         $ mp1 = current_mp[name]
                         $ mp2 = max_mp[name]
                         label "[mp1] / [mp2]":
-                            top_padding 3
-                            left_margin -150
+                            top_padding 2
+                            left_margin -155
                             text_size 14
+                    hbox:
+                        $lv = 90
+                        label "[lv]":
+                            top_padding 8
+                            left_padding 155
+                            text_size 18
     vbox:
-        xmaximum 300
+        id "em"
+        xmaximum 465
         xalign 1.0
         for name in enemyparty:
             frame:
+                style_group "hp_em"
                 xpadding 15
                 xmargin 5
-                ymargin 5
+                top_margin 5
+                bottom_margin 10
                 vbox:
-                    label name
+                    label name:
+                        left_padding 5
+                        top_padding 15
+                        text_size 26
                     hbox:
                         label "HP":
-                            right_padding 10
+                            top_padding 5
+                            left_padding 15
+                            right_padding 5
                             text_size 18
-                        bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red.png"
-                        $ hp1 = current_hp[name]
-                        $ hp2 = max_hp[name]
+                        bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png":
+                            xmaximum 225
                         label "[hp1] / [hp2]":
-                            top_padding 3
+                            top_padding 8
                             left_margin -150
                             text_size 14
+                        label "":
+                            xminimum 160
+
+                    hbox:
+                        $lv = 90
+                        label "[lv]":
+                            top_padding 18
+                            left_padding 255
+                            text_size 18
+
+style hp is default
+style hp_us_frame:
+    background Image("gui/dfo_status.png", xalign=0, yalign=0)
+style hp_em_frame:
+    background Image("gui/dfo_status2.png", xalign=1.0, yalign=0)#, xzoom=-1.0) #won't flip it x_x
+style hp_us_label_text:
+    color "#fee"
+style hp_em_label_text:
+    color "#fee"
+style hp_em_bar:
+    right_gutter 150
 
 ## Say screen ##################################################################
 ##
@@ -358,11 +424,6 @@ screen navigation():
         if main_menu:
 
             textbutton _("Start") action Start()
-            
-            if renpy.seen_label("Ending_Credits"):
-                textbutton _("Trailer") action Start("trailer")
-                
-                textbutton _("Celebration") action Start("ending_celebration")
 
         else:
 
