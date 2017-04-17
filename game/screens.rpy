@@ -83,11 +83,13 @@ style frame:
 
 screen hp_window(playerparty, enemyparty, current_hp, current_mp):
     style_prefix "hp"
-    vbox:
+    vbox: #at hp_us_in:
         id "us"
         xmaximum 465
+        $ ind = 0
         for name in playerparty:
-            frame:
+            frame at hp_us_in(ind):
+                $ ind += 1
                 style_group "hp_us"
                 xpadding 15
                 xmargin 5
@@ -104,7 +106,7 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                             hurtness = "mild_hurt"
                         else:
                             hurtness = "hurt"
-                        fname = "nick"
+                        fname = "nick" #TODO make this happen in character class
                         if name == "Nick":
                             fname = "nick"
                         elif name == "Aerith":
@@ -152,12 +154,12 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                             top_padding 8
                             left_padding 155
                             text_size 18
-    vbox:
+    vbox:# at hp_em_in:
         id "em"
         xmaximum 465
         xalign 1.0
         for name in enemyparty:
-            frame:
+            frame at hp_em_in:
                 style_group "hp_em"
                 xpadding 15
                 xmargin 5
@@ -218,7 +220,7 @@ style hp_em_bar:
 screen say(who, what):
     style_prefix "say"
 
-    window:
+    window at say_in:
         id "window"
 
         if who is not None:
@@ -323,12 +325,14 @@ screen choice(items):
     default tt = Tooltip("")
 
     vbox:
+        $ ind = 0
         for i in items:
 
             if i.caption in tooltips:
-                textbutton i.caption action i.action hovered tt.Action(tooltips[i.caption])
+                textbutton i.caption action i.action hovered tt.Action(tooltips[i.caption]) at choice_in(ind)
             else:
-                textbutton i.caption action i.action
+                textbutton i.caption action i.action at choice_in(ind)
+            $ ind += 1
 
     if tt.value != "":
         use say(None, tt.value)

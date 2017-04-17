@@ -28,6 +28,31 @@ init:
     transform flip:
         xzoom -1.0
 
+    transform hp_us_in(index):
+        xanchor 1.0
+        xpos 0.0
+        pause 0.05*index
+        ease 0.5 xalign 0.0
+
+    transform hp_em_in:
+        xanchor 0.0
+        xpos 1.0
+        ease 0.5 xalign 1.0
+
+    transform say_in:
+        yanchor 0.0
+        ypos 1.0
+        ease 0.5 yalign 1.0
+
+    transform choice_in(index):
+#        yanchor 1.0
+#        ypos -1.5*index
+#        ease 0.5 yalign 0.5
+        xanchor 0.0
+        xpos 2.0
+        pause 0.1*index
+        ease 0.5 xalign 0.5
+
     transform distant:
         zoom 0.75
 
@@ -174,7 +199,7 @@ init:
     define sfx_death_1 = "bgm/SFX_Grunt_pain_1.mp3"
     define sfx_death_2 = "bgm/SFX_Grunt_pain_2.mp3"
     define sfx_dragon = "bgm/SFX_Grunt_Angry_1.mp3"
-    
+
 init python:
     credits = ('Script', 'MagusDei'), ('Sprites and hand-drawn backgrounds', 'Qazhax'), ('Background images', 'Snehadri'), ('Programming', 'MagusDei'), ('Programming', 'Qazhax'), ('Logo', 'John Smith'), ('Music', 'xZidene'), ('Sound effects', 'xZidene'), ('Sound effects', 'Qazhax'), ('Dungeon and MMO design', 'Bahafyr')
     credits_s = "{size=80}Credits\n\n"
@@ -281,7 +306,7 @@ define c = Character("Catherine", color="DC143C")
 define nvlNarrator = Character(None, kind=nvl, what_xsize = 950, what_size=28, what_xpos=200)
 
 image SDG_DF_fade1_big = "SDG_DF_fade1_big.png"
-    
+
 define endingNarrator = Character(None,
                           color="#191970",
                           what_size=36,
@@ -303,7 +328,7 @@ define endingSilvia = Character(None,
                           what_outlines=[(3, "#9932CC", 0, 0)],
                           what_cps=20
                           )
-                          
+
 define endingAerith = Character(None,
                           color="#fff",
                           what_size=36,
@@ -458,11 +483,11 @@ label start:
     with hpunch
 
     # Sound effect
-    
+
     "The monster sinks its fangs into my skin, drawing blood!"
-    
+
     # Screen shake & sound
-    
+
     play sound sfx_blood
 
     "I can feel the warm liquid trickling down my skin... Damnit!"
@@ -497,7 +522,7 @@ label start:
             jump WeaselPull
         "Time to retreat!":
             jump WeaselRetreat
-            
+
 label FX_Silvia_Hail:
     show fx daggers
     with vpunch
@@ -553,7 +578,7 @@ label WeaselFight:
     "I raise my shield just in time as a hail of daggers falls all around me, piercing the weasels and spraying blood everywhere!"
 
     call FX_Silvia_Hail
-    
+
     "The monsters lie dead on the grass, painted crimson with blood."
 
     "I turn around to thank Silvia, but then I hear Aerith scream from behind."
@@ -704,7 +729,7 @@ label WeaselSilviaHailOfDaggers:
     n "Silvia! Use your hail of daggers, now!"
 
     "Silvia doesn't need to be told twice."
-    
+
     call FX_Silvia_Hail
 
     if blade_sphere_control:
@@ -787,7 +812,7 @@ label WeaselAerithCuringLight:
     play sound sfx_heal
     "I feel the warm, green glow closing the wounds on my arms."
     hide overlay green
-    
+
     "Freshly invigorated, we return our focus to the battle at hand."
 
     "The weasels are already getting ready to pounce. We have to react fast!"
@@ -1043,7 +1068,7 @@ label RoomDescription:
     nvlNarrator "One of these days, for certain..."
     "Suddenly, my wristband vibrates to signal a call."
     "I read the name projected on my forearm."
-    "{color=#f00}Catherine.{/color}" 
+    "{color=#f00}Catherine.{/color}"
     "My heart skips a beat, and I hover my finger over the ignore button."
     "Then, I manage to get a hold of myself. Lifting my index finger to my ear, I pick up the call."
     n "Hi."
@@ -1972,22 +1997,22 @@ label ending_celebration:
     "Aaaaahhh!!!"
     "Why does it always have to end like thiiiis!?"
     return
-    
+
 label trailer:
     play music bgm_scary
     scene black
     window hide
     endingNarrator "It will end.{w=1.0}{nw}"
-    
+
     scene bg_field
     show sil hmm at closeup, flip
     endingNarrator "This world isn't real.{w=1.0}{nw}"
     show sil annoyed at closeup, flip
     with hpunch
     endingSilvia "Doesn't it feel real?{w=1.0}{nw}"
-    
+
     pause 2
-    
+
     scene bg_fort
     show air blush2 at closeupzoomoutcenter
     endingAerith "Nicholas!{w=1.0}{nw}"
@@ -1998,25 +2023,25 @@ label trailer:
     show cat_torso green at closeupzoomoutcenter
     show cat scream at closeupzoomoutcenter
     endingCatherine "Nicky...!{w=1.0}{nw}"
-    
+
     scene bg_fort with dissolve
     endingNarrator "Damnit! What the hell is going on!?{w=1.0}{nw}"
     show sil lecture at right with moveinright
     endingSilvia "All will be explained once we reach the top.{w=1.0}{nw}"
-    
+
     pause 2
-    
+
     scene black with dissolve
     show air 2 at right, closeup
     endingAerith "There's an inscription here:{w=1.0}{nw}"
-    
+
     show air 7 at right, closeup
     endingAerith "{i}Lasciate ogne speranza, voi ch'intrate{/i}{w=1.0}{nw}"
-    
+
     hide air
     show sil lecture at left, closeup
     endingSilvia "Abandon all hope, ye who enter here.{w=1.0}{nw}"
-    
+
     pause 2
 
     scene white with dissolve
@@ -2026,11 +2051,11 @@ label trailer:
     show SDG_DF_fade1_big at zoomoutcenter
     play sound sfx_fire
     show fx fire behind SDG_DF_fade1_big
-    
+
     pause 2
-    
+
     return
-    
+
 label play_cheerful:
     if day <= 7:
         if not renpy.music.get_playing() == "bgm/BGM_Cheerful.mp3":
