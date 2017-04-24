@@ -130,8 +130,8 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                             right_padding 5
                             text_size 18
                         bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png"
-                        $ hp1 = current_hp[name]
-                        $ hp2 = max_hp[name]
+                        #$ hp1 = current_hp[name]
+                        #$ hp2 = max_hp[name]
                         label "[hp1] / [hp2]":
                             top_padding 2
                             left_margin -155
@@ -178,6 +178,8 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                             text_size 18
                         bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png":
                             xmaximum 225
+                        $ hp1 = current_hp[name]
+                        $ hp2 = max_hp[name]
                         label "[hp1] / [hp2]":
                             top_padding 8
                             left_margin -150
