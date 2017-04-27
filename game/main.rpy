@@ -1835,7 +1835,15 @@ label night:
         call truck_after
         $ truck_handled = True
     else:
-        "It's getting late, so I decide to go to sleep."
+        if stress <= 2:
+            "That was quite the day. Time to hit the bed!"
+        elif stress >= 8:
+            "It's difficult to fall asleep, and I spend hours rolling about in my bed."
+        elif stress >= 5:
+            "I yawn. What a tiring day."
+            "I'm glad to cover myself with the blanket, falling into the world of dreams."
+        else:
+            "It's quite late. I'm a bit tempted to boot up DFO, but I'd better get some sleep."
 
     $ fitness -= 2
 
@@ -1866,8 +1874,28 @@ label night:
 
         "Just as I'm going to sleep, I realize I forgot my [promise_pluralized] to [forgotten_people]."
 
-    if stress >= 8:
+
+    if stress == 0:
+        "I sleep well, heart light with joy."
+    elif stress == 1:
+        "I sleep well."
+    elif stress == 2:
+        "I dream about Catherine."
+    elif stress == 3:
+        "I'm dreaming about work again."
+    elif stress == 4:
+        "In my dream, something bad happens at work, but I can't quite remember what..."
+    elif stress == 5:
+        "My dreams are a bit dark that night."
+    elif stress == 6:
+        "My sleep is all but restful. There's just too much going on..."
+    elif stress == 7:
         "All the stress caused by recent events makes my dreams dark and uneasy."
+    elif stress == 8:
+        "I awaken during the night, covered in sweat. The nightmare soon leaves my memory, however."
+    elif stress == 9:
+        "I wake up screaming in the middle of the night."
+        "I can't catch any sleep after that."
 
     # We call events_end_day to let it know that the day is done.
     call events_end_day
