@@ -424,7 +424,9 @@ label start:
 
     $ broken_up = False
     $ call_ignored = False
-
+    $ spendtimepromise = False
+    $ moviepromise = False
+    
     $ truck_handled = True
 
 
@@ -1302,7 +1304,7 @@ label parlorMakeUp:
 
 label promiseTime:
     n "I'll spend more time with you from now on. I promise."
-
+    
     if cat_mood < 0:
         "She doesn't take that too kindly."
         show cat anger
@@ -1311,6 +1313,7 @@ label promiseTime:
         $ affection_modify('Catherine', -2)
     else:
         show cat longing
+        $ spendtimepromise = True
         "She seems a bit sad."
         c "I guess I just have to believe you. Again."
 
@@ -1322,7 +1325,8 @@ label promiseTime:
 
 label promiseMovies:
     n "I'll take you to the movies."
-
+    $ moviepromise = True
+    
     if cat_mood < 0:
         show cat tired
         "She purses her lips."
@@ -1703,7 +1707,9 @@ label day:
 
     # Increment the day it is.
     $ day += 1
-
+    
+    # Calculate dayswocat
+    $ dayswocat = calculatedayswithoutseeingCatherine()
 
     window hide
     # "It's day %(day)d."

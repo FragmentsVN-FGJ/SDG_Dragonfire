@@ -52,6 +52,11 @@ define cashier = Character("Cashier")
 
 label Catherine_house:
     scene city_street
+    python:
+        if not (act, day) in promises.keys():
+            promises[(act, day)] = {('Catherine', 'meet'): True}
+        else:
+            promises[(act, day)][('Catherine', 'meet')] = True
     "Catherine opens the door."
     c "Oh, hi! This is a surprise."
     c "Well, come on in..."
