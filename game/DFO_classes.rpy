@@ -1,0 +1,236 @@
+init -99 python:
+    class Gamestate(store.object):
+        """ docstring for Gamestate
+            All variables related to battles that are just laying around should be moved here
+        """
+        def __init__(self):
+            super(Gamestate, self).__init__()
+            self.players = {}
+            self.enemies = {}
+
+        def init_battle(self):
+            self.turn_number = 0
+
+
+    gamestate = Gamestate()
+    class BattleParticipant(store.object):
+        """ docstring for BattleParticipant
+            Any entity that can participate in battles
+            contains stats used for battles
+
+            name String name shown in the status panel
+            skills Skill[] list of all skills character can use
+
+            max_hp Int maximum health points
+            max_mp Int maximum mana points
+            level Int current level
+            xp Int xp towards the next level
+            physical_defense Int physical defense stat
+            magical_defense Int magic defense stat
+            attack Int attack related stat, for damage etc
+
+            The stats displayed on the gui are taken from here
+        """
+        def __init__(   self,
+                        name,
+                        skills,
+                        max_hp=100,
+                        max_mp=100,
+                        level=90,
+                        xp=0,
+                        physical_defense=50,
+                        magical_defense=50,
+                        attack=50,
+                        *args, **kwargs):
+
+            super(BattleParticipant, self).__init__()
+            self.name = name
+
+            self.max_hp = max_hp
+            self.max_mp = max_mp
+            self.hp = max_hp
+            self.mp = max_mp
+
+            self.xp = xp
+            self.level = level
+            self.max_xp = self.get_xp_cap()
+
+            self.p_def = p_def
+            self.m_def = m_def
+            self.attack = attack
+
+            self.status_effects = set()
+
+        def full_heal(self):
+            self.hp = max_hp
+            self.mp = max_mp
+
+        def heal(self, amount):
+            self.hp += amount
+            if self.hp > self.max_hp:
+                self.hp = self.max_hp
+
+        def end_turn(self):
+            for status_effect in self.status_effects:
+                status_effect.end_turn()
+
+        def start_turn(self):
+            for status_effect in self.status_effects:
+                status_effect.start_turn()
+            # filter skills that can be used and map them to tuples
+            choices = [skill.get_menu_tuple() for skill in skills if skill.can_be_used(self)]
+            result = renpy.display_menu(choices)
+            result()
+
+        def clear_effects(self):
+            self.status_effects = set()
+
+        """ Adds xp and checks if there is enough xp to level up
+            will only check for one level,
+            assuming the amount of xp added is much less than xp limit,
+            add while loop to check for more than one level
+        """
+        def add_xp(self, amount):
+            self.xp += amount
+            if self.xp > self.max_xp:
+                self.level += 1
+                self.level_up()
+                self.xp -= self.max_xp
+                self.max_xp = self.get_xp_cap()
+
+        """ Calculates an xp amount required to level up
+        """
+        def get_xp_cap(self):
+            lev = 10 * self.level               # 10 per level, 900 at 90
+            diff = max(0, 5*(self.level-30))    # 0 until lv 30, after which 5 per level, 300 at 90
+            base = 5 * self.level + 100         # 5 per level + 100, 550 at 90
+            return (lev + diff) * base          # N^2 growth, 660000 at 90, 674325 at 91
+
+        """ Increases all stats by 1% or 1
+        """
+        def level_up(self):
+            self.p_def += max(1, int(self.p_def*0.01))
+            self.m_def += max(1, int(self.m_def*0.01))
+            self.attack += max(1, int(self.attack*0.01))
+
+
+    class StatusEffect(store.object):
+        """ docstring for StatusEffect
+            superclass for status effects,
+            all status effects should be subclassed from this class
+
+            name String the type of the effect
+            host BattleParticipant the character the effect is applied on
+            turns Int tells the amount of turns the effect lasts
+            positive Boolean tells whether effect is seen as debuff or buff
+            modifiers Double multiply the described stat
+
+            Adds itself to the host when created
+        """
+        def __init__(   self,
+                        name,
+                        host,
+                        turns = 2,
+                        positive = False,
+                        p_def_modifier = 1,
+                        m_def_modifier = 1,
+                        attack_modifier = 1,
+                        damage_taken_modifier = 1,
+                        damage_caused_modifier = 1):
+            super(StatusEffect, self).__init__()
+            self.name = name
+            self.positive = positive
+
+            self.p_def_mod = p_def_modifier
+            self.m_def_mod = m_def_modifier
+            self.attack_mod = attack_modifier
+            self.dmg_caused_mod = damage_caused_modifier
+            self.dmg_taken_mod = damage_taken_modifier
+
+            self.turns = turns
+            self.host = host
+            self.add_for(host)
+
+        """ called when the character turn ends
+            now that I think of it, this might bug if there are multiple status effects and one is removed
+            if sth like that appears maybe a copied version of the status effects should be used when iterating over it
+            the same might happen on any other version of the
+        """
+        def on_end_turn(self):
+            if self.turns == 0:
+                self.remove()
+            else:
+                self.turns -= 1
+
+        """ called at the beginning of a turn
+        """
+        def on_start_turn(self):
+            pass
+
+        """ called when the character is attacked
+            e.g. if the effect can block one attack or sth?
+            TODO add some way for these to actually block attacks?
+        """
+        def on_defense(self):
+            pass
+
+        """ called when the character attacks
+            e.g. if the effect can block one attack or sth
+        """
+        def on_attack(self):
+            pass
+
+        """ Removes itself from its host and lets hope garbage collection does its job
+        """
+        def remove(self):
+            self.host.status_effects.remove(self)
+            dfo_narrator(self.host.name + " has no longer status: " + self.name)
+
+        """ Adds itself to the host character, and writes a piece of dialogue describing the effect
+            called when the status is first applied to a character
+            should not be called outside __init__
+        """
+        def add_for(self, host):
+            host.status_effects += self
+            dfo_narrator(host.name + " got status: "+ self.name) #TODO add dfo_narrator character with the dfo say panel bg
+
+
+    class Skill(store.object):
+        """ docstring for Skill
+            Superclass for skills
+
+            name String skill name shown in choice menu
+            call_label String label to be called when using the skill
+            mp_cost Int amount of mp required to use the skill
+        """
+        def __init__(self, name, call_label, mp_cost=0):
+            super(Skill, self).__init__()
+            self.name = name
+            self.call_label = call_label
+
+        def get_menu_tuple(self):
+            return (self.name, self.target)
+
+        """ shows choice menu to choose target enemy if more than one possible target
+            override if skill targets allies or all enemies at once
+        """
+        def target(self, user):
+            target_group = gamestate.enemies
+            if len(target_group) > 1:
+                target = menu([(enemy, enemy) for enemy in target_group])
+            else:
+                for enemy in target_group:
+                    target = enemy
+            self.use(user, target_group[target])
+
+        """ user uses the skill on target
+            calls label defined in call label, with user target and this skill as parameters
+        """
+        def use(self, user, target):
+            renpy.call(self.call_label, user, target, self)
+
+        """ Checks if the skill can be used by user
+            Override in a subclass if it uses charges or sth instead
+        """
+        def can_be_used(self, user):
+            return user.mp > self.mp_cost
