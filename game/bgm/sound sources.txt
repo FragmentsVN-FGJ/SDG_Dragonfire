@@ -1,61 +1,71 @@
-person falling on carpet sound:
+"Fall on carpet" by j0rd4nkzf
+	Source: https://www.freesound.org/people/j0rd4nkzf/sounds/244259/
+	Creative Commons 0 https://creativecommons.org/publicdomain/zero/1.0/
+
 	SFX_Rock_Collapse.mp3
 	SFX_Rock_Thump.mp3
-	CC0
-	https://www.freesound.org/people/j0rd4nkzf/sounds/244259/
 
-footsteps on artificial grass sound:
+"footsteps grass.wav" by Yuval
+	Source: https://www.freesound.org/people/Yuval/sounds/206030/
+	Creative Commons 0 https://creativecommons.org/publicdomain/zero/1.0/
+
 	SFX_Footsteps_grass.mp3
-	CC0
-	https://www.freesound.org/people/Yuval/sounds/206030/
 
-fire sound:
+"Fire.wav" by SGAK
+	Source: https://www.freesound.org/people/SGAK/sounds/87564/
+	Creative Commons 0 https://creativecommons.org/publicdomain/zero/1.0/
+
 	SFX_Fire.mp3
-	CC0
-	https://www.freesound.org/people/SGAK/sounds/87564/
 
-Sword hit sound:
+"sword-01.wav" by audione
+	Source: https://www.freesound.org/people/audione/sounds/52458/
+	Creative Commons 0 https://creativecommons.org/publicdomain/zero/1.0/
+
 	SFX_Sword_hit.mp3
-	CC0
-	https://www.freesound.org/people/audione/sounds/52458/
 
-Sword hit sounds:
+"Sword sounds compilation" by SamsterBirdies
+	Source: https://www.freesound.org/people/SamsterBirdies/sounds/345308/
+	Creative Commons 0 https://creativecommons.org/publicdomain/zero/1.0/
+
 	SFX_Sword_hit_2.mp3
 	SFX_Sword_hit_3.mp3
 	SFX_Sword_hit_4.mp3
-	CC0
-	https://www.freesound.org/people/SamsterBirdies/sounds/345308/
 
-Sword slash sound:
+"Axe Slash 2" by smokebomb99
+	Source: https://www.freesound.org/people/smokebomb99/sounds/147289/
+	Creative Commons 0 https://creativecommons.org/publicdomain/zero/1.0/
+
 	SFX_Sword_slash_8.mp3
-	CC0
-	https://www.freesound.org/people/smokebomb99/sounds/147289/
 
-Sheathe sword sound:
+"Union Sword Sheath 4.wav" by mooseranger
+	Source: https://www.freesound.org/people/mooseranger/sounds/170715/
+	Creative Commons 0 https://creativecommons.org/publicdomain/zero/1.0/
+
 	SFX_Raise_Shield.mp3
-	CC0
-	https://www.freesound.org/people/mooseranger/sounds/170715/
 
-Heart beat sound:
+"Heart Beat" by thenudo
+	Source: https://freesound.org/people/thenudo/sounds/146765/
+	Creative Commons 0 https://creativecommons.org/publicdomain/zero/1.0/
+
 	SFX_Heart_Beat.mp3
-	CC0
-	https://freesound.org/people/thenudo/sounds/146765/
 
-Pouring soup sound:
-	SFX_Soup.mp3
-	File was changed to mp3 from flac
-	CC Attribution
-	https://freesound.org/people/Hitrison/sounds/251411/
+"Pouring Soup in a Metal Pan - Long,Slow,Nasty" by Hitrison
+	Creative Commons Attribution https://creativecommons.org/licenses/by/3.0/
+	Source: https://freesound.org/people/Hitrison/sounds/251411/
 
-Death scream sound:
-	SFX_Scream_Death.mp3
-	File was changed to mp3 from Wav
-	CC Attribution Noncommercial
-	https://freesound.org/people/Syna-Max/sounds/58793/
+	SFX_Soup.mp3 - converted to mp3
+
+"death_scream.wav" by Syna-Max
+	Creative Commons Attribution Noncommercial https://creativecommons.org/licenses/by-nc/3.0/
+	Source: https://freesound.org/people/Syna-Max/sounds/58793/
+
+	SFX_Scream_Death.mp3 - converted to mp3
 	
-Static noise:
+"SFX_Noise.mp3" by Qazhax
+	original
+	Creative Commons Attribution Noncommercial https://creativecommons.org/licenses/by-nc/3.0/
+
 	SFX_Noise.mp3
-	file was created by Qazhax
 
 
 Sources for the rest of the sounds currently unknown.
