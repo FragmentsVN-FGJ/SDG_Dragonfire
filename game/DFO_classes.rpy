@@ -11,6 +11,34 @@ init -99 python:
         def init_battle(self):
             self.turn_number = 0
 
+        def add_player(self, player):
+            self.players[player.name] = player
+        def add_enemy(self, enemy):
+            self.enemies[enemy.name] = enemy
+
+        """ removes participant BattleParticipant from battle if it exists on either side
+        """
+        def remove(self, participant):
+            if participant in self.players:
+                del self.players[participant]
+            elif participant in self.enemies:
+                del self.enemies[participant]
+
+        """ shows choice menu to choose target enemy if more than one possible target
+            returns target BattleParticipant or None
+        """
+        def target_enemy(self):
+            target_group = self.enemies
+            if len(target_group) > 1:
+                target = menu([(enemy, enemy) for enemy in target_group])
+            elif  len(target_group) == 1:
+                for enemy in target_group:
+                    target = enemy
+            else:
+                return None
+            return target_group[target]
+
+
 
     gamestate = Gamestate()
     class BattleParticipant(store.object):
@@ -20,6 +48,7 @@ init -99 python:
 
             name String name shown in the status panel
             skills Skill[] list of all skills character can use
+            death_label String name of label to call on death
 
             max_hp Int maximum health points
             max_mp Int maximum mana points
@@ -34,6 +63,7 @@ init -99 python:
         def __init__(   self,
                         name,
                         skills,
+                        death_label,
                         max_hp=100,
                         max_mp=100,
                         level=90,
@@ -70,17 +100,34 @@ init -99 python:
             if self.hp > self.max_hp:
                 self.hp = self.max_hp
 
+        def take_damage(self, amount):
+            self.hp -= amount
+            if self.hp <= 0:
+                self.die()
+
+        def die(self):
+            gamestate.remove(self.name)
+            renpy.call(self.death_label)
+
         def end_turn(self):
             for status_effect in self.status_effects:
                 status_effect.end_turn()
 
+        """ Called when the unit begins their turn
+            enemies need to be subclassed to have ai pick their targets and
+            calls start turn for all status effects
+            shows choice menu for skills
+            picks target or shows a choice menu for choosing target
+            calls skill call_label
+        """ #TODO make it possible to return from choosing target?
         def start_turn(self):
             for status_effect in self.status_effects:
                 status_effect.start_turn()
             # filter skills that can be used and map them to tuples
             choices = [skill.get_menu_tuple() for skill in skills if skill.can_be_used(self)]
-            result = renpy.display_menu(choices)
-            result()
+            skill = renpy.display_menu(choices)
+            target = skill.target()
+            renpy.call(skill.call_label, self, target, skill)
 
         def clear_effects(self):
             self.status_effects = set()
@@ -208,26 +255,24 @@ init -99 python:
             self.name = name
             self.call_label = call_label
 
+        """ returns (String, Skill) tuple for the battleparticipant
+            to use in a menu
+        """
         def get_menu_tuple(self):
-            return (self.name, self.target)
+            return (self.name, self)
 
         """ shows choice menu to choose target enemy if more than one possible target
             override if skill targets allies or all enemies at once
+            returns target BattleParticipant or None
         """
-        def target(self, user):
-            target_group = gamestate.enemies
-            if len(target_group) > 1:
-                target = menu([(enemy, enemy) for enemy in target_group])
-            else:
-                for enemy in target_group:
-                    target = enemy
-            self.use(user, target_group[target])
+        def target(self):
+            return gamestate.target_enemy()
 
-        """ user uses the skill on target
-            calls label defined in call label, with user target and this skill as parameters
-        """
-        def use(self, user, target):
-            renpy.call(self.call_label, user, target, self)
+        #""" user uses the skill on target
+        #    calls label defined in call label, with user target and this skill as parameters
+        #"""
+        #def use(self, user, target):
+        #    renpy.call(self.call_label, user, target, self)
 
         """ Checks if the skill can be used by user
             Override in a subclass if it uses charges or sth instead
