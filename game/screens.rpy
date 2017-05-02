@@ -81,6 +81,16 @@ style frame:
 ## In-game screens
 ################################################################################
 
+screen remember_popup_window(message):
+    vbox:        
+        frame at alpha_dissolve:
+            xpadding 15
+            xmargin 5
+            top_margin 5
+            bottom_margin 10
+            text message
+    timer 2.0 action Hide("remember_popup_window", dissolve)
+
 screen hp_window(playerparty, enemyparty, current_hp, current_mp):
     style_prefix "hp"
     vbox: #at hp_us_in:
@@ -331,9 +341,9 @@ screen choice(items):
         for i in items:
 
             if i.caption in tooltips:
-                textbutton i.caption action i.action hovered tt.Action(tooltips[i.caption]) at choice_in(ind)
+                textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) at choice_in(ind)
             else:
-                textbutton i.caption action i.action at choice_in(ind)
+                textbutton i.caption action [i.action, Hide("countdown_bar")] at choice_in(ind)
             $ ind += 1
 
     if tt.value != "":
