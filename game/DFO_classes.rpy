@@ -3,6 +3,8 @@ init -99 python:
         """ docstring for Gamestate
             All variables related to battles that are just laying around should be moved here
         """
+        battle_label = "Ruins_battle1"
+
         def __init__(self):
             super(Gamestate, self).__init__()
             self.players = {}
@@ -10,9 +12,15 @@ init -99 python:
 
         def init_battle(self):
             self.turn_number = 0
+            for name in self.players:
+                player = self.players[name]
+                player.full_heal()
+            for name in self.enemies:
+                enemy = self.enemies[name]
+                enemy.full_heal()
 
-        def add_player(self, player):
-            self.players[player.name] = player
+        def add_player(self, player, name):
+            self.players[name] = player
         def add_enemy(self, enemy):
             self.enemies[enemy.name] = enemy
 
@@ -23,6 +31,15 @@ init -99 python:
                 del self.players[participant]
             elif participant in self.enemies:
                 del self.enemies[participant]
+        """ wins battle and returns or jumps or something
+        """
+        def win():
+            pass
+
+        """ loses battle and returns or sth
+        """
+        def lose():
+            pass
 
         """ shows choice menu to choose target enemy if more than one possible target
             returns target BattleParticipant or None
@@ -39,24 +56,24 @@ init -99 python:
             return target_group[target]
 
 
-
-    gamestate = Gamestate()
     class BattleParticipant(store.object):
         """ docstring for BattleParticipant
             Any entity that can participate in battles
             contains stats used for battles
 
             name String name shown in the status panel
-            skills Skill[] list of all skills character can use
-            death_label String name of label to call on death
+            skills Skill[] list of all skills character can use     # not used
+            death_label String name of label to call on death       # not used
 
             max_hp Int maximum health points
             max_mp Int maximum mana points
             level Int current level
             xp Int xp towards the next level
-            physical_defense Int physical defense stat
-            magical_defense Int magic defense stat
+            physical_defense Int physical defense multiplier, 0 immune to physical, 1: no extra armour
+            magical_defense Double multiplier for magic damage taken, 0: immune to magic, 1: magic does normal damage
+            evasion Double default dodge chance added to dodge checks, 0: no dodge, 1: dodge about everything
             attack Int attack related stat, for damage etc
+            critical_player Boolean killing this character will end the battle  # not used
 
             The stats displayed on the gui are taken from here
         """
@@ -64,36 +81,39 @@ init -99 python:
                         name,
                         skills,
                         death_label,
-                        max_hp=100,
-                        max_mp=100,
+                        hp=100,
+                        mp=100,
                         level=90,
                         xp=0,
-                        physical_defense=50,
-                        magical_defense=50,
-                        attack=50,
+                        physical_defense=0,
+                        magical_defense=0,
+                        evasion=0,
+                        attack=0,
+                        critical_player=False,
                         *args, **kwargs):
 
             super(BattleParticipant, self).__init__()
             self.name = name
 
-            self.max_hp = max_hp
-            self.max_mp = max_mp
-            self.hp = max_hp
-            self.mp = max_mp
+            self.max_hp = hp
+            self.max_mp = mp
+            self.hp = hp
+            self.mp = mp
 
             self.xp = xp
             self.level = level
             self.max_xp = self.get_xp_cap()
 
-            self.p_def = p_def
-            self.m_def = m_def
+            self.physical_defense = physical_defense
+            self.magical_defense = magical_defense
             self.attack = attack
+            self.critical_player = critical_player
 
-            self.status_effects = set()
+            self.status_effects = []
 
         def full_heal(self):
-            self.hp = max_hp
-            self.mp = max_mp
+            self.hp = self.max_hp
+            self.mp = self.max_mp
 
         def heal(self, amount):
             self.hp += amount
@@ -101,12 +121,14 @@ init -99 python:
                 self.hp = self.max_hp
 
         def take_damage(self, amount):
-            self.hp -= amount
+            status_mod = reduce(lambda a,b: a.damage_taken_modifier * b, self.status_effects, 1)
+            self.hp -= ceil(amount * self.physical_defense * status_mod)
             if self.hp <= 0:
                 self.die()
 
         def die(self):
             gamestate.remove(self.name)
+            #renpy.call(gamestate.battle_label+".death", self.name) # will use the .death local death label
             renpy.call(self.death_label)
 
         def end_turn(self):
@@ -204,15 +226,15 @@ init -99 python:
             the same might happen on any other version of the
         """
         def on_end_turn(self):
+            self.turns -= 1
             if self.turns == 0:
                 self.remove()
-            else:
-                self.turns -= 1
 
         """ called at the beginning of a turn
+            returns True if player can act on the turn, False if player can't
         """
         def on_start_turn(self):
-            pass
+            return True
 
         """ called when the character is attacked
             e.g. if the effect can block one attack or sth?
@@ -247,8 +269,10 @@ init -99 python:
             Superclass for skills
 
             name String skill name shown in choice menu
-            call_label String label to be called when using the skill
+            call_label String label to be called when using the skill, parameters user, target, skill
             mp_cost Int amount of mp required to use the skill
+
+            TODO use multiple inheritance instead of simply reclassing for functions?
         """
         def __init__(self, name, call_label, mp_cost=0):
             super(Skill, self).__init__()

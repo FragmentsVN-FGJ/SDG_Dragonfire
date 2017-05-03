@@ -82,7 +82,7 @@ style frame:
 ################################################################################
 
 screen remember_popup_window(message):
-    vbox:        
+    vbox:
         frame at alpha_dissolve:
             xpadding 15
             xmargin 5
@@ -91,13 +91,14 @@ screen remember_popup_window(message):
             text message
     timer 2.0 action Hide("remember_popup_window", dissolve)
 
-screen hp_window(playerparty, enemyparty, current_hp, current_mp):
+screen hp_window(playerparty, enemyparty):
     style_prefix "hp"
     vbox: #at hp_us_in:
         id "us"
         xmaximum 465
         $ ind = 0
         for name in playerparty:
+            $ player = playerparty[name]
             frame at hp_us_in(ind):
                 $ ind += 1
                 style_group "hp_us"
@@ -107,8 +108,8 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                 bottom_margin 10
                 vbox:
                     python:
-                        hp1 = current_hp[name]
-                        hp2 = max_hp[name]
+                        hp1 = player.hp
+                        hp2 = player.max_hp
                         hp3 = hp1*1.0/hp2
                         if hp3 > 0.5:
                             hurtness = "normal"
@@ -130,7 +131,7 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                         ymaximum 0
                         xmargin -15
                         ymargin -5
-                    label name:
+                    label player.name:
                         left_padding 150
                         top_padding 15
                         text_size 26
@@ -139,7 +140,7 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                             left_padding 160
                             right_padding 5
                             text_size 18
-                        bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png"
+                        bar value player.hp range player.max_hp left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png"
                         #$ hp1 = current_hp[name]
                         #$ hp2 = max_hp[name]
                         label "[hp1] / [hp2]":
@@ -151,9 +152,9 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                             left_padding 170
                             right_padding 5
                             text_size 18
-                        bar value current_mp[name] range max_mp[name] left_bar "gui/bar/left_blue_edge.png" right_bar "gui/bar/right_blue_edge.png"
-                        $ mp1 = current_mp[name]
-                        $ mp2 = max_mp[name]
+                        bar value player.mp range player.max_mp left_bar "gui/bar/left_blue_edge.png" right_bar "gui/bar/right_blue_edge.png"
+                        $ mp1 = player.mp
+                        $ mp2 = player.max_mp
                         label "[mp1] / [mp2]":
                             top_padding 2
                             left_margin -155
@@ -169,6 +170,7 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
         xmaximum 465
         xalign 1.0
         for name in enemyparty:
+            $ enemy = enemyparty[name]
             frame at hp_em_in:
                 style_group "hp_em"
                 xpadding 15
@@ -176,7 +178,7 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                 top_margin 5
                 bottom_margin 10
                 vbox:
-                    label name:
+                    label enemy.name:
                         left_padding 5
                         top_padding 15
                         text_size 26
@@ -186,10 +188,10 @@ screen hp_window(playerparty, enemyparty, current_hp, current_mp):
                             left_padding 15
                             right_padding 5
                             text_size 18
-                        bar value current_hp[name] range max_hp[name] left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png":
+                        bar value enemy.hp range enemy.max_hp left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png":
                             xmaximum 225
-                        $ hp1 = current_hp[name]
-                        $ hp2 = max_hp[name]
+                        $ hp1 = enemy.hp
+                        $ hp2 = enemy.max_hp
                         label "[hp1] / [hp2]":
                             top_padding 8
                             left_margin -150
@@ -232,7 +234,7 @@ style hp_em_bar:
 screen say(who, what):
     style_prefix "say"
 
-    window at say_in:
+    window: # at say_in:
         id "window"
 
         if who is not None:

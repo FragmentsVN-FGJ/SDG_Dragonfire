@@ -1,4 +1,65 @@
 
+label nickdeath:
+    with hpunch
+    screen black
+    with dissolve
+    play sound sfx_grunt_2
+    "Blood trickles over my eyes, and I begin a long descent into darkness..."
+    return
+
+label airdeath:
+    play sound sfx_grunt_4_f #TODO add aerith screams
+    "Aerith falls to the ground as her body disintegrates into fine purple dust, blown away by an intangible wind."
+    return
+
+label sildeath:
+    play sound sfx_grunt_5_f
+    "Silvia disappears in a cloud of lavender mist."
+    return
+
+label riderdeath:
+    # I'd like to do some cool procedural stuff with Tracery here, but it'll have to wait until after NaNo
+    $ victorious = True
+    $ i = renpy.random.randint(1, 4)
+    if i == 1:
+        show enemy_chicken hurt
+        pause 0.1
+        show enemy_chicken normal
+        hide enemy_chicken with moveoutleft
+        play sound sfx_grunt_5
+        "I land a deep wound on his side, and he falls off his mount, which escapes into the desert."
+        "He quietly bleeds to death."
+    elif i == 2:
+        show enemy_chicken hurt
+        pause 0.1
+        show enemy_chicken normal
+        play sound sfx_battlecry
+        "He screams as my blade cuts his stomach open."
+        "He falls to the ground, a bloody mess."
+        hide enemy_chicken with moveoutright
+        "The ostrich runs off."
+    elif i == 3:
+        show enemy_chicken hurt
+        pause 0.1
+        show enemy_chicken normal
+        play sound sfx_critical
+        play sound sfx_grunt_10
+        "My strike goes right through him, splitting his body in half."
+        hide enemy_chicken with moveoutleft
+        "The ostrich runs away."
+    elif i == 4:
+        show enemy_chicken hurt
+        pause 0.1
+        show enemy_chicken normal
+        play sound [sfx_block, sfx_grunt_3]
+        "I strike at him with full force, causing him to fall off!"
+        hide enemy_chicken with moveoutright
+        play sound sfx_running
+        "The ostrich runs away, leaving its rider moaning on the ground."
+        play sound sfx_critical
+        "I finish him with a well-aimed strike right through the chest."
+    return
+
 label Ruins_battle1:
     $ spear_broken = False
     $ rider_asleep = False
@@ -12,7 +73,8 @@ label Ruins_battle1:
     $ playerdeath = False
     $ target_list = ["Rider"]
     $ nick_acted = False
-    show screen hp_window(playerparty, target_list, current_hp, current_mp)
+    $ gamestate.battle_label = "Ruins_battle1"
+    show screen hp_window(gamestate.players, gamestate.enemies)
     play sound sfx_battlehorn
     "As we approach, trapdoors spring open all around us, sending sand flying in every direction!"
     show sil star
@@ -186,9 +248,9 @@ label .act_attack:
 
 label .act_techniques:
     menu:
-        "Furious Strike" if target_list and current_mp["Nick"] > mp_costs["Furious Strike"]:
+        "Furious Strike" if target_list and gamestate.players['Nick'].mp > mp_costs["Furious Strike"]:
             $ nick_acted = True
-            $ current_mp["Nick"] -= mp_costs["Furious Strike"]
+            $ gamestate.players['Nick'].mp -= mp_costs["Furious Strike"]
             "This technique requires me to close in on the attacker."
             "I run toward the rider, readying my blade!"
             np "Furious... Strike!"
@@ -226,8 +288,8 @@ label .act_techniques:
             else:
                 "Damn! His mount is too fast, and he dodges my incursion."
                 return
-        "Blade Sphere Control" if current_mp["Nick"] > mp_costs["Blade Sphere Control"] and not blade_sphere_control:
-            $ current_mp["Nick"] -= mp_costs["Blade Sphere Control"]
+        "Blade Sphere Control" if gamestate.players['Nick'].mp > mp_costs["Blade Sphere Control"] and not blade_sphere_control:
+            $ gamestate.players['Nick'].mp -= mp_costs["Blade Sphere Control"]
             "I close my eyes to find internal peace."
             play sound sfx_shield
             np "Blade Sphere Control!"
@@ -272,7 +334,7 @@ label .act_Aerith:
         "Depths of Slumber" if target_list:
             call .act_Aerith_begin_casting("Depths of Slumber", 'warrior')
             if spell_successful:
-                $ current_mp["Aerith"] -= mp_costs["Depths of Slumber"]
+                $ gamestate.players['Aerith'].mp -= mp_costs["Depths of Slumber"]
                 a "Gift him with a peaceful sleep! Depths of Slumber!"
                 #TODO add sleep spell sound, sound of falling asleep
                 show overlay purple
@@ -288,7 +350,7 @@ label .act_Aerith:
 
 label .act_Aerith_begin_casting(spell, target):
     np "Aerith! [spell]!"
-    if mp_costs[spell] > current_mp["Aerith"]:
+    if mp_costs[spell] > gamestate.players['Aerith'].mp:
         a "Uh, I don't have enough mana..."
         n "Damn..."
         jump .act_phase
@@ -353,15 +415,15 @@ label .act_Silvia:
                     play sound sfx_grunt_4
                     "He screams in pain and fury."
                     return
-        "Hide" if not silvia_hidden and current_mp['Silvia'] > mp_costs['Hide']:
-            $ current_mp['Silvia'] -= mp_costs['Hide']
+        "Hide" if not silvia_hidden and gamestate.players['Silvia'].mp > mp_costs['Hide']:
+            $ gamestate.players['Silvia'].mp -= mp_costs['Hide']
             np "Silvia! Hide!"
             s "Very well."
             "She melds into the shadows."
             $ silvia_hidden = True
             return
-        "Hail of Daggers" if target_list and current_mp['Silvia'] > mp_costs["Hail of Daggers"]:
-            $ current_mp['Silvia'] -= mp_costs["Hail of Daggers"]
+        "Hail of Daggers" if target_list and gamestate.players['Silvia'].mp > mp_costs["Hail of Daggers"]:
+            $ gamestate.players['Silvia'].mp -= mp_costs["Hail of Daggers"]
             $ silvia_hidden = False
             np "Say, Silvia, did you see the forecast?"
             "She smiles a little."
@@ -450,8 +512,8 @@ label .act_Silvia:
                     "The ostrich starts to frenzy, but the rider barely manages to calm it down."
                     "They're not going to hold out for much longer, though." # This is a damage message, need to proceduralize...
                     return
-        "Poisoned Blade" if target_list and current_mp["Silvia"] > mp_costs["Poisoned Blade"]:
-            $ current_mp['Silvia'] -= mp_costs["Poisoned Blade"]
+        "Poisoned Blade" if target_list and gamestate.players['Silvia'].mp > mp_costs["Poisoned Blade"]:
+            $ gamestate.players['Silvia'].mp -= mp_costs["Poisoned Blade"]
             $ silvia_hidden = False
             np "Poison him!"
             s "Your wish..."
@@ -494,7 +556,9 @@ label .act_Silvia:
                     play sound sfx_grunt_5
                     "The blade goes straight through his right arm."
                     "He seems disoriented by the poison, but still has will to fight left in him!"
-                    $ poison_counter["Rider"] = renpy.random.randint(1, 3)
+                    $ rnd = renpy.random.randint(1, 3)
+                    $ PoisonStatus(rider, rnd)
+                    $ poison_counter["Rider"] = rnd
                 return
         "Return":
             jump .act_phase
@@ -548,14 +612,14 @@ label .rider_escape:
 label .dealdamage(target, amount, handle_death = True):
     with vpunch
     $ target_died = False
-    $ current_hp[target] -= amount
-    if current_hp[target] < 0:
-        $ current_hp[target] = 0
+    $ gamestate.players[target].take_damage( amount )
+    if gamestate.players[target].hp < 0:
+        $ gamestate.players[target].hp = 0
         if handle_death:
             call .death(target)
         $ target_died = True
     #if not target_died:
-        #$ stats_frame(target, 90, current_hp[target], max_hp[target], xalign=0.5, yalign=0.0)
+        #$ stats_frame(target, 90, gamestate.players[target].hp, gamestate.players[target].max_hp, xalign=0.5, yalign=0.0)
         #pause 2
     return
 

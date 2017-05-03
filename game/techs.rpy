@@ -1,8 +1,8 @@
 label CuringLight(caster, target):
-    $ current_mp[caster] -= mp_costs['Curing Light']
-    $ current_hp[target] += heal_amount['Curing Light']
-    if current_hp[target] > max_hp[target]:
-        $ current_hp[target] = max_hp[target]
+    $ gamestate.players[target].mp -= mp_costs['Curing Light']
+    $ gamestate.players[target].hp += heal_amount['Curing Light']
+    if gamestate.players[target].hp > gamestate.players[target].max_hp:
+        $ gamestate.players[target].hp = gamestate.players[target].max_hp
 
     if target == "Nick":
         "The green light fills me with strength."
@@ -17,7 +17,7 @@ label CuringLight(caster, target):
     return
 
 label LightBarrier(caster, target = "Aerith"):
-    $ current_mp[caster] -= mp_costs["Light Barrier"]
+    $ gamestate.players[target].mp -= mp_costs["Light Barrier"]
     a "Luxphoros, protect thy faithful in a time of need. Light Barrier!"
     $ duration = renpy.random.randint(2, 4)
     $ light_barrier_active[target] = duration
@@ -35,14 +35,14 @@ label LightBarrier(caster, target = "Aerith"):
 
 label usetechnique(caster, technique_name, target = "Nick"):
     $ tech_fail = False
-    if mp_costs[technique_name] > current_mp[caster]:
+    if mp_costs[technique_name] > gamestate.players[target].mp:
         $ tech_fail = True
     # Potential interrupt here.
     if tech_fail:
         call expression idtolabel[technique_name]+".start("+caster+", "+target+")"
         call expression idtolabel[technique_name]+".fail("+caster+", "+target+")"
         return
-    $ current_mp[caster] -= mp_costs[technique_name]
+    $ gamestate.players[target].mp -= mp_costs[technique_name]
     $ i = renpy.random.random()
     if i <= 0.5:
         call expression idtolabel[technique_name]+".start("+caster+", "+target+")"
