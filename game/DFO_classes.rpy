@@ -120,9 +120,17 @@ init -99 python:
             if self.hp > self.max_hp:
                 self.hp = self.max_hp
 
-        def take_damage(self, amount):
+        """ calculates defense bonuses against
+            types: physical, magical, fixed
+        """
+        def take_damage(self, amount, type="physical"):
             status_mod = reduce(lambda a,b: a.damage_taken_modifier * b, self.status_effects, 1)
-            self.hp -= ceil(amount * self.physical_defense * status_mod)
+            def_mod = 1
+            if type == "physical":
+                def_mod = 1 - (1 - self.physical_defense) * reduce(lambda a,b: a.physical_defense_modifier * b, self.status_effects, 1)
+            elif type == "magical":
+                def_mod = 1 - (1 - self.magical_defense) * reduce(lambda a,b: a.magical_defense_modifier * b, self.status_effects, 1)
+            self.hp -= ceil(amount * def_mod * status_mod)
             if self.hp <= 0:
                 self.die()
 
@@ -201,8 +209,8 @@ init -99 python:
                         host,
                         turns = 2,
                         positive = False,
-                        p_def_modifier = 1,
-                        m_def_modifier = 1,
+                        physical_defense_modifier = 1,
+                        magical_defense_modifier = 1,
                         attack_modifier = 1,
                         damage_taken_modifier = 1,
                         damage_caused_modifier = 1):
@@ -210,11 +218,11 @@ init -99 python:
             self.name = name
             self.positive = positive
 
-            self.p_def_mod = p_def_modifier
-            self.m_def_mod = m_def_modifier
-            self.attack_mod = attack_modifier
-            self.dmg_caused_mod = damage_caused_modifier
-            self.dmg_taken_mod = damage_taken_modifier
+            self.physical_defense_modifier = physical_defense_modifier
+            self.magical_defense_modifier = magical_defense_modifier
+            self.attack_modifier = attack_modifier
+            self.damage_caused_modifier = damage_caused_modifier
+            self.damage_taken_modifier = damage_taken_modifier
 
             self.turns = turns
             self.host = host
