@@ -43,6 +43,8 @@ init -99 python:
 
         """ shows choice menu to choose target enemy if more than one possible target
             returns target BattleParticipant or None
+
+            Deprecated
         """
         def target_enemy(self):
             target_group = self.enemies
@@ -120,19 +122,27 @@ init -99 python:
             if self.hp > self.max_hp:
                 self.hp = self.max_hp
 
-        """ calculates defense bonuses against
-            types: physical, magical, fixed
+        """ calculates final damage after defense bonuses and applies it
+            types: physical, magical, (default: unavoidable dmg)
+            returns damage taken
         """
-        def take_damage(self, amount, type="physical"):
+        def take_damage(self, amount, damage_type="physical"):
             status_mod = reduce(lambda a,b: a.damage_taken_modifier * b, self.status_effects, 1)
             def_mod = 1
-            if type == "physical":
+            if damage_type == "physical":
                 def_mod = 1 - (1 - self.physical_defense) * reduce(lambda a,b: a.physical_defense_modifier * b, self.status_effects, 1)
-            elif type == "magical":
+            elif damage_type == "magical":
                 def_mod = 1 - (1 - self.magical_defense) * reduce(lambda a,b: a.magical_defense_modifier * b, self.status_effects, 1)
-            self.hp -= ceil(amount * def_mod * status_mod)
+            damage = ceil(amount * def_mod * status_mod)
+            self.hp -= damage
             if self.hp <= 0:
                 self.die()
+            return damage
+
+        def defend(self, enemy, amount, damage_type="physical"):
+            for status_effect in self.status_effects:
+                status_effect.on_defense(enemy)
+            self.take_damage(attack, damage_type)
 
         def die(self):
             gamestate.remove(self.name)
@@ -143,21 +153,40 @@ init -99 python:
             for status_effect in self.status_effects:
                 status_effect.end_turn()
 
-        """ Called when the unit begins their turn
-            enemies need to be subclassed to have ai pick their targets and
+        """ Called when the unit begins their turn,
+            contains the main logic for choosing targets and attacking
+
+            enemies need to be subclassed and override this function to work automatically
             calls start turn for all status effects
             shows choice menu for skills
             picks target or shows a choice menu for choosing target
             calls skill call_label
         """ #TODO make it possible to return from choosing target?
         def start_turn(self):
+            cont = True
             for status_effect in self.status_effects:
-                status_effect.start_turn()
+                cont = cont and status_effect.start_turn()
+            if not cont:
+                return
             # filter skills that can be used and map them to tuples
             choices = [skill.get_menu_tuple() for skill in skills if skill.can_be_used(self)]
             skill = renpy.display_menu(choices)
-            target = skill.target()
+            targets = skill.target()
+            target = self.choose_target(targets)
+            for status_effect in self.status_effects:
+                status_effect.on_attack(target)
             renpy.call(skill.call_label, self, target, skill)
+
+
+        def choose_target(self, targets):
+            if len(targets) > 1:
+                target = renpy.display_menu([(enemy.name, enemy) for enemy in targets])
+            elif  len(targets) == 1:
+                for enemy in targets:
+                    target = enemy
+            else:
+                return None
+            return targets[target]
 
         def clear_effects(self):
             self.status_effects = set()
@@ -190,6 +219,76 @@ init -99 python:
             self.m_def += max(1, int(self.m_def*0.01))
             self.attack += max(1, int(self.attack*0.01))
 
+    class AutonomousParticipant(BattleParticipant):
+        """ docstring for AutonomousParticipant
+            AI controlled character
+        """
+        def __init__(   self,
+                        name,
+                        skills,
+                        death_label,
+                        hp=100,
+                        mp=100,
+                        level=90,
+                        xp=0,
+                        physical_defense=0,
+                        magical_defense=0,
+                        evasion=0,
+                        attack=0,
+                        critical_player=False,
+                        *args, **kwargs):
+            super(AutonomousParticipant, self).__init__(
+                            name,
+                            skills,
+                            death_label,
+                            hp=hp,
+                            mp=mp,
+                            level=level,
+                            xp=xp,
+                            physical_defense=physical_defense,
+                            magical_defense=magical_defense,
+                            evasion=evasion,
+                            attack=attack,
+                            critical_player=critical_player,
+                            *args, **kwargs)
+            self.threats = {}
+
+
+        def start_turn(self):
+            cont = True
+            for status_effect in self.status_effects:
+                cont = cont and status_effect.start_turn()
+            if not cont:
+                return
+            # filter skills that can be used and map them to tuples
+            choices = [skill.get_menu_tuple() for skill in skills if skill.can_be_used(self)]
+            skill = renpy.random.choice(choices)
+            target = skill.target()
+            for status_effect in self.status_effects:
+                status_effect.on_attack()
+            renpy.call(skill.call_label, self, target, skill)
+
+        """ this might have some bugs
+        """
+        def choose_target(self, targets):
+            if len(targets) > 1:
+                weights = map(lambda a: 1000+threats.get(a, 0), targets)
+                cumdist = list(itertools.accumulate(weights))
+                x = random.random() * cumdist[-1]
+                target = choices[bisect.bisect(cumdist, x)]
+            elif  len(targets) == 1:
+                for enemy in targets:
+                    target = enemy
+            else:
+                return None
+            return targets[target]
+
+        def defend(self, enemy, amount, damage_type="physical"):
+            for status_effect in self.status_effects:
+                status_effect.on_defense(enemy)
+            dmg = self.take_damage(attack, damage_type)
+            self.threats[enemy.name] += damage
+
 
     class StatusEffect(store.object):
         """ docstring for StatusEffect
@@ -213,7 +312,7 @@ init -99 python:
                         magical_defense_modifier = 1,
                         attack_modifier = 1,
                         damage_taken_modifier = 1,
-                        damage_caused_modifier = 1):
+                        damage_dealt_modifier = 1):
             super(StatusEffect, self).__init__()
             self.name = name
             self.positive = positive
@@ -221,7 +320,7 @@ init -99 python:
             self.physical_defense_modifier = physical_defense_modifier
             self.magical_defense_modifier = magical_defense_modifier
             self.attack_modifier = attack_modifier
-            self.damage_caused_modifier = damage_caused_modifier
+            self.damage_dealt_modifier = damage_dealt_modifier
             self.damage_taken_modifier = damage_taken_modifier
 
             self.turns = turns
@@ -235,7 +334,7 @@ init -99 python:
         """
         def on_end_turn(self):
             self.turns -= 1
-            if self.turns == 0:
+            if self.turns <= 0:
                 self.remove()
 
         """ called at the beginning of a turn
@@ -246,15 +345,17 @@ init -99 python:
 
         """ called when the character is attacked
             e.g. if the effect can block one attack or sth?
-            TODO add some way for these to actually block attacks?
+            TODO add some way for these to actually block attacks? -> damage mod = 0 -_-;;
+            enemy BattleParticipant the one making the attack.
         """
-        def on_defense(self):
+        def on_defense(self, enemy):
             pass
 
         """ called when the character attacks
-            e.g. if the effect can block one attack or sth
+            e.g. if the effect can increase damage for one attack or sth?
+            enemy BattleParticipant the one being attacked.
         """
-        def on_attack(self):
+        def on_attack(self, enemy):
             pass
 
         """ Removes itself from its host and lets hope garbage collection does its job
@@ -293,12 +394,11 @@ init -99 python:
         def get_menu_tuple(self):
             return (self.name, self)
 
-        """ shows choice menu to choose target enemy if more than one possible target
-            override if skill targets allies or all enemies at once
-            returns target BattleParticipant or None
+        """ override if skill targets allies or all enemies at once -> can't target all at once currently, unless empty list is interpreted as all, but it would not know if targets are ally or enemy... daymmm....
+            returns list of targetable BattleParticipants
         """
         def target(self):
-            return gamestate.target_enemy()
+            return list(gamestate.enemies.values())
 
         #""" user uses the skill on target
         #    calls label defined in call label, with user target and this skill as parameters
