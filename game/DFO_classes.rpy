@@ -1,9 +1,13 @@
 init -99 python:
+    import math
+
     class Gamestate(store.object):
         """ docstring for Gamestate
             All variables related to battles that are just laying around should be moved here
         """
         battle_label = "Ruins_battle1"
+        players = {}
+        enemies = {}
 
         def __init__(self):
             super(Gamestate, self).__init__()
@@ -23,6 +27,27 @@ init -99 python:
             self.players[name] = player
         def add_enemy(self, enemy):
             self.enemies[enemy.name] = enemy
+
+        """ gives damage to target character and returns whether the target died
+        """
+        def take_damage(self, target, amount, type="physical"):
+            if target in self.players:
+                self.players[target].take_damage(amount)
+                if self.players[target].hp <= 0:
+                    return True
+            elif target in self.enemies:
+                self.enemies[target].take_damage(amount)
+                if self.enemies[target].hp <= 0:
+                    return True
+            return False
+
+        """ returns character by key or None if no such character found
+        """
+        def get_character(self, participant):
+            if participant in self.players:
+                return self.players[participant]
+            elif participant in self.enemies:
+                return self.enemies[participant]
 
         """ removes participant BattleParticipant from battle if it exists on either side
         """
@@ -79,6 +104,24 @@ init -99 python:
 
             The stats displayed on the gui are taken from here
         """
+        name = ""
+        max_hp = 0
+        max_mp = 0
+        hp = 0
+        mp = 0
+
+        xp = 0
+        level = 1
+        max_xp = 100
+
+        physical_defense = 0
+        magical_defense = 0
+        attack = 0
+        critical_player = False
+
+        status_effects = []
+
+
         def __init__(   self,
                         name,
                         skills,
@@ -127,14 +170,14 @@ init -99 python:
             returns damage taken
         """
         def take_damage(self, amount, damage_type="physical"):
-            status_mod = reduce(lambda a,b: a.damage_taken_modifier * b, self.status_effects, 1)
+            status_mod = reduce(lambda a,b: b.damage_taken_modifier * a, self.status_effects, 1)
             def_mod = 1
             if damage_type == "physical":
-                def_mod = 1 - (1 - self.physical_defense) * reduce(lambda a,b: a.physical_defense_modifier * b, self.status_effects, 1)
+                def_mod = 1 - (1 - self.physical_defense) * reduce(lambda a,b: b.physical_defense_modifier * a, self.status_effects, 1)
             elif damage_type == "magical":
-                def_mod = 1 - (1 - self.magical_defense) * reduce(lambda a,b: a.magical_defense_modifier * b, self.status_effects, 1)
-            damage = ceil(amount * def_mod * status_mod)
-            self.hp -= damage
+                def_mod = 1 - (1 - self.magical_defense) * reduce(lambda a,b: b.magical_defense_modifier * a, self.status_effects, 1)
+            damage = int(math.ceil(amount * def_mod * status_mod))
+            self.hp = self.hp - damage
             if self.hp <= 0:
                 self.die()
             return damage
@@ -303,6 +346,18 @@ init -99 python:
 
             Adds itself to the host when created
         """
+        name = ""
+        positive = False
+
+        physical_defense_modifier = 1
+        magical_defense_modifier = 1
+        attack_modifier = 1
+        damage_dealt_modifier = 1
+        damage_taken_modifier = 1
+
+        turns = 1
+        host = None
+
         def __init__(   self,
                         name,
                         host,
@@ -369,7 +424,7 @@ init -99 python:
             should not be called outside __init__
         """
         def add_for(self, host):
-            host.status_effects += self
+            host.status_effects.append(self)
             dfo_narrator(host.name + " got status: "+ self.name) #TODO add dfo_narrator character with the dfo say panel bg
 
 

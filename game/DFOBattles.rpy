@@ -149,7 +149,8 @@ label .start_round:
 
 label .poison(person):
     $ poison_counter[person] -= 1
-    call .dealdamage(person, damage['poison'], False)
+    #call .dealdamage(person, damage['poison'], False)
+    $ gamestate.get_character(person).end_turn() #TODO move to a proper place for calling on_end_turn for all status effects
     if target_died:
         if person == "Rider":
             show enemy_chicken hurt
@@ -611,13 +612,10 @@ label .rider_escape:
 
 label .dealdamage(target, amount, handle_death = True):
     with vpunch
-    $ target_died = False
-    $ gamestate.players[target].take_damage( amount )
-    if gamestate.players[target].hp < 0:
-        $ gamestate.players[target].hp = 0
+    $ target_died = gamestate.take_damage( target, amount )
+    if target_died:
         if handle_death:
             call .death(target)
-        $ target_died = True
     #if not target_died:
         #$ stats_frame(target, 90, gamestate.players[target].hp, gamestate.players[target].max_hp, xalign=0.5, yalign=0.0)
         #pause 2

@@ -735,6 +735,7 @@ label .victorious:
 
 label RuinsStart:
     $ silvia_hidden = False
+    call DFO_character_init
     $ gamestate.init_battle()
     #$ current_hp = {'Nick': max_hp['Nick'], 'Aerith': max_hp['Aerith'], 'Silvia': max_hp['Silvia'], 'Rider': max_hp['Rider']}
     #$ current_mp = {'Nick': max_mp['Nick'], 'Aerith': max_mp['Aerith'], 'Silvia': max_mp['Silvia']}
@@ -1130,6 +1131,7 @@ label DFO_login2:
 
 label DFO_login:
     $ stress += stress_modifiers['DFO']
+
     if not first_login:
         jump DFO_login2
     $ first_login = False
@@ -1214,7 +1216,7 @@ label nameNP:
         if np_name.strip('0123456789_').lower() in atleasttryNames:
             comp "That would be a rather boring name."
             jump nameNP
-    $ set_nick_nick(np_name)
+    $ gamestate.players["Nick"].name = np_name
     comp "Input password."
     comp "Thank you, [np_name]. Logging in..."
     return

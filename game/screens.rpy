@@ -131,6 +131,15 @@ screen hp_window(playerparty, enemyparty):
                         ymaximum 0
                         xmargin -15
                         ymargin -5
+                    for effect in player.status_effects:
+                        $ ico = Image("images/fx/dfo_effect "+effect.name+".png", yalign=0, xalign=0)
+                        frame:
+                            background ico
+                            xmaximum 0
+                            ymaximum 0
+                            xalign 0
+                            xmargin -15
+                            ymargin -5
                     label player.name:
                         left_padding 150
                         top_padding 15
@@ -143,7 +152,7 @@ screen hp_window(playerparty, enemyparty):
                         bar value player.hp range player.max_hp left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png"
                         #$ hp1 = current_hp[name]
                         #$ hp2 = max_hp[name]
-                        label "[hp1] / [hp2]":
+                        label "[player.hp] / [player.max_hp]":
                             top_padding 2
                             left_margin -155
                             text_size 14
@@ -178,6 +187,27 @@ screen hp_window(playerparty, enemyparty):
                 top_margin 5
                 bottom_margin 10
                 vbox:
+                    python:
+                        fname = "bird" #TODO make this happen in character class or somewhere else than here anyways X_x
+                        if name == "Naga":
+                            fname = "naga"
+                        profile = Image("images/status/dfo_status_"+fname+".png", yalign=0, xalign=1.0)
+                    frame at flip:
+                        background profile
+                        xmaximum 0
+                        ymaximum 0
+                        xalign 0
+                        xmargin -20
+                        ymargin -5
+                    for effect in enemy.status_effects:
+                        $ ico = Image("images/fx/dfo_effect "+effect.name+".png", yalign=0, xalign=1.0)
+                        frame:
+                            background ico
+                            xmaximum 0
+                            ymaximum 0
+                            xalign 1.0
+                            xmargin -15
+                            ymargin -5
                     label enemy.name:
                         left_padding 5
                         top_padding 15
