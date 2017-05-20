@@ -307,9 +307,9 @@ init python:
         return
 
 # Define characters
-define a = Character("Aerith", color="#FF1493")
+define a = Character("Aerith", color="#FF1493", window_background="gui/dfo_textbox6.png", what_color="#245")
 define n = Character("Nicholas", color="#191970")
-define s = Character("Silvia", color="#9932CC")
+define s = Character("Silvia", color="#9932CC", window_background="gui/dfo_textbox6.png", what_color="#245")
 define c = Character("Catherine", color="DC143C")
 define nvlNarrator = Character(None, kind=nvl, what_xsize = 950, what_size=28, what_xpos=200)
 
@@ -434,7 +434,7 @@ label start:
     $ call_ignored = False
     $ spendtimepromise = False
     $ moviepromise = False
-    
+
     $ truck_handled = True
 
     $ mood = {"Catherine": 0, "Silvia": 0, "Aerith": 0}
@@ -515,7 +515,7 @@ label start:
 
     "She's surrounded by the creatures as well, trying to keep them away
     with her staff."
-    
+
     show screen remember_popup_window("Aerith will remember this for the rest of her life.")
 
     "Um, shouldn't she just cast a spell or something?"
@@ -1175,7 +1175,7 @@ label day:
 
     # Increment the day it is.
     $ day += 1
-    
+
     # Calculate dayswocat
     $ dayswocat = calculatedayswithoutseeingCatherine()
 
