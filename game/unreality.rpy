@@ -426,3 +426,53 @@ label truck_after:
     play music bgm_main
     scene black with Dissolve(2.0)
     return
+    
+    
+label DFO_again:
+    scene white with dissolve
+    scene bg_plains with pixellate
+    show sil normal at center
+    play music bgm_main
+        
+    "I... huh?"
+    "I blink as my eyes adjust to the vibrant hyper-reality around me."
+    "Silvia is here with me."
+    "But why am I here?"
+    s "You look confused, liege."
+    menu:
+        "Why am I here?":
+            np "Why am I here?"
+            show sil question
+            s "Whatever do you mean, liege?"
+        "Sorry, I'm just feeling a bit dizzy.":
+            np "Sorry. I got dizzy there for a moment."
+            show sil question
+    s "Do you not want to continue grinding?"
+    np "Grinding?"
+    show sil normal
+    menu:
+        "What do you mean?":
+            np "What do you mean, grinding?"
+            s "Vanquishing weak enemies in order to gain experience."
+            show sil question
+            s "You ought to know this, liege. Did you hit your head, perchance?"
+            np "No, I mean, we've been grinding? For how long?"
+        "How long have we been grinding?":
+            np "Just how long have we been grinding?"
+    s "The hourglass has turned twice."
+    "Two hours?"
+    # Promise with Catherine?
+    s "Do you desire rest?"
+    menu:
+        "Yes.":
+            np "Yeah, I think I need to sit down for a moment."
+            "We find a safe area and sit down to rest."
+        "No.":
+            np "No, we can keep going. I'm sure it was just momentary."
+            "We grind for a while longer, then go to a safe area to sit down and rest."
+    show sil at closeup
+    s "Back there, it was not mere dizziness which confused you."
+    "Damn. She's perceptive."
+    s "You did not remember what we had been doing. What is wrong, my liege?"
+    
+    return
