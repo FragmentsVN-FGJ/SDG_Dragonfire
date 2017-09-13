@@ -482,11 +482,17 @@ label start:
     scene black with dissolve
     # Show a default background.
     scene bg_field with dissolve
+    
 
     # The script here is run before any event.
 
     # Battle music
     play music bgm_battle
+    
+    # Refactoring needed, DFO_character_init should take gamestate and characters as parameters
+    call DFO_character_init
+    $ gamestate.init_battle()
+    show screen hp_window(gamestate.players, gamestate.enemies)
 
     n "Damnit!"
 

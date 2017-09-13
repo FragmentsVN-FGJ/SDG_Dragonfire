@@ -105,6 +105,7 @@ init -99 python:
             The stats displayed on the gui are taken from here
         """
         name = ""
+        fname = ""
         max_hp = 0
         max_mp = 0
         hp = 0
@@ -124,6 +125,7 @@ init -99 python:
 
         def __init__(   self,
                         name,
+                        fname,
                         skills,
                         death_label,
                         hp=100,
