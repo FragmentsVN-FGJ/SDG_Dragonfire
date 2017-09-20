@@ -97,7 +97,8 @@ screen enemy_hp_window(enemyparty):
         id "em"
         xmaximum 465
         xalign 1.0
-        for enemy in enemyparty:
+        for name in enemyparty:
+            $ enemy = enemyparty[name]
             frame at hp_em_in:
                 style_group "hp_em"
                 vbox:
@@ -150,7 +151,8 @@ screen ally_hp_window(playerparty):
         id "us"
         xmaximum 465
         $ ind = 0
-        for player in playerparty:
+        for name in playerparty:
+            $ player = playerparty[name]
             frame at hp_us_in(ind):
                 $ ind += 1
                 style_group "hp_us"

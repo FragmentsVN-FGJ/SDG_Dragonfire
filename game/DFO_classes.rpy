@@ -141,6 +141,7 @@ init -99 python:
 
             super(BattleParticipant, self).__init__()
             self.name = name
+            self.fname = fname
 
             self.max_hp = hp
             self.max_mp = mp

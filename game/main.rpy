@@ -1037,6 +1037,7 @@ label WeaselVictory:
     show air 8
     "We say our farewells, and I log off."
     scene black with crt
+    hide screen hp_window
     "Taking off my headset, it takes a while for my eyes to adjust to the dim lighting of my room."
     jump RoomDescription
     return
@@ -1122,6 +1123,7 @@ label RoomDescription:
     $ promises[('parlor', 1)] = {("Catherine", "meet"): False}
 
     window hide
+    scene black with dissolve
     pause 2
     nvl clear
     window show
@@ -1146,6 +1148,7 @@ label RoomDescription:
 
     nvl clear
 
+    scene player_room with dissolve
     play music bgm_main
 
     nvlNarrator "My eyes blink open as the timed lights in my room reach their brightest setting."
