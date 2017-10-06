@@ -1,7 +1,8 @@
 label DFO_character_init:
     $ nick_skills = []
 
-    $ nick = BattleParticipant("This still bugs when reloading", "nick", nick_skills, "nickdeath",
+    # Bugs when reloading???
+    $ nick = BattleParticipant("Nicholas", "nick", nick_skills, "nickdeath",
         hp= 6736, mp= 2350,
         physical_defense= 0.3,
         magical_defense= 0.6,

@@ -130,9 +130,10 @@ screen enemy_hp_window(enemyparty):
                             left_padding 15
                             right_padding 5
                             text_size 18
+                            text_font "fonts/FONTC.ttf"
                         bar value enemy.hp range enemy.max_hp left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png":
                             xmaximum 225
-                        label "[enemy.hp] / [enemy.max_hp]":
+                        label "{b}[enemy.hp] / [enemy.max_hp]{/b}":
                             top_padding 8
                             left_margin -150
                             text_size 14
@@ -146,73 +147,79 @@ screen enemy_hp_window(enemyparty):
                             left_padding 255
                             text_size 18
 
+screen single_ally_hp_window(player, ind):
+    frame at hp_us_in(ind):
+        style_group "hp_us"
+        xmaximum 465
+        vbox:
+            python:
+                hp1 = player.hp
+                hp2 = player.max_hp
+                hp3 = hp1*1.0/hp2
+                if hp3 > 0.5:
+                    hurtness = "normal"
+                elif hp3 > 0.2:
+                    hurtness = "mild_hurt"
+                else:
+                    hurtness = "hurt"
+                profile = Image("images/status/dfo_status_"+player.fname+" "+hurtness+".png", yalign=0, xalign=0)
+            frame:
+                background profile
+                xmaximum 0
+                ymaximum 0
+                xmargin -15
+                ymargin -5
+            for effect in player.status_effects:
+                $ ico = Image("images/fx/dfo_effect "+effect.name+".png", yalign=0, xalign=0)
+                frame:
+                    background ico
+                    xmaximum 0
+                    ymaximum 0
+                    xalign 0
+                    xmargin -15
+                    ymargin -5
+            label player.name:
+                left_padding 150
+                top_padding 15
+                text_size 26
+            hbox:
+                label "{b}HP{/b}":
+                    left_padding 160
+                    right_padding 5
+                    text_size 18
+                    text_font "fonts/FONTC.ttf"
+                bar value player.hp range player.max_hp left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png"
+                label "{b}[player.hp] / [player.max_hp]{/b}":
+                    top_padding 2
+                    left_margin -175
+                    text_size 14
+            hbox:
+                label "{b}MP{/b}":
+                    left_padding 170
+                    right_padding 5
+                    text_size 18
+                    text_font "fonts/FONTC.ttf"
+                bar value player.mp range player.max_mp left_bar "gui/bar/left_blue_edge.png" right_bar "gui/bar/right_blue_edge.png"
+                label "{b}[player.mp] / [player.max_mp]{/b}":
+                    top_padding 2
+                    left_margin -175
+                    text_size 14
+            hbox:
+                $lv = 90
+                label "{i}[lv]{/i}":
+                    top_padding 10
+                    left_padding 153
+                    text_size 18
+
 screen ally_hp_window(playerparty):
     vbox: #at hp_us_in:
         id "us"
-        xmaximum 465
         $ ind = 0
         for name in playerparty:
             $ player = playerparty[name]
-            frame at hp_us_in(ind):
-                $ ind += 1
-                style_group "hp_us"
-                vbox:
-                    python:
-                        hp1 = player.hp
-                        hp2 = player.max_hp
-                        hp3 = hp1*1.0/hp2
-                        if hp3 > 0.5:
-                            hurtness = "normal"
-                        elif hp3 > 0.2:
-                            hurtness = "mild_hurt"
-                        else:
-                            hurtness = "hurt"
-                        profile = Image("images/status/dfo_status_"+player.fname+" "+hurtness+".png", yalign=0, xalign=0)
-                    frame:
-                        background profile
-                        xmaximum 0
-                        ymaximum 0
-                        xmargin -15
-                        ymargin -5
-                    for effect in player.status_effects:
-                        $ ico = Image("images/fx/dfo_effect "+effect.name+".png", yalign=0, xalign=0)
-                        frame:
-                            background ico
-                            xmaximum 0
-                            ymaximum 0
-                            xalign 0
-                            xmargin -15
-                            ymargin -5
-                    label player.name:
-                        left_padding 150
-                        top_padding 15
-                        text_size 26
-                    hbox:
-                        label "HP":
-                            left_padding 160
-                            right_padding 5
-                            text_size 18
-                        bar value player.hp range player.max_hp left_bar "gui/bar/left_red_edge.png" right_bar "gui/bar/right_red_edge.png"
-                        label "[player.hp] / [player.max_hp]":
-                            top_padding 2
-                            left_margin -155
-                            text_size 14
-                    hbox:
-                        label "MP":
-                            left_padding 170
-                            right_padding 5
-                            text_size 18
-                        bar value player.mp range player.max_mp left_bar "gui/bar/left_blue_edge.png" right_bar "gui/bar/right_blue_edge.png"
-                        label "[player.mp] / [player.max_mp]":
-                            top_padding 2
-                            left_margin -155
-                            text_size 14
-                    hbox:
-                        $lv = 90
-                        label "[lv]":
-                            top_padding 8
-                            left_padding 155
-                            text_size 18
+            use single_ally_hp_window(player, ind)
+            $ ind += 1
+
     
 screen hp_window(playerparty, enemyparty):
     style_prefix "hp"

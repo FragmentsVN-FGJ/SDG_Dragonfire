@@ -492,14 +492,23 @@ label start:
     # Refactoring needed, DFO_character_init should take gamestate and characters as parameters
     call DFO_character_init
     $ gamestate.init_battle()
-    show screen hp_window(gamestate.players, gamestate.enemies)
+    #show screen hp_window(gamestate.players, gamestate.enemies)
+    show screen single_ally_hp_window(gamestate.players['Nick'], 0)
+ 
+    $ dfoMode = True
+    
+    $ gamestate.take_damage("Nick", 15000)
+    $ gamestate.take_damage("Aerith", 2000)
 
-    n "Damnit!"
+    
+    n "D{font=fonts/FONTC_AEROMATICS.TTF}{size=24}a{/size}{/font}mnit!"
 
     play sound sfx_grunt_1
     with hpunch
 
     # Sound effect
+    
+    $ gamestate.take_damage("Nick", 2000)
 
     "The monster sinks its fangs into my skin, drawing blood!"
 
@@ -508,16 +517,21 @@ label start:
     play sound sfx_blood
 
     "I can feel the warm liquid trickling down my skin... Damnit!"
-
+    
+    hide screen single_ally_hp_window
+    
     with hpunch
 
     "With a huge throwing motion, I manage to shed the weasel, but others are already circling around me."
 
-    "They're huge. But I'm not actually worried. Not yet, anyway."
+    "They're humongous. But I'm not actually worried. Not yet, anyway."
 
     show air 10 at distant, left with moveinleft
 
     "I see Aerith in the corner of my vision."
+    
+    show screen single_ally_hp_window(gamestate.players['Aerith'], 0)
+
 
     "She's surrounded by the creatures as well, trying to keep them away
     with her staff."
@@ -527,6 +541,7 @@ label start:
     "Um, shouldn't she just cast a spell or something?"
 
     hide air with moveoutleft
+    hide screen single_ally_hp_window
 
     "Silvia is nowhere to be seen. Hiding somewhere in plain sight, no doubt."
 
@@ -612,7 +627,13 @@ label WeaselAerithScream:
     show air 10 at distant, right with moveinright
 
     "She's still surrounded by a pack of weasels, desperately pushing them off!"
+    
+    show screen single_ally_hp_window(gamestate.players['Aerith'], 0)
 
+    pause 0.5
+    
+    $ gamestate.take_damage("Aerith", 100)
+    
     "Their gnawing at her health. She won't last at this rate!"
 
     $ tooltips = {}
@@ -622,11 +643,14 @@ label WeaselAerithScream:
     menu:
         "Run to save her!":
             "I run through the pack to her side, seeking to protect her from harm!"
+            hide screen single_ally_hp_window
             show air 10 at left with moveinright
             jump WeaselProtectAerith
         "Tell her to cast her barrier spell":
+            hide screen single_ally_hp_window
             jump WeaselAerithBarrier
         "Tell Silvia to use the hail of daggers":
+            hide screen single_ally_hp_window
             jump WeaselSilviaHailOfDaggersAerithAlone
 
     return
@@ -980,6 +1004,8 @@ label WeaselRetreat:
 
 label WeaselVictory:
 
+    hide screen hp_window
+
     play music bgm_cheerful
 
     hide air
@@ -1037,7 +1063,7 @@ label WeaselVictory:
     show air 8
     "We say our farewells, and I log off."
     scene black with crt
-    hide screen hp_window
+    $ dfoMode = False
     "Taking off my headset, it takes a while for my eyes to adjust to the dim lighting of my room."
     jump RoomDescription
     return
