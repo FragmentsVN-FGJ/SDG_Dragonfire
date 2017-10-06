@@ -294,9 +294,9 @@ init python:
         if affection[person] < 0:
             affection[person] = 0
         if amount < 0:
-            renpy.show_screen(remember_popup_window, person+" does not seem happy.")
+            renpy.show_screen("remember_popup_window", person+" does not seem happy.")
         elif amount > 0:
-            renpy.show_screen(remember_popup_window, person+" seems pleased.")
+            renpy.show_screen("remember_popup_window", person+" seems pleased.")
         return
 
     def trust_modify(person, amount):
@@ -513,7 +513,7 @@ label start:
 
     scene black with dissolve
     # Show a default background.
-    scene bg_field with dissolve
+    scene bg_twilight_fields with dissolve
     
 
     # The script here is run before any event.
@@ -981,13 +981,13 @@ label AerithDepthsOfSlumber:
             "Her spell is interrupted as she grapples with the weasel."
             "The rest of the pack is already preparing to pounce. We need to act fast!"
             $ tooltips = {}
-            $ tooltips["Offensive technique: Furious strike!"] = "Bash a foe with utmost fury. If they attempt to parry, their weapons will surely be broken, and their allies shall flee in terror!"
+            $ tooltips["Offensive Technique: Furious Strike!"] = "Bash a foe with utmost fury. If they attempt to parry, their weapons will surely be broken, and their allies shall flee in terror!"
             $ tooltips["Silvia Technique: Hail of Daggers!"] = "Raining death from above. Just make sure your allies are not caught in the range!"
 
             menu:
-                "Offensive technique: Furious strike!":
+                "Offensive Technique: Furious Strike!":
                     jump WeaselFuriousStrike
-                "Silvia technique: Hail of Daggers!":
+                "Silvia Technique: Hail of Daggers!":
                     jump WeaselSilviaHailOfDaggers
     return
 
