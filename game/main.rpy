@@ -33,6 +33,12 @@ init:
         xpos 0.0
         pause 0.05*index
         ease 0.5 xalign 0.0
+        
+    transform hp_us_out:
+        xanchor 0.0
+        xpos 1.0
+        pause 0.05
+        ease 0.5 xalign 0.0
 
     transform hp_em_in:
         xanchor 0.0
@@ -301,17 +307,42 @@ init python:
         if trust[person] < 0:
             trust[person] = 0
         if amount < 0:
-            renpy.show_screen(remember_popup_window, person+" looks suspicious.")
+            renpy.show_screen("remember_popup_window", person+" looks suspicious.")
         elif amount > 0:
-            renpy.show_screen(remember_popup_window, person+" trusts you.")
+            renpy.show_screen("remember_popup_window", person+" trusts you.")
         return
 
+image DFO_blinking_arrow:
+    alpha 0.3
+    zoom 0.5
+    yoffset 11
+    xoffset 2
+    "images/arrow3.png"
+    pause 0.5
+    alpha 0.0
+    pause 0.5
+    repeat
+    
+image blinking_arrow:
+    alpha 0.3
+    zoom 0.4
+    yoffset 7
+    xoffset 2
+    "images/arrow3.png"
+    pause 0.5
+    alpha 0.0
+    pause 0.5
+    repeat
+   
+
+        
 # Define characters
-define a = Character("Aerith", color="#FF1493", window_background="gui/dfo_textbox6.png", what_color="#245")
-define n = Character("Nicholas", color="#191970")
-define s = Character("Silvia", color="#9932CC", window_background="gui/dfo_textbox6.png", what_color="#245")
+define a = Character("Aerith", color="#FF1493", window_background="gui/dfo_textbox6.png", what_color="#245", ctc="DFO_blinking_arrow")
+define n = Character("Nicholas", color="#191970", what_color="#fff", ctc=ConditionSwitch("dfoMode", "DFO_blinking_arrow", "True", "blinking_arrow"))
+define s = Character("Silvia", color="#9932CC", window_background="gui/dfo_textbox6.png", what_color="#245", ctc="DFO_blinking_arrow")
 define c = Character("Catherine", color="DC143C")
 define nvlNarrator = Character(None, kind=nvl, what_xsize = 950, what_size=28, what_xpos=200)
+define narrator = Character(None, what_color="#DCDCDC", window_background="gui/dfo_textbox7.png", ctc=ConditionSwitch("dfoMode", "DFO_blinking_arrow", "True", "blinking_arrow"))
 
 image SDG_DF_fade1_big = "SDG_DF_fade1_big.png"
 
@@ -408,6 +439,7 @@ image fx fire:
     pause 0.1
     "images/fx/fx fire_7.png"
     pause 0.1
+
 
 label pay(amount):
     $ pay_successful = paycash(amount)

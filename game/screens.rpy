@@ -264,13 +264,21 @@ screen say(who, what):
     window: # at say_in:
         id "window"
 
+        if dfoMode:
+            background Image("gui/dfo_textbox6.png")
+        
         if who is not None:
 
             window:
                 style "namebox"
-                text who id "who"
-
-        text what id "what" xpos 268 ypos 50 xsize 744
+                if dfoMode:
+                    text who+":" id "who"
+                else:
+                    text who id "who"
+        if dfoMode:
+            text what id "what" xpos 268 ypos 50 xsize 744 color "#245" size 32 font "fonts/FONTC.TTF"
+        else:
+            text what id "what" xpos 268 ypos 50 xsize 744
 
 
     ## If there's a side image, display it above the text. Do not display on the
@@ -364,21 +372,28 @@ style input:
 screen choice(items):
     style_prefix "choice"
     default tt = Tooltip("")
-
+    
     vbox:
+        
         $ ind = 0
         for i in items:
 
-            if i.caption in tooltips:
-                textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) at choice_in(ind)
+            if dfoMode:
+                if i.caption in tooltips:
+                    textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) background Frame("gui/dfo_textbox6.png") text_font "fonts/FONTC.TTF" at choice_in(ind)
+                else:
+                    textbutton i.caption action [i.action, Hide("countdown_bar")] background Frame("gui/dfo_textbox6.png") text_font "fonts/FONTC.TTF" at choice_in(ind)
             else:
-                textbutton i.caption action [i.action, Hide("countdown_bar")] at choice_in(ind)
+                if i.caption in tooltips:
+                    textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) at choice_in(ind)
+                else:
+                    textbutton i.caption action [i.action, Hide("countdown_bar")] at choice_in(ind)            
             $ ind += 1
 
     if tt.value != "":
         use say(None, tt.value)
 
-
+        
 ## When this is true, menu captions will be spoken by the narrator. When false,
 ## menu captions will be displayed as empty buttons.
 define config.narrator_menu = True
@@ -393,7 +408,8 @@ style choice_vbox:
     ypos 270
     yanchor 0.5
 
-    spacing gui.choice_spacing
+    #spacing gui.choice_spacing
+    spacing 10
 
 style choice_button is default:
     properties gui.button_properties("choice_button")
