@@ -265,18 +265,18 @@ screen say(who, what):
         id "window"
 
         if dfoMode:
-            background Image("gui/dfo_textbox6.png")
+            background Image("gui/dfo_textbox8.png")
         
         if who is not None:
 
             window:
                 style "namebox"
                 if dfoMode:
-                    text who+":" id "who"
+                    text "{font=fonts/FONTC_AEROMATICS.TTF}"+who+":{/font}" id "who"
                 else:
                     text who id "who"
         if dfoMode:
-            text what id "what" xpos 268 ypos 50 xsize 744 color "#245" size 32 font "fonts/FONTC.TTF"
+            text what id "what" xpos 268 ypos 50 xsize 744 color "#DCDCDC" size 24 font "fonts/FONTC_AEROMATICS.TTF"
         else:
             text what id "what" xpos 268 ypos 50 xsize 744
 
@@ -325,6 +325,8 @@ style say_dialogue:
     xpos gui.dialogue_xpos
     xsize gui.dialogue_width
     ypos gui.dialogue_ypos
+    kerning 3
+    outlines [(1, "#777", 0, 0)]
 
 ## Input screen ################################################################
 ##
@@ -380,9 +382,9 @@ screen choice(items):
 
             if dfoMode:
                 if i.caption in tooltips:
-                    textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) background Frame("gui/dfo_textbox6.png") text_font "fonts/FONTC.TTF" at choice_in(ind)
+                    textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) background Frame("gui/dfo_textbox8.png") text_font "fonts/FONTC_AEROMATICS.TTF" text_color "#DCDCDC" at choice_in(ind)
                 else:
-                    textbutton i.caption action [i.action, Hide("countdown_bar")] background Frame("gui/dfo_textbox6.png") text_font "fonts/FONTC.TTF" at choice_in(ind)
+                    textbutton i.caption action [i.action, Hide("countdown_bar")] background Frame("gui/dfo_textbox8.png") text_font "fonts/FONTC_AEROMATICS.TTF" text_color "#DCDCDC" at choice_in(ind)
             else:
                 if i.caption in tooltips:
                     textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) at choice_in(ind)
@@ -451,7 +453,7 @@ screen quick_menu():
 init python:
     config.overlay_screens.append("quick_menu")
 
-default quick_menu = True
+default quick_menu = False
 
 style quick_button is default
 style quick_button_text is button_text

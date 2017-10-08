@@ -315,7 +315,7 @@ init python:
 image DFO_blinking_arrow:
     alpha 0.3
     zoom 0.5
-    yoffset 11
+    yoffset 9
     xoffset 2
     "images/arrow3.png"
     pause 0.5
@@ -337,12 +337,12 @@ image blinking_arrow:
 
         
 # Define characters
-define a = Character("Aerith", color="#FF1493", window_background="gui/dfo_textbox6.png", what_color="#245", ctc="DFO_blinking_arrow")
-define n = Character("Nicholas", color="#191970", what_color="#fff", ctc=ConditionSwitch("dfoMode", "DFO_blinking_arrow", "True", "blinking_arrow"))
-define s = Character("Silvia", color="#9932CC", window_background="gui/dfo_textbox6.png", what_color="#245", ctc="DFO_blinking_arrow")
-define c = Character("Catherine", color="DC143C")
+define a = Character("Aerith", color="#FF1493", ctc="DFO_blinking_arrow")
+define n = Character("Nicholas", color="#191970", ctc=ConditionSwitch("dfoMode", "DFO_blinking_arrow", "True", "blinking_arrow"))
+define s = Character("Silvia", color="#9932CC", ctc="DFO_blinking_arrow")
+define c = Character("Catherine", color="DC143C", ctc="blinking_arrow")
 define nvlNarrator = Character(None, kind=nvl, what_xsize = 950, what_size=28, what_xpos=200)
-define narrator = Character(None, what_color="#DCDCDC", window_background="gui/dfo_textbox7.png", ctc=ConditionSwitch("dfoMode", "DFO_blinking_arrow", "True", "blinking_arrow"))
+define narrator = Character(None, what_color="#DCDCDC", ctc=ConditionSwitch("dfoMode", "DFO_blinking_arrow", "True", "blinking_arrow"))
 
 image SDG_DF_fade1_big = "SDG_DF_fade1_big.png"
 
@@ -532,8 +532,7 @@ label start:
     $ gamestate.take_damage("Nick", 15000)
     $ gamestate.take_damage("Aerith", 2000)
 
-    
-    n "D{font=fonts/FONTC_AEROMATICS.TTF}{size=24}a{/size}{/font}mnit!"
+    n "Damnit!"
 
     play sound sfx_grunt_1
     with hpunch
@@ -542,7 +541,8 @@ label start:
     
     $ gamestate.take_damage("Nick", 2000)
 
-    "The monster sinks its fangs into my skin, drawing blood!"
+    # Note: Size 24 is good for FONTC_AEROMATICS
+    "{font=fonts/FONTC_AEROMATICS.TTF}{size=24}The monster sinks its fangs into my skin, drawing blood!{/size}{/font}"
 
     # Screen shake & sound
 
