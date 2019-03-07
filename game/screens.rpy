@@ -382,7 +382,7 @@ screen choice(items):
 
             if dfoMode:
                 if i.caption in tooltips:
-                    textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) background Frame("gui/dfo_textbox8.png") text_font "fonts/FONTC_AEROMATICS.TTF" text_color "#DCDCDC" at choice_in(ind)
+                    textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) background Frame("gui/dfo_textbox8.png") hover_background Frame("choice_background_hover") text_font "fonts/FONTC_AEROMATICS.TTF" text_color "#DCDCDC" at choice_in(ind)
                 else:
                     textbutton i.caption action [i.action, Hide("countdown_bar")] background Frame("gui/dfo_textbox8.png") text_font "fonts/FONTC_AEROMATICS.TTF" text_color "#DCDCDC" at choice_in(ind)
             else:
@@ -411,13 +411,17 @@ style choice_vbox:
     yanchor 0.5
 
     #spacing gui.choice_spacing
-    spacing 10
+    spacing 20
+    hover_spacing 10
 
 style choice_button is default:
     properties gui.button_properties("choice_button")
+    yminimum 65
+    hover_yminimum 75
 
 style choice_button_text is default:
     properties gui.button_text_properties("choice_button")
+    hover_size 24
 
 
 ## Quick Menu screen ###########################################################
