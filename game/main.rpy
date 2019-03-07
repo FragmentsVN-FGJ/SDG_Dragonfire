@@ -333,7 +333,13 @@ image blinking_arrow:
     alpha 0.0
     pause 0.5
     repeat
-   
+    
+image choice_background_hover:
+    "gui/dfo_textbox8.png"
+    #im.MatrixColor("images/bg/movie_theatre.png", im.matrix.brightness(-0.5))
+    "gui/dfo_textbox6.png" with Dissolve(2.0, alpha=True)
+    pause 1.0
+    repeat
 
         
 # Define characters
