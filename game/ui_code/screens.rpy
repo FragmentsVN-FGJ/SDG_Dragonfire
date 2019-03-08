@@ -391,7 +391,16 @@ screen choice(items):
         $ choice_background_hover_pic = "choice_background_hover" if dfoMode else "gui/button/choice_hover_background.png"
         for i in items:
             $ tt_action = tooltips[i.caption] if i.caption in tooltips else ""
-            textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tt_action) background Frame(choice_background_pic) hover_background Frame(choice_background_hover_pic) text_font choice_text_font text_color choice_text_color at choice_in(ind)
+            textbutton i.caption:
+                action [i.action, Hide("countdown_bar")]
+                hovered tt.Action(tt_action)
+                background Frame(choice_background_pic)
+                hover_background Frame(choice_background_hover_pic)
+                text_font choice_text_font
+                text_color choice_text_color
+                text_yalign 0.5
+                text_size 24
+                at choice_in(ind)
             $ ind += 1
 
     if tt.value != "":
