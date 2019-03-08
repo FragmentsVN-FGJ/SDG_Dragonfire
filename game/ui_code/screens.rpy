@@ -371,25 +371,27 @@ style input:
 ##
 ## http://www.renpy.org/doc/html/screen_special.html#choice
 
+# This transform is used to place the choices in the right positions.
+transform choice_in(index):
+    xanchor 0.0
+    xpos 2.0
+    pause 0.1*index
+    ease 0.5 xalign 0.5
+
 screen choice(items):
     style_prefix "choice"
     default tt = Tooltip("")
     
     vbox:
-        
+        ## TODO: Hovering doesn't work with the timer. (Removing timer for now...)
         $ ind = 0
+        $ choice_text_color = "#DCDCDC" if dfoMode else gui.text_color
+        $ choice_text_font = "fonts/FONTC_AEROMATICS.TTF" if dfoMode else gui.text_font
+        $ choice_background_pic = "gui/dfo_textbox8.png" if dfoMode else "gui/button/choice_idle_background.png"
+        $ choice_background_hover_pic = "choice_background_hover" if dfoMode else "gui/button/choice_hover_background.png"
         for i in items:
-
-            if dfoMode:
-                if i.caption in tooltips:
-                    textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) background Frame("gui/dfo_textbox8.png") hover_background Frame("choice_background_hover") text_font "fonts/FONTC_AEROMATICS.TTF" text_color "#DCDCDC" at choice_in(ind)
-                else:
-                    textbutton i.caption action [i.action, Hide("countdown_bar")] background Frame("gui/dfo_textbox8.png") text_font "fonts/FONTC_AEROMATICS.TTF" text_color "#DCDCDC" at choice_in(ind)
-            else:
-                if i.caption in tooltips:
-                    textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tooltips[i.caption]) at choice_in(ind)
-                else:
-                    textbutton i.caption action [i.action, Hide("countdown_bar")] at choice_in(ind)            
+            $ tt_action = tooltips[i.caption] if i.caption in tooltips else ""
+            textbutton i.caption action [i.action, Hide("countdown_bar")] hovered tt.Action(tt_action) background Frame(choice_background_pic) hover_background Frame(choice_background_hover_pic) text_font choice_text_font text_color choice_text_color at choice_in(ind)
             $ ind += 1
 
     if tt.value != "":
