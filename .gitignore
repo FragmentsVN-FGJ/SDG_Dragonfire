@@ -7,6 +7,9 @@
 *~
 tmp/*
 
+# Backup files
+*.bak
+
 # Local-only files
 errors.txt
 log.txt
