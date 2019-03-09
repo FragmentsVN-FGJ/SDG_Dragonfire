@@ -463,6 +463,14 @@ label start:
     $ curing_light = False
 
     jump start_baudrillard
+    
+label morning_screen:
+    centered "{size=+10}{color=#fff}Morning{/color}{/size}{w=1.0}{nw}"
+    return
+
+label evening_screen:
+    centered "{size=+10}{color=#fff}Evening{/color}{/size}{w=1.0}{nw}"
+    return
 
 # This is the label that is jumped to at the start of a day.
 label day:
@@ -478,6 +486,49 @@ label day:
     window hide
     # "It's day %(day)d."
     call calendar(1)
+    
+    if day == 1:
+        call morning_screen
+        call Catherine_gym_together
+        call evening_screen
+        call RuinsStart
+    elif day == 2:
+        call morning_screen
+        call parlorStart
+        call evening_screen
+        call RuinsStart
+    elif day == 3:
+        call morning_screen
+        call cleanintro
+        call DFOServers
+        call evening_screen
+        call RuinsStart
+    elif day == 4:
+        call morning_screen
+        call smith_call1
+        call evening_screen
+        call RuinsStart
+    elif day == 5:
+        call morning_screen
+        call Catherine_study_together
+        call evening_screen
+        call RuinsStart
+    # elif day == 6:
+        # call RuinsStart
+    # elif day == 7:
+        # call RuinsStart
+    # elif day == 8:
+        # call RuinsStart
+    # elif day == 9:
+        # call RuinsStart
+    # elif day == 10:
+        # call RuinsStart
+    else:
+        call ending_for_now
+        call events_end_day
+        jump Ending_Credits
+
+    jump day
 
     if (day-1)%7 == 1:
         $ payment = work_counter*work_payment

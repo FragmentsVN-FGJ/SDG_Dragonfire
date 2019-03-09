@@ -126,7 +126,7 @@ label parlorConversation:
     $ timer_vars = None
     "She's fiddling with a napkin, deliberating something, but can't get the words out."
 
-    show screen countdown_bar(10, "parlorWait")
+#    show screen countdown_bar(10, "parlorWait")
 
     menu:
         "Wait for her to say something":
@@ -146,10 +146,10 @@ label parlorApology:
     n "T-that too. I mean, you know me, right?"
     c "Sometimes, Nicholas, I think I know you too well."
     "I swallow. She's not going to..."
-    if not parlorwait:
-        show screen countdown_bar(10, "parlorWait")
-    else:
-        show screen countdown_bar(10, "parlorBeg")
+#    if not parlorwait:
+#        show screen countdown_bar(10, "parlorWait")
+#    else:
+#        show screen countdown_bar(10, "parlorBeg")
     menu:
         "Promise to make it up to her":
             jump parlorMakeUp
@@ -278,10 +278,10 @@ label parlorConsole:
     c "Don't call me that! First you disappear for two weeks, then I call you and you act as if nothing has happened!"
     show cat something
 
-    if not parlorwait:
-        show screen countdown_bar(10, "parlorWait")
-    else:
-        show screen countdown_bar(10, "parlorBeg")
+#    if not parlorwait:
+#        show screen countdown_bar(10, "parlorWait")
+#    else:
+#        show screen countdown_bar(10, "parlorBeg")
     
     menu:
         "Get angry":
