@@ -1,0 +1,40 @@
+living room	https://pixabay.com/photos/dining-room-living-room-modern-3108037/
+bathroom	https://pixabay.com/photos/modern-minimalist-bathroom-bath-3115450/
+kitchen		https://pixabay.com/photos/kitchen-interior-home-house-white-3496594/
+kitchen		https://pixabay.com/photos/modern-furniture-apartments-room-3256167/
+destroyed room	https://www.pexels.com/photo/wrecked-home-furnitures-interior-1411392/
+bedroom		https://www.pexels.com/photo/brown-bed-and-white-mattress-376531/
+casino		https://pixabay.com/photos/casino-arcade-slot-machines-3491252/
+amusement park	https://pixabay.com/photos/arcade-game-amusement-park-night-981658/
+mall		https://www.pexels.com/photo/architecture-building-buildings-business-264706/
+grocery store	https://www.pexels.com/photo/grocery-cart-with-item-1005638/
+restaurant	https://www.pexels.com/photo/people-sitting-near-tables-1601775/
+bar		https://www.pexels.com/photo/brown-wooden-bar-1872888/
+library		https://pixabay.com/photos/books-library-education-literature-768426/
+library		https://www.pexels.com/photo/bookcase-books-bookshelves-hallway-270571/
+library		https://www.pexels.com/photo/people-at-library-sitting-down-at-tables-757855/
+lecture hall	https://www.pexels.com/photo/auditorium-benches-chairs-class-207691/
+a lot of abandoned factories on pixbay
+scifi gym	https://pixabay.com/photos/fitness-studio-fitness-facility-331566/
+scifi gym	https://pixabay.com/photos/fitness-studio-fitness-facility-331567/
+scifi gym	https://pixabay.com/photos/fitness-studio-fitness-facility-331569/
+gym		https://pixabay.com/photos/fitness-studio-train-gym-3675225/
+gym		https://pixabay.com/photos/fitness-studio-training-gym-868415/
+sauna		https://pixabay.com/photos/finnish-sauna-wellness-health-spa-776997/
+sauna		https://pixabay.com/photos/sauna-lamp-heat-relax-wood-253938/
+sauna		https://pixabay.com/photos/pool-sauna-bath-vacation-3001209/
+sauna		https://pixabay.com/photos/sauna-sweat-wood-s-sweating-2461346/
+sauna		https://pixabay.com/photos/bath-firewood-design-sauna-blow-1317997/
+sauna		https://pixabay.com/photos/sauna-leisure-finnish-sauna-relax-2844863/
+pool		https://pixabay.com/photos/pool-sauna-bath-vacation-3001205/
+pool		https://www.pexels.com/photo/architecture-hotel-pool-poolside-261327/
+pool		https://www.pexels.com/photo/architecture-blue-water-buildings-business-261102/
+pool		https://pixabay.com/photos/interior-swimming-pool-rendering-1026464/
+servers		https://www.pexels.com/photo/server-1569185/
+scifi corridor	https://pixabay.com/photos/hallway-tunnel-round-tube-design-802068/
+walkway		https://pixabay.com/photos/architecture-gang-building-1778713/
+walkway		https://pixabay.com/photos/architecture-building-infrastructure-2568251/
+corridor	https://www.pexels.com/photo/empty-hallway-with-lights-turned-on-1236044/
+corridor	https://www.pexels.com/photo/narrow-corridor-with-white-light-bulb-on-top-1207922/
+corridor	https://www.pexels.com/photo/black-and-white-tiles-clean-corridor-524/
+corridor	https://unsplash.com/photos/ZVkDLrXGMdw
