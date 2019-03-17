@@ -1,5 +1,6 @@
 background images were taken from Flickr and Google images, with the permission for commercial use and making modifications.
 specific sources currently unknown.
+server bg by Manuel Geissinger https://www.pexels.com/photo/interior-of-office-building-325229/
 
 dfo backgrounds, sprites, effects, status images, crt transition and dfo gui by Qazhax
 
