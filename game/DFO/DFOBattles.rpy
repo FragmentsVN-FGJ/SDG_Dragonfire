@@ -74,6 +74,7 @@ label Ruins_battle1:
     $ target_list = ["Rider"]
     $ nick_acted = False
     $ gamestate.battle_label = "Ruins_battle1"
+    call DFO_character_init
     show screen hp_window(gamestate.players, gamestate.enemies)
     play sound sfx_battlehorn
     "As we approach, trapdoors spring open all around us, sending sand flying in every direction!"

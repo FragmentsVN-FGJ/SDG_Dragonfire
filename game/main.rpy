@@ -465,10 +465,12 @@ label start:
     jump start_baudrillard
     
 label morning_screen:
+    scene black
     centered "{size=+10}{color=#fff}Morning{/color}{/size}{w=1.0}{nw}"
     return
 
 label evening_screen:
+    scene black
     centered "{size=+10}{color=#fff}Evening{/color}{/size}{w=1.0}{nw}"
     return
 
@@ -489,6 +491,7 @@ label day:
     
     if day == 1:
         call morning_screen
+        call gymintro
         call Catherine_gym_together
         call evening_screen
         call RuinsStart

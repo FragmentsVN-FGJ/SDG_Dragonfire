@@ -17,7 +17,7 @@ label start_baudrillard:
  
     $ dfoMode = True
     
-    $ gamestate.take_damage("Nick", 15000)
+    $ gamestate.take_damage("Nick", 3000)
     $ gamestate.take_damage("Aerith", 2000)
 
     n "Damnit!"
@@ -27,7 +27,7 @@ label start_baudrillard:
 
     # Sound effect
     
-    $ gamestate.take_damage("Nick", 2000)
+    $ gamestate.take_damage("Nick", 500)
 
     # Note: Size 24 is good for FONTC_AEROMATICS
     "The monster sinks its fangs into my skin, drawing blood!"
