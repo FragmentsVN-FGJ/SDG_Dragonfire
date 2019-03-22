@@ -19,7 +19,9 @@ label start_baudrillard:
     
     $ gamestate.take_damage("Nick", 3000)
     $ gamestate.take_damage("Aerith", 2000)
-
+    
+    show enemy_mongo
+    
     n "Damnit!"
 
     play sound sfx_grunt_1
@@ -46,7 +48,9 @@ label start_baudrillard:
 
     "They're humongous. But I'm not actually worried. Not yet, anyway."
 
+    hide enemy_mongo with moveoutright
     show air 10 at distant, left with moveinleft
+    show enemy_mongo at distant, center, flip with moveinleft
 
     "I see Aerith in the corner of my vision."
     
@@ -61,8 +65,11 @@ label start_baudrillard:
 
     hide air with moveoutleft
     hide screen single_ally_hp_window
+    hide enemy_mongo with moveoutleft
 
     "Silvia is nowhere to be seen. Hiding somewhere in plain sight, no doubt."
+    
+    show enemy_mongo with moveinright
 
     "The weasels are circling me, staring at my wound with blood-hungry eyes."
 
@@ -131,6 +138,7 @@ label WeaselFight:
     "I raise my shield just in time as a hail of daggers falls all around me, piercing the weasels and spraying blood everywhere!"
 
     call FX_Silvia_Hail
+    hide enemy_mongo with falldown
 
     "The monsters lie dead on the grass, painted crimson with blood."
 
@@ -672,26 +680,30 @@ label RoomDescription:
     pause 2
     nvl clear
     window show
+    
+    call dream_start
 
-    play music bgm_scary
+    scene black with Dissolve(2.0)
 
-    nvlNarrator "My dreams are uneasy that night."
-    nvlNarrator "I am lying on the floor of my apartment."
-    nvlNarrator "Catherine comes to me, laughing."
-    nvlNarrator "She hates me. Hates me."
-    nvlNarrator "There’s a knife in her hands now."
-    nvlNarrator "I don’t love her enough."
+    # play music bgm_scary
+
+    # nvlNarrator "My dreams are uneasy that night."
+    # nvlNarrator "I am lying on the floor of my apartment."
+    # nvlNarrator "Catherine comes to me, laughing."
+    # nvlNarrator "She hates me. Hates me."
+    # nvlNarrator "There’s a knife in her hands now."
+    # nvlNarrator "I don’t love her enough."
+
+    # #nvl clear
+
+    # nvlNarrator "That’s Silvia’s dagger! Why do you have that?"
+    # nvlNarrator "Silvia appears from the shadows. She’s enraged."
+    # nvlNarrator "Cat stole her knife."
+    # nvlNarrator "Only she has the right to use it."
+    # nvlNarrator "It was her gift to me."
+    # nvlNarrator "She grabs the knife, and there’s a hail of daggers, and everything is red and Sil laughs and laughs and laughs and I wake up."
 
     # nvl clear
-
-    nvlNarrator "That’s Silvia’s dagger! Why do you have that?"
-    nvlNarrator "Silvia appears from the shadows. She’s enraged."
-    nvlNarrator "Cat stole her knife."
-    nvlNarrator "Only she has the right to use it."
-    nvlNarrator "It was her gift to me."
-    nvlNarrator "She grabs the knife, and there’s a hail of daggers, and everything is red and Sil laughs and laughs and laughs and I wake up."
-
-    nvl clear
 
     scene player_room with dissolve
     play music bgm_main

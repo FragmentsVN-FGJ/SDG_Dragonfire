@@ -287,6 +287,17 @@ image blinking_arrow:
     alpha 0.0
     pause 0.5
     repeat
+
+image nvl_blinking_arrow:
+    alpha 0.3
+    zoom 0.4
+    yoffset 10
+    xoffset 2
+    "images/arrow3.png"
+    pause 0.5
+    alpha 0.0
+    pause 0.5
+    repeat
     
 image choice_background_hover:
     "gui/dfo_textbox8.png"
@@ -300,8 +311,8 @@ define a = Character("Aerith", color="#FF1493", ctc="DFO_blinking_arrow")
 define n = Character("Nicholas", color="#191970", ctc=ConditionSwitch("dfoMode", "DFO_blinking_arrow", "True", "blinking_arrow"))
 define s = Character("Silvia", color="#9932CC", ctc="DFO_blinking_arrow")
 define c = Character("Catherine", color="DC143C", ctc="blinking_arrow")
-define nvlNarrator = Character(None, kind=nvl, what_xsize = 950, what_size=28, what_xpos=200)
-define narrator = Character(None, what_color="#DCDCDC", ctc=ConditionSwitch("dfoMode", "DFO_blinking_arrow", "True", "blinking_arrow"))
+define nvlNarrator = Character(None, kind=nvl, what_xsize = 950, what_size=28, what_xpos=200, ctc="nvl_blinking_arrow")
+define narrator = Character(None, ctc=ConditionSwitch("dfoMode", "DFO_blinking_arrow", "True", "blinking_arrow"))
 
 image SDG_DF_fade1_big = "SDG_DF_fade1_big.png"
 
