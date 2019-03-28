@@ -482,7 +482,7 @@ label .struggle:
         "But it's too strong!"
     else:
         "Suddenly, it loosens its grasp, and I fall gracefully to the ground!"
-        show cat
+        show cat scream
         show cat_torso orange behind cat
         with moveinbottom
         with vpunch
@@ -547,8 +547,8 @@ label .Catherine_press:
 
 label .press:
     "While the machine is concentrating on Catherine, I sneak up on it, attempting to press the power down button on its back."
-    show cat
-    show cat_torso orange behind cat
+    hide cat
+    hide cat_torso
     with moveoutleft
     if not robot_stunned:
         "At the last moment, its head rotates 180 degrees to face me, and it lashes out at me!"
