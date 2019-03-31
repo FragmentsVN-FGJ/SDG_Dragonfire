@@ -621,11 +621,12 @@ label Ruins_outer:
     "This game is like 50 \% fighting..."
     show sil normal
     s "Lead the way, liege."
+    scene bg_temple_exit 0
     "We start walking down the stairs into the black dungeons."
     np "There's light ahead."
-    show air angry2
+    show air angry2 at right with moveinright
     a "Why is it purple...?"
-    show sil  uwot
+    show sil uwot at left with moveinleft
     s "The dark magic of the Harvester, without doubt."
     "We walk past the torches shining purple in the dark hallway."
     "It must be my imagination, but I can almost feel some malign force emanating from the purple flames and marble floor."
@@ -1077,6 +1078,7 @@ label DFO_init:
         show air 8 at left
     else:
         show air 7 at left
+    $ dfoMode = True
     "I blink as my eyes adjust to the vibrant hyper-reality surrounding me."
     show black
     hide black with dissolve

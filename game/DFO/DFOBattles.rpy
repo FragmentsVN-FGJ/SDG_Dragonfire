@@ -941,6 +941,7 @@ label .rider_spear(rider_target):
 
 label .victorious:
     hide enemy_chicken
+    hide screen hp_window
     $ target_list = []
     np "Whew! That wasn't too easy!"
     if "Silvia" in playerparty:
@@ -948,7 +949,6 @@ label .victorious:
         s "Did it not match your expectations, liege?"
         np "Sure it did. Well, let's move on."
         show sil normal
-    hide screen hp_window
     play music bgm_desert
     if dungeon_progress < 1:
         $ dungeon_progress = 1

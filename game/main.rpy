@@ -496,6 +496,10 @@ label day:
     # Calculate dayswocat
     $ dayswocat = calculatedayswithoutseeingCatherine()
 
+    # Reset dfoMode at the start of each day
+    # DFO_init sets this to True at the appropriate time
+    $ dfoMode = False
+
     window hide
     # "It's day %(day)d."
     call calendar(1)
