@@ -56,8 +56,7 @@ init python:
         ui.close()
 
 define comp = Character('Computer')
-define np = DynamicCharacter('np_name', color="#191970", window_background="gui/dfo_textbox6.png", what_color="#245")
-define dfo_narrator = Character('', window_background="gui/dfo_textbox6.png", what_color="#245")
+define np = DynamicCharacter('np_name', color="#191970")
 
 label Ruins_dragon:
     scene black with dissolve

@@ -408,27 +408,26 @@ class StatusEffect(object):
     def on_defense(self, enemy):
         pass
 
-    """ called when the character attacks
-        e.g. if the effect can increase damage for one attack or sth?
-        enemy BattleParticipant the one being attacked.
-    """
     def on_attack(self, enemy):
+        """ called when the character attacks
+            e.g. if the effect can increase damage for one attack or sth?
+            enemy BattleParticipant the one being attacked.
+        """
         pass
 
-    """ Removes itself from its host and lets hope garbage collection does its job
-    """
     def remove(self):
+        """ Removes itself from its host and lets hope garbage collection does its job
+        """
         self.host.status_effects.remove(self)
-        dfo_narrator(self.host.name + " has no longer status: " + self.name)
-
-    """ Adds itself to the host character, and writes a piece of dialogue describing the effect
-        called when the status is first applied to a character
-        should not be called outside __init__
-    """
+        
     def add_for(self, host):
+        """ Adds itself to the host character, and writes a piece of dialogue describing the effect
+        
+        called when the status is first applied to a character
+        
+        should not be called outside __init__
+        """
         host.status_effects.append(self)
-        dfo_narrator(host.name + " got status: "+ self.name) #TODO add dfo_narrator character with the dfo say panel bg
-
 
 class Skill(object):
     """ docstring for Skill
