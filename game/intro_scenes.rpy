@@ -108,10 +108,16 @@ label FX_Silvia_Hail:
     hide fx daggers
     return
 
+label WeaselAerithMoveInLeft:
+    show air 10 at left
+    show enemy_mongo at right
+    with moveinleft
+    return
+
 label WeaselPull:
     "Trampling the weasels around me, I run to protect Aerith!"
     "Damn, they're following me! Of course this would happen!"
-    show air blush12 at left with moveinleft
+    call WeaselAerithMoveInLeft
     "Now all of them are focused on us. Aerith is holding her hands to her mouth, gasping for air."
     jump WeaselProtectAerith
 
@@ -171,7 +177,7 @@ label WeaselAerithScream:
         "Run to save her!":
             "I run through the pack to her side, seeking to protect her from harm!"
             hide screen single_ally_hp_window
-            show air 10 at left with moveinright
+            call WeaselAerithMoveInLeft
             jump WeaselProtectAerith
         "Tell her to cast her barrier spell":
             hide screen single_ally_hp_window
@@ -224,7 +230,9 @@ label WeaselAerithBarrier:
     menu:
         "Run to Aerith":
             "I run towards the pack, ready to protect Aerith!"
-            show air at gettingcloser, left with moveinleft
+            show air 8 at gettingcloser, left
+            show enemy_mongo at gettingcloser, flip, right
+            with moveinleft
             jump WeaselProtectAerith
         "Better retreat!":
             hide air with moveoutleft
@@ -232,6 +240,8 @@ label WeaselAerithBarrier:
             jump WeaselRetreat
 
 label WeaselProtectAerith:
+    
+
     "The weasels are baring their fangs at us, and Silvia is nowhere to be seen."
 
     "Aerith is cowering behind me, trying to think of a spell to cast."
@@ -324,8 +334,13 @@ label WeaselSilviaHailOfDaggers:
                 "Still, it seems both of us remain alive."
                 $ Aerith_hurt = True
 
-    hide air with moveoutleft
+    hide air
+    hide enemy_mongo
+    with moveoutleft
+    show enemy_mongo with moveinright
     "The weasels aren't as lucky, and the blades pierce their hearts and throats."
+    
+    hide enemy_mongo with falldown
 
     "Only a pitiful whimper is left of them now."
 
@@ -402,7 +417,10 @@ label WeaselAerithCuringLight:
     return
 
 label WeaselFuriousStrike:
-    hide air moveoutleft
+    hide air
+    hide enemy_mongo
+    with moveoutleft
+    show enemy_mongo with moveinright
     "Time to go on the offensive!"
 
     "I raise my blade above my head, preparing to unleash my technique."
@@ -434,6 +452,8 @@ label WeaselFuriousStrike:
     hide fx slash
 
     "The steel runs right through its torso, hitting the ground with unbelievable power!"
+    
+    hide enemy_mongo with falldown
 
     "The earth trembles as a shockwave emanates from where the weasel was crushed."
 
@@ -509,6 +529,7 @@ label AerithDepthsOfSlumberSuccess:
 
 label WeaselRetreat:
     # Silvia appears in front of you: "Good thinking!"
+    hide enemy_mongo with moveoutright
     "I turn around to run!"
     show sil taunt at flip, right with moveinright
     "Out of nowhere, Silvia appears beside me with a teasing smile."
@@ -526,7 +547,7 @@ label WeaselRetreat:
         $ Aerith_barrier = False
     "I stop in my tracks, and she runs behind me."
     hide air with moveoutleft
-    show air 10 at left with moveinleft
+    call WeaselAerithMoveInLeft
     jump WeaselProtectAerith
 
 label WeaselVictory:
@@ -536,6 +557,7 @@ label WeaselVictory:
     play music bgm_cheerful
 
     hide air
+    hide enemy_mongo
 
     show sil normal at left with moveinleft
 
